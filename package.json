@@ -4,6 +4,7 @@
   "description": "Super simple user feedback website",
   "main": "index.js",
   "scripts": {
+    "prestart": "babel-node tools/startMessage.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -12,8 +13,32 @@
   ],
   "author": "James Irish",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.16.2",
+    "materialize-css": "^0.100.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
+    "react-router": "^4.2.0",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
   "devDependencies": {
-    "babel-cli": "^6.26.0"
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-hmre": "^1.1.1",
+    "babel-register": "^6.26.0",
+    "colors": "^1.1.2",
+    "eventsource-polyfill": "^0.9.6",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "webpack": "^3.11.0",
+    "webpack-dev-middleware": "^2.0.5",
+    "webpack-hot-middleware": "^2.21.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JamesIrish/Voice"
   }
 }
