@@ -1,0 +1,19 @@
+{
+  "name": "voice",
+  "version": "1.0.0",
+  "description": "Super simple user feedback website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "user",
+    "feedback"
+  ],
+  "author": "James Irish",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  }
+}
