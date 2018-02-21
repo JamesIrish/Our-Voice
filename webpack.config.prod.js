@@ -7,9 +7,7 @@ const GLOBALS = {
 };
 
 export default {
-    debug: false,
     devtool: 'source-map',
-    noInfo: false,
     entry: path.resolve(__dirname, 'src/index'),
     target: 'web',
     output: {
@@ -21,15 +19,12 @@ export default {
         contentBase: path.resolve(__dirname, 'dist')
     },
     plugins: [
-      new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.DefinePlugin(GLOBALS),
-      new ExtractTextPlugin("styles.css"),
-      new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin()
     ],
     module: {
         loaders: [
-            {test: /\.js$/, include: path.join(__dirname, 'src'), loaders: ['babel']},
+            {test: /\.js$/, include: path.join(__dirname, 'src'), loaders: ['babel-loader']},
             {test: /(\.css)$/, loader: ExtractTextPlugin.extract("css?sourceMap")},
             {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file'},
             {test: /\.(woff|woff2)$/, loader: 'url?prefix=font/&limit=5000'},
