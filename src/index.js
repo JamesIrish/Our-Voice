@@ -6,6 +6,6 @@ import { Router, browserHistory } from "react-router";
 import { Provider } from "react-redux";
 
 render(
-<h1>Hello</h1>,
+<h3>Welcome to Voice!</h3>,
 document.getElementById("app")
 );
