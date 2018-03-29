@@ -1,5 +1,4 @@
 import fs from "fs";
-import colors from "colors";
 
 /*eslint-disable no-console*/
 
@@ -15,3 +14,6 @@ fs.readFile("src/index.html", "utf8", (err, markup) => {
     console.log("index.html written to /dist".green);
   });
 });
+
+fs.createReadStream('node_modules/jquery/dist/jquery.min.js').pipe(fs.createWriteStream('dist/js/jquery.min.js'));
+fs.createReadStream('src/styles/styles.css').pipe(fs.createWriteStream('dist/css/styles.css'));

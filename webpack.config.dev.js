@@ -10,7 +10,7 @@ export default {
     ],
     target: 'web',
     output: {
-        path: __dirname + '/dist', // Note: Physical files are only output by the production build task `npm run build`.
+        path: __dirname + '/dist/js', // Note: Physical files are only output by the production build task `npm run build`.
         publicPath: '/',
         filename: 'bundle.js'
     },
@@ -18,8 +18,7 @@ export default {
         contentBase: path.resolve(__dirname, 'src')
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.HotModuleReplacementPlugin()
     ],
     module: {
         loaders: [

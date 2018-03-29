@@ -1,7 +1,6 @@
 /*eslint-disable no-console*/
 import webpack from "webpack";
 import webpackConfig from "../webpack.config.prod";
-import colors from "colors";
 
 process.env.NODE_ENV = "production";
 
@@ -26,7 +25,7 @@ webpack(webpackConfig).run((err, stats) => {
 
   console.log(`Webpack stats: ${stats}`);
 
-  console.log("Your app has been compiled in production moded and written to /dist.  It's ready to roll!".green);
+  console.log("Your app has been compiled in production mode and written to /dist.  It's ready to roll!".green);
 
   return 0;
 });
