@@ -43,8 +43,8 @@ function ClippedDrawer(props) {
     <div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="title" color="inherit" noWrap>
-            Clipped drawer
+          <Typography variant="headline" color="inherit" noWrap>
+            Voice
           </Typography>
         </Toolbar>
       </AppBar>
@@ -61,7 +61,7 @@ function ClippedDrawer(props) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
+        {props.children}
       </main>
     </div>
   );

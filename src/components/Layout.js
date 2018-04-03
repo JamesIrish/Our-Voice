@@ -5,31 +5,11 @@ import CssBaseline from 'material-ui/CssBaseline';
 import ClippedDrawer from './ClippedDrawer';
 
 class Layout extends React.Component {
-
-  constructor(props, context) {
-    super(props, context);
-
-    this.state = {
-      open: false
-    };
-
-    this.handleToggle = this.handleToggle.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-  }
-
-  handleToggle() {
-    this.setState({open: !this.state.open});
-  }
-
-  handleClose() {
-    this.setState({open: false});
-  }
-
   render() {
     return (
       <div>
         <CssBaseline/>
-        <ClippedDrawer/>
+        <ClippedDrawer children={this.props.children}/>
       </div>
     );
   }
