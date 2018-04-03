@@ -1,8 +1,8 @@
 {
-  "name": "pluralsight-redux-starter",
+  "name": "voice",
   "version": "1.0.0",
-  "description": "Starter kit for React and Redux Pluralsight course by Cory House",
-  "author": "Cory House",
+  "description": "Make the most of your voice; introduce, comment &amp; vote for project features.",
+  "author": "James Irish",
   "license": "MIT",
   "scripts": {
     "prestart": "babel-node tools/startMessage.js",
@@ -12,7 +12,7 @@
     "lint:watch": "npm run lint -- --watch",
     "test": "mocha --reporter spec tools/testSetup.js \"src/**/*.test.js\"",
     "test:watch": "npm run test -- --watch",
-    "clean-dist": "npm run remove-dist && xcopy /y /f /s /i \".\\node_modules\\materialize-css\\dist\" \".\\dist\"",
+    "clean-dist": "npm run remove-dist && mkdir dist",
     "remove-dist": "node_modules/.bin/rimraf ./dist",
     "build:html": "babel-node tools/buildHtml.js",
     "prebuild": "npm-run-all clean-dist test lint build:html",
@@ -23,15 +23,18 @@
     "babel-polyfill": "6.8.0",
     "bootstrap": "3.3.6",
     "jquery": "2.2.3",
-    "materialize-css": "^0.100.2",
-    "react": "15.0.2",
-    "react-dom": "15.0.2",
+    "material-ui": "^1.0.0-beta.40",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "prop-types": "^15.6.1",
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
     "react-redux": "4.4.5",
-    "react-router": "2.4.0",
+    "react-router": "^2.5.2",
     "react-router-redux": "4.0.4",
     "redux": "3.5.2",
     "redux-thunk": "2.0.1",
-    "toastr": "2.1.2"
+    "toastr": "2.1.2",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-cli": "6.8.0",
@@ -69,8 +72,8 @@
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
     "webpack": "1.13.0",
-    "webpack-dev-middleware": "1.6.1",
-    "webpack-hot-middleware": "2.10.0"
+    "webpack-dev-middleware": "^1.6.1",
+    "webpack-hot-middleware": "^2.10.0"
   },
   "repository": {
     "type": "git",
