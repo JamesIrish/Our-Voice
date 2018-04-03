@@ -20,17 +20,9 @@ export default {
   devServer: {
     contentBase: path.resolve(__dirname, 'dist')
   },
-  externals: {
-    $: 'jquery',
-    jQuery: 'jQuery'
-  },
   plugins: [
     new webpack.ProvidePlugin({
-      "_": "underscore",
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.$': 'jquery',
-      'window.jQuery': 'jquery'
+      "_": "underscore"
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin(GLOBALS),

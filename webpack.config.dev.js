@@ -19,17 +19,9 @@ export default {
   devServer: {
     contentBase: path.resolve(__dirname, 'src')
   },
-  externals: {
-    $: 'jquery',
-    jQuery: 'jQuery'
-  },
   plugins: [
     new webpack.ProvidePlugin({
-      "_": "underscore",
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.$': 'jquery',
-      'window.jQuery': 'jquery'
+      "_": "underscore"
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
