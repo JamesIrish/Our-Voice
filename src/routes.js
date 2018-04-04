@@ -2,11 +2,13 @@ import React from "react";
 import { Route, IndexRoute } from "react-router";
 import App from "./components/App";
 import HomePage from "./components/home/HomePage";
-import LoginForm from "./components/admin/LoginForm";
+import SignInForm from "./components/admin/SignInForm";
+import RegisterForm from "./components/admin/RegisterForm";
 
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage}/>
-    <Route path="login" component={LoginForm} />
+    <Route path="signin" component={SignInForm} />
+    <Route path="register" component={RegisterForm} />
   </Route>
 );

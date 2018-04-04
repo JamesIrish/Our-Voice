@@ -17,7 +17,7 @@ class App extends React.Component {
   render() {
     return (
       <MuiThemeProvider theme={theme}>
-        <Layout children={this.props.children} />
+        <Layout children={this.props.children}/>
       </MuiThemeProvider>
     );
   }
