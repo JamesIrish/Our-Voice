@@ -1,0 +1,14 @@
+{
+  "server": {
+    "port": 3000
+  },
+  "mongoDb": {
+    "host": "localhost",
+    "username": "",
+    "password": ""
+  },
+  "activeDirectory": {
+    "enabled": false,
+    "autoLogin": false
+  }
+}

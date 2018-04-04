@@ -15,6 +15,10 @@ class Layout extends React.Component {
   }
 }
 
+Layout.propTypes = {
+  children: PropTypes.object.isRequired
+};
+
 function mapStateToProps(state) {
   return {
     loading: state.ajaxCallsInProgress > 0

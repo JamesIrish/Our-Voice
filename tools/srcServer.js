@@ -1,18 +1,19 @@
 import express from 'express';
 import webpack from 'webpack';
 import path from 'path';
-import config from '../webpack.config.dev';
+import webpackconfig from '../webpack.config.dev';
 import open from 'open';
+import config from '../config/index';
 
 /* eslint-disable no-console */
 
-const port = 3000;
+const port = config.server.port;
 const app = express();
-const compiler = webpack(config);
+const compiler = webpack(webpackconfig);
 
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
-  publicPath: config.output.publicPath
+  publicPath: webpackconfig.output.publicPath
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));

@@ -18,22 +18,22 @@ const styles = theme => ({
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
-    display: 'flex',
+    display: 'flex'
   },
   appBar: {
-    zIndex: theme.zIndex.drawer + 1,
+    zIndex: theme.zIndex.drawer + 1
   },
   drawerPaper: {
     position: 'relative',
-    width: drawerWidth,
+    width: drawerWidth
   },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
-    minWidth: 0, // So the Typography noWrap works
+    minWidth: 0 // So the Typography noWrap works
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: theme.mixins.toolbar
 });
 
 function ClippedDrawer(props) {
@@ -48,12 +48,10 @@ function ClippedDrawer(props) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="permanent"
+      <Drawer variant="permanent"
         classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
+          paper: classes.drawerPaper
+        }}>
         <div className={classes.toolbar} />
         <List>{mailFolderListItems}</List>
         <Divider />
@@ -69,6 +67,7 @@ function ClippedDrawer(props) {
 
 ClippedDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
+  children: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(ClippedDrawer);

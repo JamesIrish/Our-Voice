@@ -8,6 +8,7 @@ class HomePage extends React.Component {
       <div>
         <Typography variant="display1" gutterBottom noWrap>Welcome to Voice</Typography>
         <Typography gutterBottom noWrap>Make the most of your voice; introduce, comment &amp; vote for project features.</Typography>
+        <Link to="login">Please login</Link>
       </div>
     );
   }

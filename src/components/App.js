@@ -4,11 +4,12 @@ import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import blue from 'material-ui/colors/blue';
 import yellow from 'material-ui/colors/yellow';
 import Layout from "./Layout";
+import PropTypes from "prop-types";
 
 const theme = createMuiTheme({
   palette: {
     primary: blue,
-    secondary: yellow,
+    secondary: yellow
   }
 });
 
@@ -21,5 +22,9 @@ class App extends React.Component {
     );
   }
 }
+
+App.propTypes = {
+  children: PropTypes.object.isRequired
+};
 
 export default connect()(App);
