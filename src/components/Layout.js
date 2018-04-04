@@ -10,9 +10,8 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
+import { Link } from 'react-router';
 import { mailFolderListItems, otherMailFolderListItems } from './tileData';
-
-const drawerWidth = 240;
 
 const styles = theme => ({
   root: {
@@ -30,6 +29,10 @@ const styles = theme => ({
   },
   fullList: {
     width: 'auto'
+  },
+  titleLink: {
+    color: theme.palette.primary.contrastText,
+    textDecoration: 'none'
   }
 });
 
@@ -37,14 +40,14 @@ class Layout extends React.Component {
   state = {
     open: false
   };
-  
+
   toggleDrawer = (open) => () => {
     this.setState({open: open});
   };
-  
+
   render() {
     const {classes} = this.props;
-    
+
     return (
       <div className={classes.root}>
         <AppBar position="static">
@@ -53,9 +56,9 @@ class Layout extends React.Component {
               <MenuIcon/>
             </IconButton>
             <Typography variant="headline" color="inherit" className={classes.flex}>
-              Voice
+              <Link to="/" className={classes.titleLink}>Voice</Link>
             </Typography>
-            <Button color="inherit" href="/signin">Sign in</Button>
+            <Button color="inherit" component={Link} to="signin">Sign in</Button>
           </Toolbar>
         </AppBar>
         <Drawer open={this.state.open} onClose={this.toggleDrawer(false)}>

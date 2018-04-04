@@ -14,11 +14,12 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    textAlign: 'center'
   },
   card: {
-    minWidth: 330,
-    maxWidth: 330
+    minWidth: 400,
+    maxWidth: 400
   },
   title: {
     marginBottom: theme.spacing.unit,
@@ -26,46 +27,46 @@ const styles = theme => ({
   },
   textField: {
     marginLeft: 0,
-    marginRight: theme.spacing.unit*3,
+    marginRight: 0,
     width: 280
   }
 });
 
 class SignInForm extends React.Component {
-  
+
   constructor(props, context) {
     super(props, context);
-    
+
     this.state = {
       credentials: {},
       errors: {},
       loading: false
     };
   }
-  
+
   onChange = (event) => {
     const field = event.target.id;
     let credentials = Object.assign({}, this.state.credentials);
     credentials[field] = event.target.value;
     return this.setState({credentials: credentials});
   };
-  
+
   onSubmit = () => {
     // handle auth
     //console.log('**handle auth**', this.state.credentials);
   };
-  
+
   render() {
     const {classes} = this.props;
-  
+
     return (
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>
             <Typography className={classes.title} color="textSecondary">
-              Welcome back! Please sign in.
+              Welcome back! Please sign in or <Link to="register">register for an account</Link>.
             </Typography>
-          
+
             <TextField
               required
               id="email"
@@ -76,7 +77,7 @@ class SignInForm extends React.Component {
               helperText={this.state.errors.email}
               onChange={this.onChange}
             />
-          
+
             <TextField
               required
               id="password"
@@ -88,9 +89,9 @@ class SignInForm extends React.Component {
               helperText={this.state.errors.password}
               onChange={this.onChange}
             />
-          
-            <Button size="large" style={{marginTop: 16, marginRight: 48}} component={Link} to="register">Register</Button>
-            
+
+            <Button size="large" style={{marginTop: 16, marginRight: 48}} component={Link} to="forgotten">Forgotten</Button>
+
             <Button color="primary"
                     disabled={this.state.loading}
                     variant="raised"
@@ -99,14 +100,14 @@ class SignInForm extends React.Component {
                     onClick={this.onSubmit}>
               {this.state.loading ? 'Signing in...' : 'Sign in'}
             </Button>
-          
+
             <Divider style={{marginTop: 24, marginBottom: 24}}/>
-          
+
             <Button variant="raised" >
               <img src="/microsoft-80660_16.png" style={{marginRight: 8}} />
               Sign in with a domain account
             </Button>
-        
+
           </CardContent>
         </Card>
       </div>

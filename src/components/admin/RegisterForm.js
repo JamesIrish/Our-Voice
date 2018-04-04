@@ -42,51 +42,46 @@ const styles = theme => ({
 });
 
 class RegisterForm extends React.Component {
-  
+
   constructor(props, context) {
     super(props, context);
-    
+
     this.state = {
-      email: null,
-      password: null,
-      confirmPassword: null,
-      firstName: null,
-      lastName: null,
-      displayName: null,
+      newUser:{},
       errors: {},
       loading: false,
       activeStep: 0,
     };
   }
-  
+
   handleNext = () => {
     this.setState({
       activeStep: this.state.activeStep + 1,
     });
   };
-  
+
   handleBack = () => {
     this.setState({
       activeStep: this.state.activeStep - 1,
     });
   };
-  
+
   onChange = (event) => {
     const field = event.target.id;
-    let credentials = Object.assign({}, this.state.credentials);
-    credentials[field] = event.target.value;
-    return this.setState({credentials: credentials});
+    let newUser = Object.assign({}, this.state.credentials);
+    newUser[field] = event.target.value;
+    return this.setState({newUser: newUser});
   };
-  
+
   onSubmit = () => {
     // handle auth
     //console.log('**handle auth**', this.state.credentials);
   };
-  
+
   render() {
     const {classes} = this.props;
     const { activeStep } = this.state;
-  
+
     return (
       <div className={classes.container}>
         <Card className={classes.card}>
@@ -94,12 +89,12 @@ class RegisterForm extends React.Component {
             <Typography className={classes.title} color="textSecondary">
               Please follow the steps to create your account.
             </Typography>
-  
+
             <Stepper activeStep={activeStep} orientation="vertical">
               <Step key="email">
                 <StepLabel>Provide an email address</StepLabel>
                 <StepContent>
-                  
+
                   <TextField
                     id="email"
                     label="Email address"
@@ -109,7 +104,7 @@ class RegisterForm extends React.Component {
                     helperText={this.state.errors.email}
                     onChange={this.onChange}
                   />
-                  
+
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button disabled onClick={this.handleBack} className={classes.button}>Back</Button>
@@ -121,7 +116,7 @@ class RegisterForm extends React.Component {
               <Step key="details">
                 <StepLabel>Enter your details</StepLabel>
                 <StepContent>
-      
+
                   <TextField
                     id="firstName"
                     label="First name"
@@ -131,7 +126,7 @@ class RegisterForm extends React.Component {
                     helperText={this.state.errors.firstName}
                     onChange={this.onChange}
                   />
-                  
+
                   <TextField
                     id="lastName"
                     label="Last name"
@@ -141,7 +136,7 @@ class RegisterForm extends React.Component {
                     helperText={this.state.errors.lastName}
                     onChange={this.onChange}
                   />
-  
+
                   <TextField
                     id="displayName"
                     label="Display name"
@@ -151,7 +146,7 @@ class RegisterForm extends React.Component {
                     helperText={this.state.errors.displayName}
                     onChange={this.onChange}
                   />
-      
+
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button onClick={this.handleBack} className={classes.button}>Back</Button>
@@ -160,10 +155,10 @@ class RegisterForm extends React.Component {
                   </div>
                 </StepContent>
               </Step>
-              <Step key="details">
-                <StepLabel>Enter your details</StepLabel>
+              <Step key="password">
+                <StepLabel>Create a password</StepLabel>
                 <StepContent>
-  
+
                   <TextField
                     id="password"
                     label="Password"
@@ -174,7 +169,7 @@ class RegisterForm extends React.Component {
                     helperText={this.state.errors.password}
                     onChange={this.onChange}
                   />
-  
+
                   <TextField
                     id="confirmPassword"
                     label="Confirm password"
@@ -185,7 +180,7 @@ class RegisterForm extends React.Component {
                     helperText={this.state.errors.confirmPassword}
                     onChange={this.onChange}
                   />
-      
+
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button onClick={this.handleBack} className={classes.button}>Back</Button>
