@@ -3,9 +3,9 @@ import webpack from 'webpack';
 import path from 'path';
 import webpackconfig from '../webpack.config.dev';
 import open from 'open';
+import bodyParser from "body-parser";
 import config from '../config/index';
-
-/* eslint-disable no-console */
+import apiRoutes from "./apiRoutes";
 
 const port = config.server.port;
 const app = express();
@@ -19,6 +19,11 @@ app.use(require('webpack-dev-middleware')(compiler, {
 app.use(require('webpack-hot-middleware')(compiler));
 
 app.use(express.static("dist"));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/api', apiRoutes.hook());
 
 app.get('*', function(req, res) {
   res.sendFile(path.join( __dirname, '../src/index.html'));

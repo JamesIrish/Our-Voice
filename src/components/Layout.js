@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
@@ -10,6 +11,7 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
+import Snackbar from 'material-ui/Snackbar';
 import { Link } from 'react-router';
 import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 
@@ -37,12 +39,27 @@ const styles = theme => ({
 });
 
 class Layout extends React.Component {
-  state = {
-    open: false
-  };
+  
+  constructor(props) {
+    super();
+    
+    this.state = {
+      drawerOpen: false,
+      snackOpen: props.snackOpen,
+      snackMessage: props.snackMessage
+    };
+  }
 
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({snackOpen: nextProps.snackOpen, snackMessage: nextProps.snackMessage});
+  };
+  
   toggleDrawer = (open) => () => {
-    this.setState({open: open});
+    this.setState({drawerOpen: open});
+  };
+  
+  snackClose = () => {
+    this.setState({ snackOpen: false });
   };
 
   render() {
@@ -61,7 +78,7 @@ class Layout extends React.Component {
             <Button color="inherit" component={Link} to="signin">Sign in</Button>
           </Toolbar>
         </AppBar>
-        <Drawer open={this.state.open} onClose={this.toggleDrawer(false)}>
+        <Drawer open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
           <List>{mailFolderListItems}</List>
           <Divider/>
           <List>{otherMailFolderListItems}</List>
@@ -70,6 +87,13 @@ class Layout extends React.Component {
           <div className={classes.toolbar}/>
           {this.props.children}
         </main>
+        <Snackbar
+          autoHideDuration={4000}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right'}}
+          open={this.state.snackOpen}
+          onClose={this.snackClose}
+          message={this.state.snackMessage}
+        />
       </div>
     );
   }
@@ -77,7 +101,16 @@ class Layout extends React.Component {
 
 Layout.propTypes = {
   classes: PropTypes.object.isRequired,
-  children: PropTypes.object.isRequired
+  children: PropTypes.object.isRequired,
+  snackOpen: PropTypes.bool.isRequired,
+  snackMessage: PropTypes.string
 };
 
-export default withStyles(styles)(Layout);
+function mapStateToProps(state) {
+  return {
+    snackOpen: state.snackReducer.snackOpen,
+    snackMessage: state.snackReducer.snackMessage
+  };
+}
+
+export default connect(mapStateToProps)(withStyles(styles)(Layout));

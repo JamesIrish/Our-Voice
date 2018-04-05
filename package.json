@@ -17,16 +17,21 @@
     "build:html": "babel-node tools/buildHtml.js",
     "prebuild": "npm-run-all clean-dist test lint build:html",
     "build": "babel-node tools/build.js",
-    "postbuild": "babel-node tools/distServer.js"
+    "predist": "npm run build",
+    "dist": "babel-node tools/distServer.js"
   },
   "dependencies": {
     "babel-polyfill": "6.8.0",
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.18.2",
     "bootstrap": "3.3.6",
     "material-ui": "^1.0.0-beta.40",
     "material-ui-icons": "^1.0.0-beta.36",
+    "mongodb": "^3.0.5",
     "npm": "^5.8.0",
     "prop-types": "^15.6.1",
     "react": "^15.3.0",
+    "react-document-title": "^2.0.3",
     "react-dom": "^15.3.0",
     "react-redux": "4.4.5",
     "react-router": "^2.5.2",
