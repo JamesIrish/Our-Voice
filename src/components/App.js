@@ -2,14 +2,14 @@ import React from "react";
 import {connect} from "react-redux";
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import blue from 'material-ui/colors/blue';
-import yellow from 'material-ui/colors/yellow';
+import amber from 'material-ui/colors/amber';
 import Layout from "./Layout";
 import PropTypes from "prop-types";
 
 const theme = createMuiTheme({
   palette: {
     primary: blue,
-    secondary: yellow
+    secondary: amber
   }
 });
 
