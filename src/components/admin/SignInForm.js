@@ -8,6 +8,10 @@ import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
 import { Link } from 'react-router';
 import DocumentTitle from 'react-document-title';
+import AuthApi from "../../api/AuthApi";
+import {bindActionCreators} from "redux";
+import * as snackActions from "../../actions/snackActions";
+import {connect} from "react-redux";
 
 const styles = theme => ({
   container: {
@@ -35,8 +39,8 @@ const styles = theme => ({
 
 class SignInForm extends React.Component {
 
-  constructor(props, context) {
-    super(props, context);
+  constructor() {
+    super();
 
     this.state = {
       credentials: {},
@@ -46,19 +50,32 @@ class SignInForm extends React.Component {
   }
 
   onChange = (event) => {
+    event.preventDefault();
     const field = event.target.id;
     let credentials = Object.assign({}, this.state.credentials);
     credentials[field] = event.target.value;
-    return this.setState({credentials: credentials});
+    return this.setState({ credentials: credentials });
   };
 
-  onSubmit = () => {
-    // handle auth
-    //console.log('**handle auth**', this.state.credentials);
+  onSubmit = (event) => {
+    event.preventDefault();
+    this.setState({ loading: true });
+    AuthApi.authenticateUser(this.state.credentials)
+      .then(user => {
+        this.setState({ loading: false });
+        this.props.history.push('/');
+        this.props.actions.showSnack('Welcome back ' + user.firstName);
+      })
+      .catch(error => {
+        this.setState({ loading: false });
+        this.props.actions.showSnack('An error occurred');
+        console.log(error);
+      });
   };
 
   render() {
-    const {classes} = this.props;
+    const { classes } = this.props;
+    const { loading } = this.state;
 
     return (
       <DocumentTitle title="Voice :. Sign in">
@@ -78,6 +95,7 @@ class SignInForm extends React.Component {
               error={this.state.errors.email}
               helperText={this.state.errors.email}
               onChange={this.onChange}
+              disabled={loading}
             />
 
             <TextField
@@ -90,22 +108,27 @@ class SignInForm extends React.Component {
               error={this.state.errors.password}
               helperText={this.state.errors.password}
               onChange={this.onChange}
+              disabled={loading}
             />
 
-            <Button size="large" style={{marginTop: 16, marginRight: 48}} component={Link} to="forgotten">Forgotten</Button>
+            <Button size="large"
+                    disabled={loading}
+                    style={{marginTop: 16, marginRight: 48}}
+                    component={Link}
+                    to="forgotten">Forgotten</Button>
 
             <Button color="primary"
-                    disabled={this.state.loading}
+                    disabled={loading}
                     variant="raised"
                     size="large"
                     style={{marginTop: 16}}
                     onClick={this.onSubmit}>
-              {this.state.loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Signing in...' : 'Sign in'}
             </Button>
 
             <Divider style={{marginTop: 24, marginBottom: 24}}/>
 
-            <Button variant="raised" >
+            <Button variant="raised" disabled={loading}>
               <img src="/microsoft-80660_16.png" style={{marginRight: 8}} />
               Sign in with a domain account
             </Button>
@@ -121,7 +144,18 @@ class SignInForm extends React.Component {
 SignInForm.propTypes = {
   loading: PropTypes.bool,
   errors: PropTypes.object,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SignInForm);
+function mapStateToProps() {
+  return { };
+}
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(snackActions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(SignInForm));

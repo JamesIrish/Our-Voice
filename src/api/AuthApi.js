@@ -1,8 +1,9 @@
-export default class UserApi {
+export default class AuthApi {
   
-  static createUser = (model) => {
-    return new Promise((resolve, reject) => {
-      fetch('/api/user', {
+  static authenticateUser = (model) => {
+    return new Promise((resolve, reject) =>
+    {
+      fetch('/api/auth', {
           method: 'post',
           headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -22,7 +23,6 @@ export default class UserApi {
         });
     });
   }
-  
 }
 
 

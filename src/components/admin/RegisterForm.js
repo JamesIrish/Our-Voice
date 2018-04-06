@@ -65,7 +65,7 @@ class RegisterForm extends React.Component {
   };
 
   handleBack = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     this.setState({ activeStep: this.state.activeStep - 1 });
   };
 
@@ -86,7 +86,11 @@ class RegisterForm extends React.Component {
         this.props.history.push('/signin');
         this.props.actions.showSnack('User account created. Please sign in.');
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        this.setState({ loading: false });
+        this.props.actions.showSnack('An error occurred');
+        console.log(error);
+      });
   };
 
   render() {
@@ -220,7 +224,9 @@ class RegisterForm extends React.Component {
 RegisterForm.propTypes = {
   loading: PropTypes.bool,
   errors: PropTypes.object,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 function mapStateToProps() {
