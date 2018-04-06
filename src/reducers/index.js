@@ -1,10 +1,12 @@
 import {combineReducers} from "redux";
 import ajaxCallsInProgress from "./ajaxStatusReducer";
-import snackReducer from "./snackReducer";
+import snack from "./snackReducer";
+import auth from "./authReducer";
 
 const rootReducer = combineReducers({
-  snackReducer,
-  ajaxCallsInProgress
+  ajaxCallsInProgress,
+  snack,
+  auth
 });
 
 export default rootReducer;

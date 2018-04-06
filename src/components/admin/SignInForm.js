@@ -10,8 +10,8 @@ import Card, { CardContent } from "material-ui/Card";
 import Button from "material-ui/Button";
 import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
-import AuthApi from "../../api/AuthApi";
-import * as snackActions from "../../actions/snackActions";
+import * as SnackActions from "../../actions/snackActions";
+import * as LoginActions from "../../actions/loginActions";
 
 const styles = theme => ({
   container: {
@@ -42,12 +42,25 @@ class SignInForm extends React.Component {
   constructor() {
     super();
 
+    this.passwordRef = null;
+    this.setPasswordRef = element => {
+      this.passwordRef = element;
+    };
+    
     this.state = {
       credentials: {},
+      error: null,
       errors: {},
       loading: false
     };
   }
+  
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({
+      loading: nextProps.loading,
+      error: nextProps.error
+    });
+  };
 
   onChange = (event) => {
     event.preventDefault();
@@ -57,37 +70,42 @@ class SignInForm extends React.Component {
     return this.setState({ credentials: credentials });
   };
 
+  onKeyDown = (event) => {
+    if (event.nativeEvent.keyCode === 13) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.target.id === "email")
+        this.passwordRef.focus();
+      if (event.target.id === "password")
+        this.onSubmit(event);
+    }
+  };
+  
   onSubmit = (event) => {
     event.preventDefault();
     this.setState({ loading: true });
-    AuthApi.authenticateUser(this.state.credentials)
-      .then(() => {
-        this.setState({ loading: false });
-        this.props.history.push("/");
-        this.props.actions.showSnack("Welcome back!");
-      })
-      .catch(error => {
-        this.setState({ loading: false });
-        this.props.actions.showSnack("An error occurred");
-        console.log(error);
-      });
+    this.props.actions.signInUser(this.state.credentials);
   };
 
   render() {
     const { classes } = this.props;
     const { loading } = this.state;
+    const pwInputProps = {
+      ref: this.setPasswordRef
+    };
 
     return (
       <DocumentTitle title="Voice :. Sign in">
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>
-            <Typography className={classes.title} color="textSecondary">
-              Welcome back! Please sign in or <Link to="register">register for an account</Link>.
+            <Typography className={classes.title} color="textSecondary" style={{textAlign: "left" }}>
+              Please sign in or <Link to="register">register for an account</Link>.
             </Typography>
 
             <TextField
               required
+              autoFocus
               id="email"
               label="Email address"
               className={classes.textField}
@@ -96,11 +114,13 @@ class SignInForm extends React.Component {
               helperText={this.state.errors.email}
               onChange={this.onChange}
               disabled={loading}
+              onKeyDown={this.onKeyDown}
             />
 
             <TextField
               required
               id="password"
+              inputProps={pwInputProps}
               label="Password"
               type="password"
               className={classes.textField}
@@ -109,6 +129,7 @@ class SignInForm extends React.Component {
               helperText={this.state.errors.password}
               onChange={this.onChange}
               disabled={loading}
+              onKeyDown={this.onKeyDown}
             />
 
             <Button size="large"
@@ -142,17 +163,23 @@ class SignInForm extends React.Component {
 }
 
 SignInForm.propTypes = {
-  loading: PropTypes.bool,
   errors: PropTypes.object,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
 };
 
-function mapDispatchToProps(dispatch) {
+function mapStateToProps(state) {
   return {
-    actions: bindActionCreators(snackActions, dispatch)
+    loading: state.auth.loading,
+    error: state.auth.error
   };
 }
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(SignInForm));
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Object.assign({}, SnackActions, LoginActions), dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SignInForm));

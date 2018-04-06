@@ -15,6 +15,10 @@ import List from "material-ui/List";
 import Divider from "material-ui/Divider";
 import Snackbar from "material-ui/Snackbar";
 import { mailFolderListItems, otherMailFolderListItems } from "./tileData";
+import {bindActionCreators} from "redux";
+import jwtDecode from "jwt-decode";
+import * as SnackActions from "../actions/snackActions";
+import * as LoginActions from "../actions/loginActions";
 
 const styles = theme => ({
   root: {
@@ -45,6 +49,8 @@ class Layout extends React.Component {
     super();
     
     this.state = {
+      loading: false,
+      user: props.user,
       drawerOpen: false,
       snackOpen: props.snackOpen,
       snackMessage: props.snackMessage
@@ -52,15 +58,24 @@ class Layout extends React.Component {
   }
   
   componentWillMount = () => {
-    const { cookies } = this.props;
-    let access = cookies.get("access_token");
-    console.log(access);
-    let refresh = cookies.get("refresh_token");
-    console.log(refresh);
+    if (!this.state.user)
+    {
+      const { cookies } = this.props;
+      let access = cookies.get("access_token");
+      let refresh = cookies.get("refresh_token");
+      if (access && refresh) {
+        let decoded = jwtDecode(access);
+        let email = decoded.user.email;
+        this.setState({ loading: true, user: decoded.user });
+        this.props.actions.refreshToken(email, refresh);
+      }
+    }
   };
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
+      loading: false,
+      user: nextProps.user,
       snackOpen: nextProps.snackOpen,
       snackMessage: nextProps.snackMessage
     });
@@ -71,12 +86,12 @@ class Layout extends React.Component {
   };
   
   snackClose = () => {
-    this.setState({ snackOpen: false });
+    this.props.actions.clearSnack();
   };
 
   render() {
     const { classes, children } = this.props;
-    const { drawerOpen, snackOpen, snackMessage } = this.state;
+    const { loading, user, drawerOpen, snackOpen, snackMessage } = this.state;
 
     return (
       <div className={classes.root}>
@@ -88,7 +103,9 @@ class Layout extends React.Component {
             <Typography variant="headline" color="inherit" className={classes.flex}>
               <Link to="/" className={classes.titleLink}>Voice</Link>
             </Typography>
-            <Button color="inherit" component={Link} to="signin">Sign in</Button>
+            {user
+              ? (<Button color="inherit" component={Link} to="account" disabled={loading}>{user.displayName}</Button>)
+              : (<Button color="inherit" component={Link} to="signin" disabled={loading}>Sign in</Button>)}
           </Toolbar>
         </AppBar>
         <Drawer open={drawerOpen} onClose={this.toggleDrawer(false)}>
@@ -101,7 +118,7 @@ class Layout extends React.Component {
           {children}
         </main>
         <Snackbar
-          autoHideDuration={4000}
+          autoHideDuration={3000}
           anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
           open={snackOpen}
           onClose={this.snackClose}
@@ -117,14 +134,24 @@ Layout.propTypes = {
   children: PropTypes.object.isRequired,
   snackOpen: PropTypes.bool.isRequired,
   snackMessage: PropTypes.string,
-  cookies: PropTypes.object.isRequired
+  cookies: PropTypes.object.isRequired,
+  user: PropTypes.object,
+  actions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
   return {
-    snackOpen: state.snackReducer.snackOpen,
-    snackMessage: state.snackReducer.snackMessage
+    loading: state.auth.loading,
+    user: state.auth.user,
+    snackOpen: state.snack.snackOpen,
+    snackMessage: state.snack.snackMessage
   };
 }
 
-export default withCookies(connect(mapStateToProps)(withStyles(styles)(Layout)));
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Object.assign({}, SnackActions, LoginActions), dispatch)
+  };
+}
+
+export default withCookies(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Layout)));

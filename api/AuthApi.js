@@ -66,7 +66,7 @@ export default class AuthApi {
                   if (commandResult.result.ok === 1 && commandResult.result.n === 1) {
                     res.cookie("access_token", token);
                     res.cookie("refresh_token", refreshToken);
-                    res.sendStatus(200);
+                    res.status(200).send({ user: user, accessToken: token, refreshToken: refreshToken });
                 } else
                     AuthApi._handleError(commandResult);
                 })
@@ -103,27 +103,16 @@ export default class AuthApi {
         
         Promise.all(deletePromises)
           .then(deletes => {
-            console.log(deletes);
             if (okay) {
               
-              client.find(client.collectionNames.USERS, { email: email })
-                .then(users => {
-                  if (users.length === 0)
-                  {
-                    res.sendStatus(401);
-                  }
-                  else if (users.length > 1)
-                  {
-                    AuthApi._handleError("Multiple users found", res);
-                  }
-                  else
-                  {
-                    let user = users[0];
-                    delete user.password;
-                    let token = AuthApi._createToken(user, ["admin"]);
-                    res.cookie('jwt', token);
-                    res.sendStatus(200);
-                  }
+              client.findOne(client.collectionNames.USERS, { email: email })
+                .then(user =>
+                {
+                  delete user.password;
+                  
+                  let token = AuthApi._createToken(user, ["admin"]);
+                  res.cookie('access_token', token);
+                  res.status(200).send({ user: user, accessToken: token });
                 })
                 .catch(error => AuthApi._handleError(error, res));
             } else {

@@ -112,6 +112,7 @@ class RegisterForm extends React.Component {
                 <StepContent>
 
                   <TextField
+                    autoFocus
                     id="email"
                     label="Email address"
                     className={classes.textField}

@@ -15,7 +15,33 @@ export default class AuthApi {
         .then(response => {
           console.log(response);
           if (response.ok) {
-            resolve();
+            resolve(response.json());
+          } else {
+            reject(response.statusText);
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+  
+  static getAccessToken = (email, refreshToken) => {
+    return new Promise((resolve, reject) =>
+    {
+      fetch("/api/auth/refresh", {
+        method: "post",
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ email: email, refreshToken: refreshToken })
+      })
+        .then(response => {
+          console.log(response);
+          if (response.ok) {
+            resolve(response.json());
           } else {
             reject(response.statusText);
           }
