@@ -1,19 +1,20 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Drawer from 'material-ui/Drawer';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import List from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import Snackbar from 'material-ui/Snackbar';
-import { Link } from 'react-router';
-import { mailFolderListItems, otherMailFolderListItems } from './tileData';
+import React from "react";
+import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import { Link } from "react-router";
+import { withCookies } from "react-cookie";
+import { withStyles } from "material-ui/styles";
+import Drawer from "material-ui/Drawer";
+import AppBar from "material-ui/AppBar";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
+import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+import MenuIcon from "material-ui-icons/Menu";
+import List from "material-ui/List";
+import Divider from "material-ui/Divider";
+import Snackbar from "material-ui/Snackbar";
+import { mailFolderListItems, otherMailFolderListItems } from "./tileData";
 
 const styles = theme => ({
   root: {
@@ -30,11 +31,11 @@ const styles = theme => ({
     width: 250
   },
   fullList: {
-    width: 'auto'
+    width: "auto"
   },
   titleLink: {
     color: theme.palette.primary.contrastText,
-    textDecoration: 'none'
+    textDecoration: "none"
   }
 });
 
@@ -49,13 +50,24 @@ class Layout extends React.Component {
       snackMessage: props.snackMessage
     };
   }
-
+  
+  componentWillMount = () => {
+    const { cookies } = this.props;
+    let access = cookies.get("access_token");
+    console.log(access);
+    let refresh = cookies.get("refresh_token");
+    console.log(refresh);
+  };
+  
   componentWillReceiveProps = (nextProps) => {
-    this.setState({snackOpen: nextProps.snackOpen, snackMessage: nextProps.snackMessage});
+    this.setState({
+      snackOpen: nextProps.snackOpen,
+      snackMessage: nextProps.snackMessage
+    });
   };
   
   toggleDrawer = (open) => () => {
-    this.setState({drawerOpen: open});
+    this.setState({ drawerOpen: open });
   };
   
   snackClose = () => {
@@ -63,7 +75,8 @@ class Layout extends React.Component {
   };
 
   render() {
-    const {classes} = this.props;
+    const { classes, children } = this.props;
+    const { drawerOpen, snackOpen, snackMessage } = this.state;
 
     return (
       <div className={classes.root}>
@@ -78,21 +91,21 @@ class Layout extends React.Component {
             <Button color="inherit" component={Link} to="signin">Sign in</Button>
           </Toolbar>
         </AppBar>
-        <Drawer open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
+        <Drawer open={drawerOpen} onClose={this.toggleDrawer(false)}>
           <List>{mailFolderListItems}</List>
           <Divider/>
           <List>{otherMailFolderListItems}</List>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar}/>
-          {this.props.children}
+          {children}
         </main>
         <Snackbar
           autoHideDuration={4000}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right'}}
-          open={this.state.snackOpen}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
+          open={snackOpen}
           onClose={this.snackClose}
-          message={this.state.snackMessage}
+          message={snackMessage}
         />
       </div>
     );
@@ -103,7 +116,8 @@ Layout.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.object.isRequired,
   snackOpen: PropTypes.bool.isRequired,
-  snackMessage: PropTypes.string
+  snackMessage: PropTypes.string,
+  cookies: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -113,4 +127,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(Layout));
+export default withCookies(connect(mapStateToProps)(withStyles(styles)(Layout)));

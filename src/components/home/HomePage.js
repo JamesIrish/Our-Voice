@@ -1,9 +1,9 @@
 import React from "react";
-import Typography from 'material-ui/Typography';
 import {Link} from "react-router";
 import PropTypes from "prop-types";
+import DocumentTitle from "react-document-title";
+import Typography from "material-ui/Typography";
 import {withStyles} from "material-ui/styles/index";
-import DocumentTitle from 'react-document-title';
 
 const styles = theme => ({
   container: {
@@ -12,11 +12,6 @@ const styles = theme => ({
 });
 
 class HomePage extends React.Component {
-  
-  constructor(props, context) {
-    super(props, context);
-  }
-  
   render() {
     const {classes} = this.props;
     const isAuthenticated = this.props.auth.isAuthenticated();

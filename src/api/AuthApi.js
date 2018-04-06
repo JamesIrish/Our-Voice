@@ -3,17 +3,19 @@ export default class AuthApi {
   static authenticateUser = (model) => {
     return new Promise((resolve, reject) =>
     {
-      fetch('/api/auth', {
-          method: 'post',
+      fetch("/api/auth/token", {
+          method: "post",
           headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
+            "Accept": "application/json, text/plain, */*",
+            "Content-Type": "application/json"
           },
+          credentials: "same-origin",
           body: JSON.stringify(model)
         })
         .then(response => {
+          console.log(response);
           if (response.ok) {
-            resolve(response.json());
+            resolve();
           } else {
             reject(response.statusText);
           }

@@ -24,7 +24,7 @@
     "mocha": true
   },
   "rules": {
-    "quotes": 0,
+    "quotes": 1,
     "no-console": 0,
     "no-debugger": 0,
     "no-var": 1,

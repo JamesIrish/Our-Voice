@@ -1,26 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import TextField from 'material-ui/TextField';
-import Card, { CardContent } from 'material-ui/Card';
-import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
-import Typography from 'material-ui/Typography';
-import { Link } from 'react-router';
-import DocumentTitle from 'react-document-title';
-import AuthApi from "../../api/AuthApi";
+import React from "react";
+import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
-import * as snackActions from "../../actions/snackActions";
 import {connect} from "react-redux";
+import { Link } from "react-router";
+import DocumentTitle from "react-document-title";
+import { withStyles } from "material-ui/styles";
+import TextField from "material-ui/TextField";
+import Card, { CardContent } from "material-ui/Card";
+import Button from "material-ui/Button";
+import Divider from "material-ui/Divider";
+import Typography from "material-ui/Typography";
+import AuthApi from "../../api/AuthApi";
+import * as snackActions from "../../actions/snackActions";
 
 const styles = theme => ({
   container: {
     margin: theme.spacing.unit*3,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    textAlign: 'center'
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    flexWrap: "wrap",
+    textAlign: "center"
   },
   card: {
     minWidth: 400,
@@ -61,14 +61,14 @@ class SignInForm extends React.Component {
     event.preventDefault();
     this.setState({ loading: true });
     AuthApi.authenticateUser(this.state.credentials)
-      .then(user => {
+      .then(() => {
         this.setState({ loading: false });
-        this.props.history.push('/');
-        this.props.actions.showSnack('Welcome back ' + user.firstName);
+        this.props.history.push("/");
+        this.props.actions.showSnack("Welcome back!");
       })
       .catch(error => {
         this.setState({ loading: false });
-        this.props.actions.showSnack('An error occurred');
+        this.props.actions.showSnack("An error occurred");
         console.log(error);
       });
   };
@@ -123,7 +123,7 @@ class SignInForm extends React.Component {
                     size="large"
                     style={{marginTop: 16}}
                     onClick={this.onSubmit}>
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? "Signing in..." : "Sign in"}
             </Button>
 
             <Divider style={{marginTop: 24, marginBottom: 24}}/>
@@ -149,13 +149,10 @@ SignInForm.propTypes = {
   actions: PropTypes.object.isRequired
 };
 
-function mapStateToProps() {
-  return { };
-}
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(snackActions, dispatch)
   };
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(SignInForm));
+export default connect(null, mapDispatchToProps)(withStyles(styles)(SignInForm));

@@ -1,24 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import TextField from 'material-ui/TextField';
-import Card, { CardContent } from 'material-ui/Card';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
-import Stepper, { Step, StepLabel, StepContent } from 'material-ui/Stepper';
-import UserApi from "../../api/UserApi";
-import {connect} from 'react-redux';
+import React from "react";
+import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import PropTypes from "prop-types";
+import DocumentTitle from "react-document-title";
+import { withStyles } from "material-ui/styles";
+import TextField from "material-ui/TextField";
+import Card, { CardContent } from "material-ui/Card";
+import Button from "material-ui/Button";
+import Typography from "material-ui/Typography";
+import Stepper, { Step, StepLabel, StepContent } from "material-ui/Stepper";
+import UserApi from "../../api/UserApi";
 import * as snackActions from "../../actions/snackActions";
-import DocumentTitle from 'react-document-title';
 
 const styles = theme => ({
   container: {
     margin: theme.spacing.unit*3,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    flexWrap: 'wrap'
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    flexWrap: "wrap"
   },
   card: {
     minWidth: 450,
@@ -83,12 +83,12 @@ class RegisterForm extends React.Component {
     UserApi.createUser(this.state.newUser)
       .then(() => {
         this.setState({ loading: false });
-        this.props.history.push('/signin');
-        this.props.actions.showSnack('User account created. Please sign in.');
+        this.props.history.push("/signin");
+        this.props.actions.showSnack("User account created. Please sign in.");
       })
       .catch(error => {
         this.setState({ loading: false });
-        this.props.actions.showSnack('An error occurred');
+        this.props.actions.showSnack("An error occurred");
         console.log(error);
       });
   };
@@ -229,13 +229,10 @@ RegisterForm.propTypes = {
   actions: PropTypes.object.isRequired
 };
 
-function mapStateToProps() {
-  return { };
-}
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(snackActions, dispatch)
   };
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(RegisterForm));
+export default connect(null, mapDispatchToProps)(withStyles(styles)(RegisterForm));

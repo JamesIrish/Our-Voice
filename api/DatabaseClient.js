@@ -12,6 +12,11 @@ export default class DatabaseClient {
     this._dbName = config.mongoDb.database;
   }
   
+  collectionNames = {
+    USERS: 'users',
+    REFRESH_TOKENS: 'refreshTokens'
+  };
+  
   _connectWrapper = (functionName, collectionName, document) => {
     return new Promise((resolve, reject) => {
       if (!this._isConnected) {
@@ -68,12 +73,45 @@ export default class DatabaseClient {
     });
   };
   
+  createIndexes = () => {
+    return new Promise((resolve, reject) => {
+      this.connect()
+          .then(() => {
+            let usersEmail = this._db.collection('users').createIndex({ email: 1 });
+            let refreshTokens = this._db.collection('refreshTokens').createIndex({ refreshToken: 1 });
+            let refreshTokensEmail = this._db.collection('refreshTokens').createIndex({ refreshToken: 1, email: 1 });
+            Promise.all([ usersEmail, refreshTokens, refreshTokensEmail ])
+              .then(() =>
+              {
+                this.disconnect();
+                resolve();
+              })
+              .catch(error => reject(error));
+          })
+          .catch(error => reject(error));
+    });
+  };
+  
   _find = (collection, query) => {
     return collection.find(query).toArray();
   };
   find = (collectionName, queryDocument) => {
     return this._connectWrapper(this._find, collectionName, queryDocument);
   };
+  findOne = (collectionName, queryDocument) => {
+    return new Promise((resolve, reject) => {
+      this._connectWrapper(this._find, collectionName, queryDocument)
+        .then(results => {
+          if (results.length === 0)
+            reject('No results');
+          else if (results.length > 1)
+            reject('Multiple results');
+          else
+            resolve(results[0]);
+        })
+        .catch(error => reject(error));
+    });
+  }
   
   _insertOne = (collection, newDocument) => {
     return collection.insertOne(newDocument);
@@ -89,4 +127,10 @@ export default class DatabaseClient {
     return this._connectWrapper(this._replaceOne, collectionName, replacementDocument);
   };
   
+  _deleteOne = (collection, id) => {
+    return collection.deleteOne(id);
+  };
+  deleteOne = (collectionName, id) => {
+    return this._connectWrapper(this._deleteOne, collectionName, id);
+  }
 }

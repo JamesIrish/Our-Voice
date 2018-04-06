@@ -1,8 +1,9 @@
-import express from 'express';
-import path from 'path';
-import open from 'open';
+import express from "express";
+import path from "path";
+import open from "open";
 import compression from "compression";
 import bodyParser from "body-parser";
+import passport from "passport";
 import apiRoutes from "./apiRoutes";
 
 const port = 3000;
@@ -14,10 +15,17 @@ app.use(express.static("dist"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api', apiRoutes.hook());
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.get('*', function(req, res) {
-  res.sendFile(path.join( __dirname, '../dist/index.html'));
+passport.serializeUser(function (user, done) {
+  done(null, user.email);
+});
+
+app.use("/api", apiRoutes.hook());
+
+app.get("*", function(req, res) {
+  res.sendFile(path.join( __dirname, "../dist/index.html"));
 });
 
 app.listen(port, function(err) {

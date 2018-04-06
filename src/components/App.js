@@ -1,10 +1,10 @@
 import React from "react";
-import {connect} from "react-redux";
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import blue from 'material-ui/colors/blue';
-import amber from 'material-ui/colors/amber';
-import Layout from "./Layout";
 import PropTypes from "prop-types";
+import { CookiesProvider } from "react-cookie";
+import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
+import blue from "material-ui/colors/blue";
+import amber from "material-ui/colors/amber";
+import Layout from "./Layout";
 
 const theme = createMuiTheme({
   palette: {
@@ -16,9 +16,11 @@ const theme = createMuiTheme({
 class App extends React.Component {
   render() {
     return (
-      <MuiThemeProvider theme={theme}>
-        <Layout children={this.props.children}/>
-      </MuiThemeProvider>
+      <CookiesProvider>
+        <MuiThemeProvider theme={theme}>
+          <Layout children={this.props.children}/>
+        </MuiThemeProvider>
+      </CookiesProvider>
     );
   }
 }
@@ -27,4 +29,4 @@ App.propTypes = {
   children: PropTypes.object.isRequired
 };
 
-export default connect()(App);
+export default App;

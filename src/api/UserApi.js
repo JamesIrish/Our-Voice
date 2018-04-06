@@ -2,11 +2,11 @@ export default class UserApi {
   
   static createUser = (model) => {
     return new Promise((resolve, reject) => {
-      fetch('/api/user', {
-          method: 'post',
+      fetch("/api/user", {
+          method: "post",
           headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
+            "Accept": "application/json, text/plain, */*",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify(model)
         })
