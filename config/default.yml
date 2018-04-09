@@ -1,6 +1,6 @@
-# -------------------
-#  Voice config file
-# -------------------
+# -----------------------
+#  Our-Voice config file
+# -----------------------
 
 # Environment specific variables should be placed in
 #   production.yml
@@ -21,7 +21,7 @@ mongoDb:
   settings:
     # SSL and other Mongo settings.
     # See: http://mongodb.github.io/node-mongodb-native/3.0/reference/connecting/connection-settings/
-    appname: voice
+    appname: our-voice
     ssl: false
     sslValidate: true
     sslCA: []
