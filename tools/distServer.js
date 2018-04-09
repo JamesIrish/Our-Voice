@@ -5,8 +5,9 @@ import compression from "compression";
 import bodyParser from "body-parser";
 import passport from "passport";
 import apiRoutes from "./apiRoutes";
+import config from "../config";
 
-const port = 3000;
+const port = config.port;
 const app = express();
 
 app.use(compression());
