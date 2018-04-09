@@ -77,9 +77,9 @@ export default class DatabaseClient {
     return new Promise((resolve, reject) => {
       this.connect()
           .then(() => {
-            let usersEmail = this._db.collection('users').createIndex({ email: 1 });
-            let refreshTokens = this._db.collection('refreshTokens').createIndex({ refreshToken: 1 });
-            let refreshTokensEmail = this._db.collection('refreshTokens').createIndex({ refreshToken: 1, email: 1 });
+            let usersEmail = this._db.collection(this.collectionNames.USERS).createIndex({ email: 1 });
+            let refreshTokens = this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1 });
+            let refreshTokensEmail = this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1, email: 1 });
             Promise.all([ usersEmail, refreshTokens, refreshTokensEmail ])
               .then(() =>
               {
