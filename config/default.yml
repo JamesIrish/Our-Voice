@@ -8,7 +8,8 @@
 #   development.yml
 
 # Web server configuration
-port: 3000
+# Port to bind.  Do not change to lowercase.
+PORT: 3000
 
 # Database configuration, currently we only support MongoDb
 mongoDb:
@@ -41,7 +42,7 @@ activeDirectory:
 # Gmail specific setup options:  https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
 smtp:
   service:
-  host: test
+  host:
   port:
   secure:
   auth:
