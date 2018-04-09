@@ -1,21 +1,22 @@
 import fs from "fs";
 import path from "path";
+import yaml from "js-yaml";
 
 const NODE_ENV = process.env.NODE_ENV;
-let configBuffer = null;
+let config = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "default.yml"), "utf-8"));
 
-// Init config_buffer according to the NODE_ENV
 switch (NODE_ENV) {
   case "production":
-    configBuffer = fs.readFileSync(path.resolve(__dirname, "production.json"), "utf-8");
+    config = Object.assign({}, config, yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "production.yml"), "utf-8")));
     break;
   case "staging":
-    configBuffer = fs.readFileSync(path.resolve(__dirname, "staging.json"), "utf-8");
+    config = Object.assign({}, config, yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "staging.yml"), "utf-8")));
     break;
   default:
-    configBuffer = fs.readFileSync(path.resolve(__dirname, "default.json"), "utf-8");
+    config = Object.assign({}, config, yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "development.yml"), "utf-8")));
 }
 
-let config = JSON.parse(configBuffer);
+const indentedJson = JSON.stringify(config, null, 2);
+console.log("Using config: ", indentedJson);
 
 export default config;

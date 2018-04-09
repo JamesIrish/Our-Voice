@@ -1,0 +1,50 @@
+# -------------------
+#  Voice config file
+# -------------------
+
+# Environment specific variables should be placed in
+#   production.yml
+#   staging.yml
+#   development.yml
+
+# Web server configuration
+server:
+  port: 3000
+
+# Database configuration, currently we only support MongoDb
+mongoDb:
+# Connection string for MongoDb.
+# See: https://docs.mongodb.com/manual/reference/connection-string/
+# mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]
+  url: mongodb://localhost:27017
+  database: voice
+  settings:
+    # SSL and other Mongo settings.
+    # See: http://mongodb.github.io/node-mongodb-native/3.0/reference/connecting/connection-settings/
+    appname: voice
+    ssl: false
+    sslValidate: true
+    sslCA: []
+    sslCert:
+    sslKey:
+    sslPass:
+
+# Active Directory support
+# Requirements: NodeJS hosted on Windows Server - this will not work on a Unix system
+activeDirectory:
+  # Enabling this will allow for SSO style SSPI lookup of user credentials from the domain
+  enabled: false
+  # Without 'autoLogin' the user will be presented with a login screen where they can click "Sign in with a domain account"
+  # Leave this set to false to allow users to login with email/password.  Note you can style browse to the /login screen if required.
+  autoLogin: false
+
+# NodeMailer setup
+# Gmail specific setup options:  https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
+smtp:
+  service:
+  host: test
+  port:
+  secure:
+  auth:
+    user:
+    pass:
