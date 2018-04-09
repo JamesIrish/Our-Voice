@@ -9,6 +9,7 @@ nconf
   .argv()
   .env(
   {
+    match: /^(?!NPM).*/gmi,
     separator: "_",
     parseValues: true
   })

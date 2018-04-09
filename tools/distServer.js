@@ -7,7 +7,7 @@ import passport from "passport";
 import apiRoutes from "./apiRoutes";
 import config from "../config";
 
-const port = config.port;
+const port = config.PORT;
 const app = express();
 
 app.use(compression());
