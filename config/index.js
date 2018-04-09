@@ -20,7 +20,7 @@ switch (NODE_ENV) {
 
 let config = defaultsDeep({}, process.env, { app: envConfig }, { app: baseConfig });
 
-const indentedJson = JSON.stringify(config.app, null, 2);
+const indentedJson = JSON.stringify(config, null, 2);
 console.log("Using app config: ", indentedJson);
 
-export default config.app;
+export default config;
