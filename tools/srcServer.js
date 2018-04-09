@@ -10,7 +10,7 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 import AuthApi from "../api/AuthApi";
 import apiRoutes from "./apiRoutes";
 
-const port = config.server.port;
+const port = config.port;
 const app = express();
 const compiler = webpack(webpackconfig);
 
