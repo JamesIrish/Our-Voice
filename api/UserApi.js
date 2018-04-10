@@ -1,7 +1,7 @@
 import {Router} from "express";
 import DatabaseClient from "./DatabaseClient";
 import bcrypt from "bcrypt";
-import AuthApi from "./AuthApi";
+import ApiHelpers from "./ApiHelpers";
 
 export default class UserApi {
 
@@ -10,29 +10,26 @@ export default class UserApi {
 
     routes.post("/", UserApi._createUser);
     routes.post("/exists", (req, res) => {
-      UserApi._userExists(req.body.email)
+      UserApi.userExists(req.body.email)
         .then(exists => res.statusCode(200).send(exists))
-        .catch(error => AuthApi._handleError(error, res));
+        .catch(error => ApiHelpers._handleError(error, res));
     });
 
     return routes;
   };
 
-  static _userExists = (email) => {
-    return new Promise((resolve, reject) => {
-      let client = new DatabaseClient();
-      client.find(client.collectionNames.USERS, {email: email})
-        .then(users => resolve(users.length === 1))
-        .catch(error => reject(error));
-    });
+  static userExists = async (email) => {
+    let client = new DatabaseClient();
+    let users = await client.find(client.collectionNames.USERS, {email: email});
+    return users.length === 1;
   };
 
-  static _getUser = (email) => {
+  static getUser = (email) => {
     let client = new DatabaseClient();
     return client.findOne(client.collectionNames.USERS, {email: email});
   };
 
-  static _createUser = (req, res) => {
+  static _createUser = async (req, res) => {
     let userModel = {
       isActiveDirectory: false,
       email: req.body.email,
@@ -42,32 +39,23 @@ export default class UserApi {
       accountCreated: new Date(),
       roles: []
     };
+  
+    userModel.password = await bcrypt.hash(req.body.password, 10);
 
-    bcrypt.hash(req.body.password, 10)
-      .then(hash =>
-      {
-        userModel.password = hash;
+    let client = new DatabaseClient();
 
-        let client = new DatabaseClient();
+    let commandResult = await client.insertOne(client.collectionNames.USERS, userModel);
+    
+    delete userModel.password;
 
-        client.insertOne(client.collectionNames.USERS, userModel)
-          .then(commandResult =>
-          {
-            delete userModel.password;
+    if (commandResult.result.ok === 1 && commandResult.result.n === 1)
+      res.json(userModel);
+    else
+      res.status(500).json(commandResult);
+  };
 
-            if (commandResult.result.ok === 1 && commandResult.result.n === 1)
-              res.json(userModel);
-            else
-              res.status(500).json(commandResult);
-          })
-          .catch(error => res.status(500).json(error));
-      })
-      .catch(error => res.status(500).json(error));
-  }
-
-  static _createAdUser = (domain, username, sid, model, groups) => {
-    return new Promise((resolve, reject) =>
-    {
+  static createAdUser = async (domain, username, sid, model, groups) => {
+    
       let userModel = {
         isActiveDirectory: true,
         domain: domain,
@@ -82,14 +70,12 @@ export default class UserApi {
       };
 
       let client = new DatabaseClient();
-      client.insertOne(client.collectionNames.USERS, userModel)
-        .then(commandResult => {
-          if (commandResult.result.ok === 1 && commandResult.result.n === 1)
-            resolve(userModel);
-          else
-            reject(commandResult);
-        })
-        .catch(error => reject(error));
-    });
+      
+      let commandResult = await client.insertOne(client.collectionNames.USERS, userModel);
+      
+      if (commandResult.result.ok === 1 && commandResult.result.n === 1)
+        return userModel;
+      else
+        throw new Error(JSON.stringify(commandResult));
   }
 }
