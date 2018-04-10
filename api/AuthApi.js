@@ -45,34 +45,34 @@ export default class AuthApi {
     {
       let email = req.body.email;
       let password = req.body.password;
-  
+
       let client = new DatabaseClient();
       let user = await client.findOne(client.collectionNames.USERS, {email: email});
-      
+
       let match = await bcrypt.compare(password, user.password);
-      
+
       if (match)
       {
         console.log(`User ${email} authenticated.`);
-    
+
         delete user.password;
-    
+
         let token = AuthApi._createToken(user, ["admin"]);
         let refreshToken = randtoken.uid(256);
-    
+
         let midnight = new Date();
         midnight.setDate(midnight.getDate() + 1);
         midnight.setHours(0, 0, 0, 0);
-        
+
         let refreshTokenDb = {
           created: new Date(),
           expires: midnight,
           email: user.email,
           refreshToken: refreshToken
         };
-        
+
         let commandResult = await client.insertOne(client.collectionNames.REFRESH_TOKENS, refreshTokenDb);
-        
+
         if (commandResult.result.ok === 1 && commandResult.result.n === 1)
         {
           res.cookie("access_token", token);
@@ -85,7 +85,7 @@ export default class AuthApi {
       }
       else
         res.sendStatus(401);
-        
+
     } catch(err) {
       ApiHelpers._handleError(err, res);
     }
@@ -96,17 +96,17 @@ export default class AuthApi {
     {
       let email = req.body.email;
       let refreshToken = req.body.refreshToken;
-  
+
       let client = new DatabaseClient();
       let refreshTokens = await client.find(client.collectionNames.REFRESH_TOKENS,
       {
         refreshToken: refreshToken,
         email: email
       });
-  
+
       let okay = false;
       let now = new Date();
-  
+
       for (let t = 0; t < refreshTokens.length; t++) {
         let refreshToken = refreshTokens[t];
         if (refreshToken.expires < now) {
@@ -115,20 +115,20 @@ export default class AuthApi {
           okay = true;
         }
       }
-  
+
       if (okay)
       {
         let user = await client.findOne(client.collectionNames.USERS, {email: email});
-    
+
         delete user.password;
-    
+
         let token = AuthApi._createToken(user, ["admin"]);
         res.cookie('access_token', token);
         res.status(200).send({user: user, accessToken: token});
       }
       else
         res.sendStatus(401);
-      
+
     } catch(err) {
       ApiHelpers._handleError(err, res);
     }
@@ -155,7 +155,7 @@ export default class AuthApi {
         username = usernameWithDomain;
       }
       username = username.toLowerCase();
-  
+
       console.log(`User ${domain}\\${username} authenticated`);
 
       // Query AD for user's names & email address  MUST BE CALLBACK
@@ -166,31 +166,31 @@ export default class AuthApi {
         else
         {
           let user = null;
-          
+
           // Either get the user from mongo or create them if this is the first time we've seen them
           if (await UserApi.userExists(aduser.mail))
             user = await UserApi.getUser(aduser.email);
           else
-            user = await UserApi.createAdUser(domain, username, sid, user, groups);
-  
+            user = await UserApi.createAdUser(domain, username, sid, aduser, groups);
+
           let token = AuthApi._createToken(user, groups);
           let refreshToken = randtoken.uid(256);
-  
+
           let midnight = new Date();
           midnight.setDate(midnight.getDate() + 1);
           midnight.setHours(0,0,0,0);
-  
+
           let refreshTokenDb = {
             created: new Date(),
             expires: midnight,
             email: user.email,
             refreshToken: refreshToken
           };
-  
+
           let client = new DatabaseClient();
-  
+
           let commandResult = await client.insertOne(client.collectionNames.REFRESH_TOKENS, refreshTokenDb);
-  
+
           if (commandResult.result.ok === 1 && commandResult.result.n === 1)
           {
             res.cookie("access_token", token);
@@ -200,7 +200,7 @@ export default class AuthApi {
           else
             throw new Error(JSON.stringify(commandResult));
       }});
-      
+
     } catch(err){
         ApiHelpers.handleError(err, res);
     }
