@@ -37,6 +37,12 @@ activeDirectory:
   # Without 'autoLogin' the user will be presented with a login screen where they can click "Sign in with a domain account"
   # Leave this set to false to allow users to login with email/password.  Note you can style browse to the /login screen if required.
   autoLogin: false
+  config:
+    # Url:  ldap://dc.domain.com  & baseDN:  dc=domain,dc=com
+    url:
+    baseDN:
+    username:
+    password:
 
 # NodeMailer setup
 # Gmail specific setup options:  https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799

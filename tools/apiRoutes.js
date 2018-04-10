@@ -7,29 +7,29 @@ import ProjectApi from "../api/ProjectApi";
 
 export default class ApiRoutes {
   static hook(passport) {
-    
+
     /*  TODO
     Error toJSON hook/extension so that Node can return error's to the client - this
-    should probably be handled more appropriately in case it leaks!
+    should probably be handled more appropriately in case it leaks anything sensitive!
      */
     if (!("toJSON" in Error.prototype))
       Object.defineProperty(Error.prototype, "toJSON", {
         value: function () {
           let alt = {};
-          
+
           Object.getOwnPropertyNames(this).forEach(function (key) {
             alt[key] = this[key];
           }, this);
-        
+
           return alt;
         },
         configurable: true,
         writable: true
       });
-    
+
     let client = new DatabaseClient();
     client.createIndexes();
-    
+
     let routes = new Router();
     routes.use("/config", ConfigApi.routes());
     routes.use("/auth", AuthApi.routes());

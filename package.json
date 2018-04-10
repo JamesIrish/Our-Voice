@@ -23,6 +23,7 @@
     "startdist": "babel-node tools/distServer.js"
   },
   "dependencies": {
+    "activedirectory": "^0.7.2",
     "babel-polyfill": "6.8.0",
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
@@ -36,6 +37,7 @@
     "mongodb": "^3.0.5",
     "nconf": "^0.10.0",
     "nconf-yaml": "^1.0.2",
+    "node-sspi": "^0.2.2",
     "nodemailer": "^4.6.4",
     "npm": "^5.8.0",
     "passport": "^0.4.0",
