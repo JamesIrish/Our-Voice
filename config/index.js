@@ -9,7 +9,8 @@ nconf
   .argv()
   .env(
   {
-    match: /^(?!NPM).*/gmi,
+    match: /(mongoDb|smtp|activeDirectory)/gmi,
+    whitelist: ["PORT"],
     separator: "_",
     parseValues: true
   })

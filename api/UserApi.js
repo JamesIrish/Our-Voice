@@ -14,6 +14,7 @@ export default class UserApi {
   
   static _createUser = (req, res) => {
     let userModel = {
+      isActiveDirectory: false,
       email: req.body.email,
       firstName: req.body.firstName,
       lastName: req.body.lastName,

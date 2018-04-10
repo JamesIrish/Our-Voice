@@ -5,7 +5,7 @@ import colors from "colors";
 
 process.env.NODE_ENV = "production";
 
-console.log("Generating minified bundle for production via Webpack. This will take a moment".blue);
+console.log("Generating minified bundle for production via Webpack. This will take a moment...".blue);
 
 webpack(webpackConfig).run((err, stats) => {
   if (err) {
@@ -20,7 +20,8 @@ webpack(webpackConfig).run((err, stats) => {
   }
 
   if (jsonStats.warnings.length > 0) {
-    jsonStats.warnings.map(warning => console.log(warning.yellow));
+    //jsonStats.warnings.map(warning => console.log(warning.yellow));
+    console.log("Careful, your app has warnings.".yellow);
   }
   
   console.log("Your app has been compiled in production mode and written to /dist.  It's ready to roll!".green);

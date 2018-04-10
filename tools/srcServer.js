@@ -6,6 +6,7 @@ import open from "open";
 import bodyParser from "body-parser";
 import config from "../config/index";
 import passport from "passport";
+import colors from "colors";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import AuthApi from "../api/AuthApi";
 import apiRoutes from "./apiRoutes";
@@ -64,6 +65,8 @@ app.listen(port, function(err) {
   if (err) {
     console.log(err);
   } else {
-    open(`http://localhost:${port}`);
+    let uri = `http://localhost:${port}`;
+    open(uri);
+    console.log(`Server listening at ${uri}`.green);
   }
 });
