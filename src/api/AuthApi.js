@@ -13,11 +13,10 @@ export default class AuthApi {
           body: JSON.stringify(model)
         })
         .then(response => {
-          console.log(response);
           if (response.ok) {
             resolve(response.json());
           } else {
-            reject(response.statusText);
+            reject(response.statusText, response);
           }
         })
         .catch(error => {

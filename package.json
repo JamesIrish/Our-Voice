@@ -19,7 +19,8 @@
     "prebuild": "npm-run-all clean-dist test lint build:html",
     "build": "babel-node tools/build.js",
     "predist": "npm run build",
-    "dist": "babel-node tools/distServer.js"
+    "dist": "babel-node tools/distServer.js",
+    "startdist": "babel-node tools/distServer.js"
   },
   "dependencies": {
     "babel-polyfill": "6.8.0",

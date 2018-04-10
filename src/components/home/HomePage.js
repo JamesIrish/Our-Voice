@@ -15,34 +15,41 @@ const styles = theme => ({
 class HomePage extends React.Component {
   
   constructor(props) {
-    super();
+    super(props);
     
     this.state = {
-      loading: props.loading,
+      authLoading: props.authLoading,
       user: props.user
     };
   }
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      loading: nextProps.loading,
+      authLoading: nextProps.authLoading,
       user: nextProps.user
     });
   };
   
   render() {
     const { classes } = this.props;
-    const { user } = this.state;
+    const { user, authLoading } = this.state;
+    const Greeting = () => {
+      if (authLoading)
+        return (<Typography gutterBottom noWrap>Signing you in, please wait a moment...</Typography>);
+      else {
+        return user ? (
+          <Typography gutterBottom noWrap>Welcome back {user.firstName}!</Typography>
+        ) : (
+          <Typography gutterBottom noWrap><Link to="signin">Please sign in</Link></Typography>
+        );
+      }
+    };
     return (
       <DocumentTitle title="Voice">
         <div className={classes.container}>
           <Typography variant="display1" gutterBottom noWrap>Welcome to Voice</Typography>
           <Typography gutterBottom noWrap>Make the most of your voice; introduce, comment &amp; vote for project features.</Typography>
-          {user ? (
-            <Typography gutterBottom noWrap>Welcome back {user.firstName}!</Typography>
-          ) : (
-            <Typography gutterBottom noWrap><Link to="signin">Please sign in</Link></Typography>
-          )}
+          <Greeting />
         </div>
       </DocumentTitle>
     );
@@ -51,13 +58,13 @@ class HomePage extends React.Component {
 
 HomePage.propTypes = {
   classes: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired,
+  authLoading: PropTypes.bool.isRequired,
   user: PropTypes.object
 };
 
 function mapStateToProps(state) {
   return {
-    loading: state.auth.loading,
+    authLoading: state.auth.loading,
     user: state.auth.user
   };
 }

@@ -3,7 +3,7 @@ import path from "path";
 import yaml from "js-yaml";
 import nconf from "nconf";
 
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 nconf
   .argv()

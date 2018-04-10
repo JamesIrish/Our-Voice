@@ -14,7 +14,7 @@ export default class UserApi {
           if (response.ok) {
             resolve(response.json());
           } else {
-            reject(response.statusText);
+            reject(response.statusText, response);
           }
         })
         .catch(error => {

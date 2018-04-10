@@ -1,6 +1,9 @@
 export const BEGIN_AJAX_CALL = "BEGIN_AJAX_CALL";
 export const AJAX_CALL_ERROR = "AJAX_CALL_ERROR";
 
+export const CONFIG_LOAD_SUCCESS = "CONFIG_LOAD_SUCCESS";
+export const CONFIG_LOAD_ERROR = "CONFIG_LOAD_ERROR";
+
 export const SHOW_SNACK = "SHOW_SNACK";
 export const CLEAR_SNACK = "CLEAR_SNACK";
 

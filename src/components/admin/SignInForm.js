@@ -39,8 +39,8 @@ const styles = theme => ({
 
 class SignInForm extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.passwordRef = null;
     this.setPasswordRef = element => {
@@ -49,15 +49,19 @@ class SignInForm extends React.Component {
     
     this.state = {
       credentials: {},
-      error: null,
       errors: {},
-      loading: false
+      configLoading: props.configLoading,
+      activeDirectoryEnabled: props.activeDirectoryEnabled,
+      authLoading: props.authLoading,
+      error: props.error
     };
   }
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      loading: nextProps.loading,
+      configLoading: nextProps.configLoading,
+      activeDirectoryEnabled: nextProps.activeDirectoryEnabled,
+      authLoading: nextProps.authLoading,
       error: nextProps.error
     });
   };
@@ -83,15 +87,29 @@ class SignInForm extends React.Component {
   
   onSubmit = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
+    this.setState({ authLoading: true });
     this.props.actions.signInUser(this.state.credentials);
   };
 
   render() {
     const { classes } = this.props;
-    const { loading } = this.state;
+    const { activeDirectoryEnabled, authLoading } = this.state;
     const pwInputProps = {
       ref: this.setPasswordRef
+    };
+    
+    const ActiveDirectory = () => {
+      if (activeDirectoryEnabled){
+        return (
+          <div>
+            <Divider style={{marginTop: 24, marginBottom: 24}}/>
+            <Button variant="raised" disabled={authLoading}>
+              <img src="/microsoft-80660_16.png" style={{marginRight: 8}} />
+              Sign in with a domain account
+            </Button>
+          </div>);
+      }
+      return null;
     };
 
     return (
@@ -113,7 +131,7 @@ class SignInForm extends React.Component {
               error={this.state.errors.email}
               helperText={this.state.errors.email}
               onChange={this.onChange}
-              disabled={loading}
+              disabled={authLoading}
               onKeyDown={this.onKeyDown}
             />
 
@@ -128,31 +146,26 @@ class SignInForm extends React.Component {
               error={this.state.errors.password}
               helperText={this.state.errors.password}
               onChange={this.onChange}
-              disabled={loading}
+              disabled={authLoading}
               onKeyDown={this.onKeyDown}
             />
 
             <Button size="large"
-                    disabled={loading}
+                    disabled={authLoading}
                     style={{marginTop: 16, marginRight: 48}}
                     component={Link}
                     to="forgotten">Forgotten</Button>
 
             <Button color="primary"
-                    disabled={loading}
+                    disabled={authLoading}
                     variant="raised"
                     size="large"
                     style={{marginTop: 16}}
                     onClick={this.onSubmit}>
-              {loading ? "Signing in..." : "Sign in"}
+              {authLoading ? "Signing in..." : "Sign in"}
             </Button>
-
-            <Divider style={{marginTop: 24, marginBottom: 24}}/>
-
-            <Button variant="raised" disabled={loading}>
-              <img src="/microsoft-80660_16.png" style={{marginRight: 8}} />
-              Sign in with a domain account
-            </Button>
+            
+           <ActiveDirectory/>
 
           </CardContent>
         </Card>
@@ -166,12 +179,23 @@ SignInForm.propTypes = {
   errors: PropTypes.object,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  configLoading: PropTypes.bool.isRequired,
+  activeDirectoryEnabled: PropTypes.bool.isRequired,
+  authLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string
 };
 
+function getAdEnabled(state) {
+  if (!state.config) return false;
+  if (!state.config.activeDirectory) return false;
+  return state.config.activeDirectory.enabled;
+}
 function mapStateToProps(state) {
   return {
-    loading: state.auth.loading,
+    configLoading: state.config.loading,
+    activeDirectoryEnabled: getAdEnabled(state),
+    authLoading: state.auth.loading,
     error: state.auth.error
   };
 }
