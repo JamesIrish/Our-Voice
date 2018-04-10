@@ -46,7 +46,7 @@ class SignInForm extends React.Component {
     this.setPasswordRef = element => {
       this.passwordRef = element;
     };
-    
+
     this.state = {
       credentials: {},
       errors: {},
@@ -56,7 +56,7 @@ class SignInForm extends React.Component {
       error: props.error
     };
   }
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       configLoading: nextProps.configLoading,
@@ -84,11 +84,16 @@ class SignInForm extends React.Component {
         this.onSubmit(event);
     }
   };
-  
+
   onSubmit = (event) => {
     event.preventDefault();
     this.setState({ authLoading: true });
     this.props.actions.signInUser(this.state.credentials);
+  };
+  onSubmitAd = (event) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    this.props.actions.signInAdUser();
   };
 
   render() {
@@ -97,13 +102,13 @@ class SignInForm extends React.Component {
     const pwInputProps = {
       ref: this.setPasswordRef
     };
-    
+
     const ActiveDirectory = () => {
       if (activeDirectoryEnabled){
         return (
           <div>
             <Divider style={{marginTop: 24, marginBottom: 24}}/>
-            <Button variant="raised" disabled={authLoading}>
+            <Button variant="raised" disabled={authLoading} onClick={this.onSubmitAd}>
               <img src="/microsoft-80660_16.png" style={{marginRight: 8}} />
               Sign in with a domain account
             </Button>
@@ -164,7 +169,7 @@ class SignInForm extends React.Component {
                     onClick={this.onSubmit}>
               {authLoading ? "Signing in..." : "Sign in"}
             </Button>
-            
+
            <ActiveDirectory/>
 
           </CardContent>

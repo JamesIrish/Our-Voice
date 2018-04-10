@@ -18,7 +18,7 @@ export default class AuthApi {
 
     routes.post("/token", AuthApi._token);
     routes.post("/refresh", AuthApi._refresh);
-    routes.get("/sspi", function (req, res, next) {
+    routes.post("/sspi", function (req, res, next) {
       let nodeSSPIObj = new NodeSSPI({
         retrieveGroups: true,
         offerBasic: false

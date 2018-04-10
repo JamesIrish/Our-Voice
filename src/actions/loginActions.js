@@ -16,6 +16,14 @@ export function signInUser(credentials) {
       .catch(error => dispatch(signInError(error)));
   };
 }
+export function signInAdUser() {
+  return function(dispatch) {
+    dispatch({ type: types.AUTH_LOADING });
+    return AuthApi.authenticateUserAd()
+      .then(auth => dispatch(signInSuccess(auth)))
+      .catch(error => dispatch(signInError(error)));
+  };
+}
 
 export function refreshTokenSuccess(auth) {
   return { type: types.REFRESH_TOKEN_SUCCESS, auth: auth };
