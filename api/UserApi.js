@@ -2,6 +2,7 @@ import {Router} from "express";
 import DatabaseClient from "./DatabaseClient";
 import bcrypt from "bcrypt";
 import ApiHelpers from "./ApiHelpers";
+import EmailApi from "./EmailApi";
 
 export default class UserApi {
 
@@ -50,8 +51,13 @@ export default class UserApi {
   
       delete userModel.password;
   
-      if (commandResult.result.ok === 1 && commandResult.result.n === 1)
+      if (commandResult.result.ok === 1 && commandResult.result.n === 1) {
+        
+        let emailApi = new EmailApi();
+        await emailApi.sendWelcomeEmail(userModel);
+        
         res.json(userModel);
+      }
       else
         res.status(500).json(commandResult);
       
