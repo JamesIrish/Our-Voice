@@ -10,6 +10,7 @@ export default class EmailApi {
   }
   
   sendWelcomeEmail = async (user) => {
+    
     const email = new Email(
     {
       message: {
@@ -19,7 +20,7 @@ export default class EmailApi {
         }
       },
       send: true,
-      transport: Object.assign({}, this.transporter, { send: true }),
+      transport: this.transporter,
       juice: true,
       juiceResources: {
         preserveImportant: true,
