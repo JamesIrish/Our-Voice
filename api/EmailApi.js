@@ -6,7 +6,6 @@ import path from "path";
 export default class EmailApi {
   
   constructor() {
-    console.log("Using SMTP config", config.smtp);
     this.transporter = nodemailer.createTransport(config.smtp);
   }
   
@@ -14,7 +13,10 @@ export default class EmailApi {
     const email = new Email(
     {
       message: {
-        from: "no-reply@our-voice.io"
+        from: {
+          name: "Our Voice",
+          address: "no-reply@our-voice.io"
+        }
       },
       send: true,
       transport: Object.assign({}, this.transporter, { send: true }),
