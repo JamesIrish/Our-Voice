@@ -3,7 +3,6 @@ import DatabaseClient from "./DatabaseClient";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import randtoken from "rand-token";
-import NodeSSPI from "node-sspi";
 import ActiveDirectory from "activedirectory";
 import config from "../config/index";
 import UserApi from "./UserApi";
@@ -18,16 +17,19 @@ export default class AuthApi {
 
     routes.post("/token", AuthApi._token);
     routes.post("/refresh", AuthApi._refresh);
+    if (PLATFORM === "win32") {
     routes.post("/sspi", function (req, res, next) {
+      var NodeSSPI = require("node-sspi");
       let nodeSSPIObj = new NodeSSPI({
         retrieveGroups: true,
         offerBasic: false
       });
-      nodeSSPIObj.authenticate(req, res, function(err){
+      nodeSSPIObj.authenticate(req, res, function (err) {
         if (err) ApiHelpers.handleError(err, res);
         else res.finished || next();
       });
     }, AuthApi._sspi);
+    }
 
     return routes;
   };

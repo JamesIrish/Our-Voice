@@ -2,10 +2,12 @@
 import webpack from "webpack";
 import webpackConfig from "../webpack.config.prod";
 import colors from "colors";
+import os from "os";
 
 process.env.NODE_ENV = "production";
 
 console.log("Generating minified bundle for production via Webpack. This will take a moment...".blue);
+console.log("Build targeting " + os.platform());
 
 webpack(webpackConfig).run((err, stats) => {
   if (err) {

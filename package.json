@@ -20,7 +20,8 @@
     "build": "babel-node tools/build.js",
     "predist": "npm run build",
     "dist": "babel-node tools/distServer.js",
-    "startdist": "babel-node tools/distServer.js"
+    "startdist": "babel-node tools/distServer.js",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "activedirectory": "^0.7.2",

@@ -16,6 +16,9 @@
       "jsx": true
     }
   },
+  "globals": {
+    "PLATFORM": true
+  },
   "env": {
     "es6": true,
     "browser": true,
