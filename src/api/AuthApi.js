@@ -48,6 +48,31 @@ export default class AuthApi {
         });
     });
   }
+  
+  static forgotten = (email) => {
+    return new Promise((resolve, reject) =>
+    {
+      fetch("/api/auth/forgotten", {
+        method: "post",
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ email: email })
+      })
+        .then(response => {
+          if (response.ok) {
+            resolve(response.json());
+          } else {
+            reject(response.statusText, response);
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
 
   static getAccessToken = (email, refreshToken) => {
     return new Promise((resolve, reject) =>

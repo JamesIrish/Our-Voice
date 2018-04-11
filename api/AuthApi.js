@@ -8,6 +8,7 @@ import ActiveDirectory from "activedirectory";
 import config from "../config/index";
 import UserApi from "./UserApi";
 import ApiHelpers from "./ApiHelpers";
+import EmailApi from "./EmailApi";
 
 export default class AuthApi {
 
@@ -18,6 +19,7 @@ export default class AuthApi {
 
     routes.post("/token", AuthApi._token);
     routes.post("/refresh", AuthApi._refresh);
+    routes.post("/forgotten", AuthApi._forgotten);
     
     if (os.platform() === "win32")
     {
@@ -209,5 +211,40 @@ export default class AuthApi {
     } catch(err){
         ApiHelpers.handleError(err, res);
     }
-  }
+  };
+  
+  static _forgotten = async (req, res) => {
+    let client = null;
+    try
+    {
+      let email = req.body.email;
+      
+      client = new DatabaseClient();
+      client.connect();
+      
+      let user = await client.findOne(client.collectionNames.USERS, { email: email });
+      
+      user.resetPasswordToken = randtoken.uid(32);
+      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      
+      await client.replaceOne(client.collectionNames.USERS, user);
+      
+      let safeUser = Object.assign({}, user);
+      delete safeUser.password;
+      
+      let emailApi = new EmailApi();
+      await emailApi.sendResetPasswordEmail(safeUser);
+      
+      res.sendStatus(204);
+    }
+    catch(err)
+    {
+      ApiHelpers.handleError(err, res);
+    }
+    finally
+    {
+      if (client)
+        client.disconnect();
+    }
+  };
 }

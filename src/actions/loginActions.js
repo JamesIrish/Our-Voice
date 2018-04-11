@@ -40,3 +40,16 @@ export function refreshToken(email, refreshToken) {
       .catch(error => dispatch(refreshTokenError(error)));
   };
 }
+
+export function forgottenComplete() {
+  return { type: types.FORGOTTEN_COMPLETE };
+}
+
+export function forgotten(email) {
+  return function(dispatch) {
+    dispatch({ type: types.AUTH_LOADING });
+    return AuthApi.forgotten(email)
+      .then(() => dispatch(forgottenComplete()))
+      .catch(() => dispatch(forgottenComplete()));
+  };
+}

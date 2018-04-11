@@ -4,11 +4,13 @@ import App from "./components/App";
 import HomePage from "./components/home/HomePage";
 import SignInForm from "./components/admin/SignInForm";
 import RegisterForm from "./components/admin/RegisterForm";
+import ForgottenForm from "./components/admin/ForgottenForm";
 
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage} />
     <Route path="signin" component={SignInForm}  />
     <Route path="register" component={RegisterForm}  />
+    <Route path="forgotten" component={ForgottenForm}  />
   </Route>
 );
