@@ -11,6 +11,8 @@ import Typography from "material-ui/Typography";
 import Stepper, { Step, StepLabel, StepContent } from "material-ui/Stepper";
 import UserApi from "../../api/UserApi";
 import * as snackActions from "../../actions/snackActions";
+import _debounce from "lodash/debounce";
+import {has as _has} from "lodash/object";
 
 const styles = theme => ({
   container: {
@@ -51,13 +53,36 @@ class RegisterForm extends React.Component {
   constructor() {
     super();
 
+    this.debouncedValidate = _debounce(this.validateField, 300);
+    
+    this.refs = {};
+    
     this.state = {
-      newUser: {},
+      newUser: {
+        email: "",
+        firstName: "",
+        lastName: "",
+        displayName: "",
+        password: "",
+        confirmPassword: ""
+      },
       errors: {},
       loading: false,
       activeStep: 0
     };
   }
+  
+  setRef = element => {
+    if (element && element.id) {
+      let newRefs = Object.assign({}, this.refs);
+      newRefs[element.id] = element;
+      this.refs = newRefs;
+    }
+  };
+  
+  stateHasProp = (propPath) => {
+    return _has(this.state, propPath);
+  };
 
   handleNext = (event) => {
     event.preventDefault();
@@ -71,18 +96,29 @@ class RegisterForm extends React.Component {
 
   onKeyDown = (event) => {
     if (event.nativeEvent.keyCode === 13) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (event.target.id === "email")
-        this.handleNext(event);
-
-      if (event.target.id === "displayName")
-        this.handleNext(event);
-
-      if (event.target.id === "confirmPassword")
-        if (this.state.formValid)
+      if (this.state.formValid)
+      {
+        if (event.target.id === "email" || event.target.id === "displayName")
+          this.handleNext(event);
+        else if (event.target.id === "confirmPassword")
           this.onSubmit(event);
+        else {
+          switch (event.target.id) {
+            case "firstName":
+              this.refs.lastName.focus();
+              break;
+            case "lastName":
+              this.refs.displayName.focus();
+              break;
+            case "password":
+              this.refs.confirmPassword.focus();
+              break;
+          }
+          event.preventDefault();
+        }
+      }
+      else
+          event.preventDefault();
     }
   };
 
@@ -92,7 +128,7 @@ class RegisterForm extends React.Component {
     const value = event.target.value;
     let newUser = Object.assign({}, this.state.newUser);
     newUser[field] = value;
-    return this.setState({ newUser: newUser }, () => { this.validateField(field, value); });
+    return this.setState({ newUser: newUser }, () => { this.debouncedValidate(field, value); });
   };
 
   validateField = (fieldName, value) => {
@@ -122,14 +158,14 @@ class RegisterForm extends React.Component {
         else
           fieldValidationErrors[fieldName] = "should be at least 8 characters long";
         break;
+      case "confirmPassword":
+        if (this.state.newUser.password !== this.state.newUser.confirmPassword)
+          fieldValidationErrors.confirmPassword = "passwords do not match";
+        else
+          delete fieldValidationErrors.confirmPassword;
+        break;
       default:
         break;
-    }
-    if (fieldName === "password" || fieldName === "confirmPassword") {
-      if (this.state.newUser.password !== this.state.newUser.confirmPassword)
-        fieldValidationErrors.confirmPassword = "passwords do not match";
-      else
-        delete fieldValidationErrors.confirmPassword;
     }
     this.setState({
       errors: fieldValidationErrors,
@@ -154,7 +190,7 @@ class RegisterForm extends React.Component {
       })
       .catch(error => {
         this.setState({ loading: false });
-        this.props.actions.showSnack("An error occurred");
+        this.props.actions.showSnack("An error occurred. Do you already have an account?");
         console.log(error);
       });
   };
@@ -162,9 +198,21 @@ class RegisterForm extends React.Component {
   render() {
     const { classes } = this.props;
     const { activeStep, loading } = this.state;
-    const fieldInputProps = {
-      ref: this.setRef
-    };
+    
+    const hasEmailError = this.stateHasProp("errors.email");
+    const hasFirstNameError = this.stateHasProp("errors.firstName");
+    const hasLastNameError = this.stateHasProp("errors.lastName");
+    const hasDisplayNameError = this.stateHasProp("errors.displayName");
+    const hasPasswordError = this.stateHasProp("errors.password");
+    const hasConfirmPasswordError = this.stateHasProp("errors.confirmPassword");
+    
+    const hasStep1Error = hasEmailError;
+    const hasStep2Error = hasFirstNameError || hasLastNameError || hasDisplayNameError;
+    const hasStep3Error = hasPasswordError || hasConfirmPasswordError;
+    
+    const fieldInputProps = { ref: this.setRef };
+    const emailFieldInputProps = Object.assign({}, fieldInputProps, { type: "email", spellCheck: "false" });
+    
     return (
       <DocumentTitle title="Voice :. Register">
       <div className={classes.container}>
@@ -176,7 +224,7 @@ class RegisterForm extends React.Component {
 
             <Stepper activeStep={activeStep} orientation="vertical">
               <Step key="email">
-                <StepLabel>Provide an email address</StepLabel>
+                <StepLabel error={hasStep1Error}>Provide an email address</StepLabel>
                 <StepContent>
 
                   <TextField
@@ -185,8 +233,8 @@ class RegisterForm extends React.Component {
                     label="Email address"
                     className={classes.textField}
                     margin="normal"
-                    inputProps={fieldInputProps}
-                    error={this.state.errors.email != undefined}
+                    inputProps={emailFieldInputProps}
+                    error={hasEmailError}
                     helperText={this.state.errors.email}
                     value={this.state.newUser.email}
                     onChange={this.onChange}
@@ -203,7 +251,7 @@ class RegisterForm extends React.Component {
                 </StepContent>
               </Step>
               <Step key="details">
-                <StepLabel>Enter your details</StepLabel>
+                <StepLabel error={hasStep2Error}>Enter your details</StepLabel>
                 <StepContent>
 
                   <TextField
@@ -213,7 +261,7 @@ class RegisterForm extends React.Component {
                     className={classes.textField}
                     margin="normal"
                     inputProps={fieldInputProps}
-                    error={this.state.errors.firstName != undefined}
+                    error={hasFirstNameError}
                     helperText={this.state.errors.firstName}
                     value={this.state.newUser.firstName}
                     onChange={this.onChange}
@@ -227,7 +275,7 @@ class RegisterForm extends React.Component {
                     className={classes.textField}
                     margin="normal"
                     inputProps={fieldInputProps}
-                    error={this.state.errors.lastName != undefined}
+                    error={hasLastNameError}
                     helperText={this.state.errors.lastName}
                     value={this.state.newUser.lastName}
                     onChange={this.onChange}
@@ -241,7 +289,7 @@ class RegisterForm extends React.Component {
                     className={classes.textField}
                     margin="normal"
                     inputProps={fieldInputProps}
-                    error={this.state.errors.displayName != undefined}
+                    error={hasDisplayNameError}
                     helperText={this.state.errors.displayName}
                     value={this.state.newUser.displayName}
                     onChange={this.onChange}
@@ -258,7 +306,7 @@ class RegisterForm extends React.Component {
                 </StepContent>
               </Step>
               <Step key="password">
-                <StepLabel>Create a password</StepLabel>
+                <StepLabel error={hasStep3Error}>Create a password</StepLabel>
                 <StepContent>
 
                   <TextField
@@ -269,7 +317,7 @@ class RegisterForm extends React.Component {
                     className={classes.textField}
                     margin="normal"
                     inputProps={fieldInputProps}
-                    error={this.state.errors.password != undefined}
+                    error={hasPasswordError}
                     helperText={this.state.errors.password}
                     value={this.state.newUser.password}
                     onChange={this.onChange}
@@ -284,7 +332,7 @@ class RegisterForm extends React.Component {
                     className={classes.textField}
                     margin="normal"
                     inputProps={fieldInputProps}
-                    error={this.state.errors.confirmPassword != undefined}
+                    error={hasConfirmPasswordError}
                     helperText={this.state.errors.confirmPassword}
                     value={this.state.newUser.confirmPassword}
                     onChange={this.onChange}

@@ -99,7 +99,12 @@ class SignInForm extends React.Component {
   render() {
     const { classes } = this.props;
     const { activeDirectoryEnabled, authLoading } = this.state;
-    const pwInputProps = {
+    
+    const emailInputProps = {
+      type: "email",
+      spellCheck: false
+    };
+    const passwordInputProps = {
       ref: this.setPasswordRef
     };
 
@@ -133,6 +138,7 @@ class SignInForm extends React.Component {
               label="Email address"
               className={classes.textField}
               margin="normal"
+              inputProps={emailInputProps}
               error={this.state.errors.email}
               helperText={this.state.errors.email}
               onChange={this.onChange}
@@ -143,7 +149,7 @@ class SignInForm extends React.Component {
             <TextField
               required
               id="password"
-              inputProps={pwInputProps}
+              inputProps={passwordInputProps}
               label="Password"
               type="password"
               className={classes.textField}

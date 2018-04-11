@@ -12,7 +12,7 @@ export default class UserApi {
     routes.post("/exists", (req, res) => {
       UserApi.userExists(req.body.email)
         .then(exists => res.statusCode(200).send(exists))
-        .catch(error => ApiHelpers._handleError(error, res));
+        .catch(error => ApiHelpers.handleError(error, res));
     });
 
     return routes;
@@ -30,52 +30,57 @@ export default class UserApi {
   };
 
   static _createUser = async (req, res) => {
-    let userModel = {
-      isActiveDirectory: false,
-      email: req.body.email,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      displayName: req.body.displayName,
-      accountCreated: new Date(),
-      roles: []
-    };
+    try
+    {
+      let userModel = {
+        isActiveDirectory: false,
+        email: req.body.email,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        displayName: req.body.displayName,
+        accountCreated: new Date(),
+        roles: []
+      };
   
-    userModel.password = await bcrypt.hash(req.body.password, 10);
-
-    let client = new DatabaseClient();
-
-    let commandResult = await client.insertOne(client.collectionNames.USERS, userModel);
-    
-    delete userModel.password;
-
-    if (commandResult.result.ok === 1 && commandResult.result.n === 1)
-      res.json(userModel);
-    else
-      res.status(500).json(commandResult);
+      userModel.password = await bcrypt.hash(req.body.password, 10);
+  
+      let client = new DatabaseClient();
+  
+      let commandResult = await client.insertOne(client.collectionNames.USERS, userModel);
+  
+      delete userModel.password;
+  
+      if (commandResult.result.ok === 1 && commandResult.result.n === 1)
+        res.json(userModel);
+      else
+        res.status(500).json(commandResult);
+      
+    } catch (err) {
+      ApiHelpers.handleError(err, res);
+    }
   };
 
   static createAdUser = async (domain, username, sid, model, groups) => {
-    
-      let userModel = {
-        isActiveDirectory: true,
-        domain: domain,
-        sid: sid,
-        username: username,
-        email: model.mail,
-        firstName: model.givenName,
-        lastName: model.sn,
-        displayName: model.displayName,
-        accountCreated: new Date(),
-        roles: groups || []
-      };
+    let userModel = {
+      isActiveDirectory: true,
+      domain: domain,
+      sid: sid,
+      username: username,
+      email: model.mail,
+      firstName: model.givenName,
+      lastName: model.sn,
+      displayName: model.displayName,
+      accountCreated: new Date(),
+      roles: groups || []
+    };
 
-      let client = new DatabaseClient();
-      
-      let commandResult = await client.insertOne(client.collectionNames.USERS, userModel);
-      
-      if (commandResult.result.ok === 1 && commandResult.result.n === 1)
-        return userModel;
-      else
-        throw new Error(JSON.stringify(commandResult));
+    let client = new DatabaseClient();
+    
+    let commandResult = await client.insertOne(client.collectionNames.USERS, userModel);
+    
+    if (commandResult.result.ok === 1 && commandResult.result.n === 1)
+      return userModel;
+    else
+      throw new Error(JSON.stringify(commandResult));
   }
 }

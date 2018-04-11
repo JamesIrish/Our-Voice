@@ -24,7 +24,7 @@ export default class AuthApi {
         offerBasic: false
       });
       nodeSSPIObj.authenticate(req, res, function(err){
-        if (err) ApiHelpers._handleError(err, res);
+        if (err) ApiHelpers.handleError(err, res);
         else res.finished || next();
       });
     }, AuthApi._sspi);
@@ -80,14 +80,14 @@ export default class AuthApi {
           res.status(200).send({user: user, accessToken: token, refreshToken: refreshToken});
         }
         else
-          throw new Error(JSON.stringify(commandResult));
+          ApiHelpers.handleError(new Error(JSON.stringify(commandResult), res));
 
       }
       else
         res.sendStatus(401);
 
     } catch(err) {
-      ApiHelpers._handleError(err, res);
+      ApiHelpers.handleError(err, res);
     }
   };
 
@@ -123,14 +123,14 @@ export default class AuthApi {
         delete user.password;
 
         let token = AuthApi._createToken(user, ["admin"]);
-        res.cookie('access_token', token);
+        res.cookie("access_token", token);
         res.status(200).send({user: user, accessToken: token});
       }
       else
         res.sendStatus(401);
 
     } catch(err) {
-      ApiHelpers._handleError(err, res);
+      ApiHelpers.handleError(err, res);
     }
   };
 

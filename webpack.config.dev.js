@@ -1,5 +1,6 @@
 import webpack from "webpack";
 import path from "path";
+import LodashModuleReplacementPlugin from "lodash-webpack-plugin";
 
 export default {
   debug: true,
@@ -20,8 +21,8 @@ export default {
     contentBase: path.resolve(__dirname, "src")
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      "_": "underscore"
+    new LodashModuleReplacementPlugin({
+      "paths": true
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()

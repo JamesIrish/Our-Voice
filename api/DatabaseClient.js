@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient } from "mongodb";
 import config from "../config/index";
 
 export default class DatabaseClient {
@@ -13,8 +13,8 @@ export default class DatabaseClient {
   }
   
   collectionNames = {
-    USERS: 'users',
-    REFRESH_TOKENS: 'refreshTokens'
+    USERS: "users",
+    REFRESH_TOKENS: "refreshTokens"
   };
   
   _connectWrapper = (functionName, collectionName, document) => {
@@ -73,23 +73,34 @@ export default class DatabaseClient {
     });
   };
   
-  createIndexes = () => {
-    return new Promise((resolve, reject) => {
-      this.connect()
-          .then(() => {
-            let usersEmail = this._db.collection(this.collectionNames.USERS).createIndex({ email: 1 });
-            let refreshTokens = this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1 });
-            let refreshTokensEmail = this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1, email: 1 });
-            Promise.all([ usersEmail, refreshTokens, refreshTokensEmail ])
-              .then(() =>
-              {
-                this.disconnect();
-                resolve();
-              })
-              .catch(error => reject(error));
-          })
-          .catch(error => reject(error));
-    });
+  createIndexes = async () => {
+    await this.connect();
+    
+    try {
+      await this._db.collection(this.collectionNames.USERS).createIndex({email: 1}, {unique: true});
+    } catch(err) {
+      console.log("Warning: Problem defining index, it will be deleted and created afresh");
+      await this._db.collection(this.collectionNames.USERS).dropIndex({email: 1});
+      await this._db.collection(this.collectionNames.USERS).createIndex({email: 1}, {unique: true});
+    }
+    
+    try {
+      await this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1 });
+    } catch(err) {
+      console.log("Warning: Problem defining index, it will be deleted and created afresh");
+      await this._db.collection(this.collectionNames.REFRESH_TOKENS).dropIndex({ refreshToken: 1 });
+      await this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1 });
+    }
+    
+    try {
+      await this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1, email: 1 });
+    } catch(err) {
+      console.log("Warning: Problem defining index, it will be deleted and created afresh");
+      await this._db.collection(this.collectionNames.REFRESH_TOKENS).dropIndex({ refreshToken: 1, email: 1 });
+      await this._db.collection(this.collectionNames.REFRESH_TOKENS).createIndex({ refreshToken: 1, email: 1 });
+    }
+    
+    await this.disconnect();
   };
   
   _find = (collection, query) => {
