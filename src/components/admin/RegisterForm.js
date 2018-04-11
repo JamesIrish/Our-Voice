@@ -52,7 +52,7 @@ class RegisterForm extends React.Component {
     super();
 
     this.state = {
-      newUser:{},
+      newUser: {},
       errors: {},
       loading: false,
       activeStep: 0
@@ -69,12 +69,78 @@ class RegisterForm extends React.Component {
     this.setState({ activeStep: this.state.activeStep - 1 });
   };
 
+  onKeyDown = (event) => {
+    if (event.nativeEvent.keyCode === 13) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (event.target.id === "email")
+        this.handleNext(event);
+
+      if (event.target.id === "displayName")
+        this.handleNext(event);
+
+      if (event.target.id === "confirmPassword")
+        if (this.state.formValid)
+          this.onSubmit(event);
+    }
+  };
+
   onChange = (event) => {
     event.preventDefault();
     const field = event.target.id;
+    const value = event.target.value;
     let newUser = Object.assign({}, this.state.newUser);
-    newUser[field] = event.target.value;
-    return this.setState({ newUser: newUser });
+    newUser[field] = value;
+    return this.setState({ newUser: newUser }, () => { this.validateField(field, value); });
+  };
+
+  validateField = (fieldName, value) => {
+    let fieldValidationErrors = Object.assign({}, this.state.errors);
+    let emailValid = this.state.emailValid;
+    let passwordValid = this.state.passwordValid;
+
+    switch(fieldName) {
+      case "email":
+        emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+        if (emailValid)
+          delete fieldValidationErrors[fieldName];
+        else
+          fieldValidationErrors[fieldName] = "please provide a valid email address";
+        break;
+      case "firstName":
+      case "lastName":
+      case "displayName":
+        if (value.length >= 3)
+          delete fieldValidationErrors[fieldName];
+        else
+          fieldValidationErrors[fieldName] = "should be at least 3 characters long";
+        break;
+      case "password":
+        if (value.length >= 8)
+          delete fieldValidationErrors[fieldName];
+        else
+          fieldValidationErrors[fieldName] = "should be at least 8 characters long";
+        break;
+      default:
+        break;
+    }
+    if (fieldName === "password" || fieldName === "confirmPassword") {
+      if (this.state.newUser.password !== this.state.newUser.confirmPassword)
+        fieldValidationErrors.confirmPassword = "passwords do not match";
+      else
+        delete fieldValidationErrors.confirmPassword;
+    }
+    this.setState({
+      errors: fieldValidationErrors,
+      emailValid: emailValid,
+      passwordValid: passwordValid
+    }, this.validateForm);
+  };
+
+  validateForm = () => {
+    let noErrors = Object.keys(this.state.errors).length === 0;
+    this.setState({formValid: noErrors});
   };
 
   onSubmit = (event) => {
@@ -96,7 +162,9 @@ class RegisterForm extends React.Component {
   render() {
     const { classes } = this.props;
     const { activeStep, loading } = this.state;
-
+    const fieldInputProps = {
+      ref: this.setRef
+    };
     return (
       <DocumentTitle title="Voice :. Register">
       <div className={classes.container}>
@@ -117,10 +185,13 @@ class RegisterForm extends React.Component {
                     label="Email address"
                     className={classes.textField}
                     margin="normal"
-                    error={this.state.errors.email}
+                    inputProps={fieldInputProps}
+                    error={this.state.errors.email != undefined}
                     helperText={this.state.errors.email}
+                    value={this.state.newUser.email}
                     onChange={this.onChange}
                     disabled={loading}
+                    onKeyDown={this.onKeyDown}
                   />
 
                   <div className={classes.actionsContainer}>
@@ -136,14 +207,18 @@ class RegisterForm extends React.Component {
                 <StepContent>
 
                   <TextField
+                    autoFocus
                     id="firstName"
                     label="First name"
                     className={classes.textField}
                     margin="normal"
-                    error={this.state.errors.firstName}
+                    inputProps={fieldInputProps}
+                    error={this.state.errors.firstName != undefined}
                     helperText={this.state.errors.firstName}
+                    value={this.state.newUser.firstName}
                     onChange={this.onChange}
                     disabled={loading}
+                    onKeyDown={this.onKeyDown}
                   />
 
                   <TextField
@@ -151,10 +226,13 @@ class RegisterForm extends React.Component {
                     label="Last name"
                     className={classes.textField}
                     margin="normal"
-                    error={this.state.errors.lastName}
+                    inputProps={fieldInputProps}
+                    error={this.state.errors.lastName != undefined}
                     helperText={this.state.errors.lastName}
+                    value={this.state.newUser.lastName}
                     onChange={this.onChange}
                     disabled={loading}
+                    onKeyDown={this.onKeyDown}
                   />
 
                   <TextField
@@ -162,10 +240,13 @@ class RegisterForm extends React.Component {
                     label="Display name"
                     className={classes.textField}
                     margin="normal"
-                    error={this.state.errors.displayName}
+                    inputProps={fieldInputProps}
+                    error={this.state.errors.displayName != undefined}
                     helperText={this.state.errors.displayName}
+                    value={this.state.newUser.displayName}
                     onChange={this.onChange}
                     disabled={loading}
+                    onKeyDown={this.onKeyDown}
                   />
 
                   <div className={classes.actionsContainer}>
@@ -181,15 +262,19 @@ class RegisterForm extends React.Component {
                 <StepContent>
 
                   <TextField
+                    autoFocus
                     id="password"
                     label="Password"
                     type="password"
                     className={classes.textField}
                     margin="normal"
-                    error={this.state.errors.password}
+                    inputProps={fieldInputProps}
+                    error={this.state.errors.password != undefined}
                     helperText={this.state.errors.password}
+                    value={this.state.newUser.password}
                     onChange={this.onChange}
                     disabled={loading}
+                    onKeyDown={this.onKeyDown}
                   />
 
                   <TextField
@@ -198,10 +283,13 @@ class RegisterForm extends React.Component {
                     type="password"
                     className={classes.textField}
                     margin="normal"
-                    error={this.state.errors.confirmPassword}
+                    inputProps={fieldInputProps}
+                    error={this.state.errors.confirmPassword != undefined}
                     helperText={this.state.errors.confirmPassword}
+                    value={this.state.newUser.confirmPassword}
                     onChange={this.onChange}
                     disabled={loading}
+                    onKeyDown={this.onKeyDown}
                   />
 
                   <div className={classes.actionsContainer}>
