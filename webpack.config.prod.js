@@ -1,12 +1,10 @@
 import webpack from "webpack";
 import path from "path";
-import os from "os";
 import ExtractTextPlugin from "extract-text-webpack-plugin";
 import LodashModuleReplacementPlugin from "lodash-webpack-plugin";
 
 const GLOBALS = {
-  "process.env.NODE_ENV": JSON.stringify("production"),
-  PLATFORM: os.platform()
+  "process.env.NODE_ENV": JSON.stringify("production")
 };
 
 export default {

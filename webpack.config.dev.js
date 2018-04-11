@@ -1,6 +1,5 @@
 import webpack from "webpack";
 import path from "path";
-import os from "os";
 import LodashModuleReplacementPlugin from "lodash-webpack-plugin";
 
 export default {
@@ -26,9 +25,6 @@ export default {
       "paths": true
     }),
     new webpack.IgnorePlugin(/node-sspi/),
-    new webpack.DefinePlugin({
-      PLATFORM: os.platform()
-    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
   ],

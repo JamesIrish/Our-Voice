@@ -1,4 +1,5 @@
 import {Router} from "express";
+import os from "os";
 import DatabaseClient from "./DatabaseClient";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -17,18 +18,20 @@ export default class AuthApi {
 
     routes.post("/token", AuthApi._token);
     routes.post("/refresh", AuthApi._refresh);
-    if (PLATFORM === "win32") {
-    routes.post("/sspi", function (req, res, next) {
-      var NodeSSPI = require("node-sspi");
-      let nodeSSPIObj = new NodeSSPI({
-        retrieveGroups: true,
-        offerBasic: false
-      });
-      nodeSSPIObj.authenticate(req, res, function (err) {
-        if (err) ApiHelpers.handleError(err, res);
-        else res.finished || next();
-      });
-    }, AuthApi._sspi);
+    
+    if (os.platform() === "win32")
+    {
+      routes.post("/sspi", function (req, res, next) {
+        let NodeSSPI = require("node-sspi");
+        let nodeSSPIObj = new NodeSSPI({
+          retrieveGroups: true,
+          offerBasic: false
+        });
+        nodeSSPIObj.authenticate(req, res, function (err) {
+          if (err) ApiHelpers.handleError(err, res);
+          else res.finished || next();
+        });
+      }, AuthApi._sspi);
     }
 
     return routes;
