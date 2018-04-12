@@ -46,7 +46,7 @@ activeDirectory:
 
 # NodeMailer setup
 # Gmail specific setup options:  https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
-smtp:
+email:
   host:
   port:
   secure:

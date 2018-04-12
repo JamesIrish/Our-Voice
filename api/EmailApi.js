@@ -4,16 +4,16 @@ import config from "../config/index";
 import path from "path";
 
 export default class EmailApi {
-  
+
   constructor() {
-    this.transporter = nodemailer.createTransport(config.smtp);
+    this.transporter = nodemailer.createTransport(config.email);
   }
-  
+
   _createMail = () => {
     return new Email(
       {
         message: {
-          from: {
+          from: config.email.from || {
             name: "Our Voice",
             address: "no-reply@our-voice.io"
           }
@@ -29,11 +29,11 @@ export default class EmailApi {
         }
       });
   };
-  
+
   sendWelcomeEmail = async (user) => {
-    
+
     let email = this._createMail();
-  
+
     await email.send(
     {
       template: "welcome",
@@ -44,11 +44,11 @@ export default class EmailApi {
       locals: Object.assign({}, user, { website: "http://our-voice.io" })
     });
   };
-  
+
   sendResetPasswordEmail = async (user) => {
-  
+
     let email = this._createMail();
-  
+
     await email.send(
     {
       template: "resetpassword",
@@ -59,5 +59,5 @@ export default class EmailApi {
       locals: Object.assign({}, user, { reseturl: `http://our-voice.io/auth/reset/${user.resetPasswordToken}` })
     });
   };
-  
+
 }
