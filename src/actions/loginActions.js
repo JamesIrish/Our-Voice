@@ -32,10 +32,10 @@ export function refreshTokenError(error) {
   return { type: types.REFRESH_TOKEN_ERROR, error: error };
 }
 
-export function refreshToken(email, refreshToken) {
+export function refreshToken(userId, refreshToken) {
   return function(dispatch) {
     dispatch({ type: types.AUTH_LOADING });
-    return AuthApi.getAccessToken(email, refreshToken)
+    return AuthApi.getAccessToken(userId, refreshToken)
       .then(auth => dispatch(refreshTokenSuccess(auth)))
       .catch(error => dispatch(refreshTokenError(error)));
   };

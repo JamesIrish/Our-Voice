@@ -42,7 +42,7 @@ class ForgottenForm extends React.Component {
     super(props);
 
     this.state = {
-      email: "",
+      email: props.location.state.email || "",
       errors: {},
       configLoading: props.configLoading,
       authLoading: props.authLoading,
@@ -145,7 +145,8 @@ ForgottenForm.propTypes = {
   actions: PropTypes.object.isRequired,
   configLoading: PropTypes.bool.isRequired,
   authLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string
+  error: PropTypes.string,
+  location: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {

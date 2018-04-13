@@ -37,6 +37,7 @@
     "material-ui": "^1.0.0-beta.40",
     "material-ui-icons": "^1.0.0-beta.36",
     "mongodb": "^3.0.5",
+    "mongoose": "^5.0.14",
     "nconf": "^0.10.0",
     "nconf-yaml": "^1.0.2",
     "nodemailer": "^4.6.4",

@@ -11,13 +11,15 @@
 # Port to bind.  Do not change to lowercase.
 PORT: 3000
 
+# The external url, may differ if behind a proxy.  This is used for the links within emails etc.
+externalUrl: http://localhost:3000
+
 # Database configuration, currently we only support MongoDb
 mongoDb:
 # Connection string for MongoDb.
 # See: https://docs.mongodb.com/manual/reference/connection-string/
-# mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]
-  url: mongodb://localhost:27017
-  database: voice
+# mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+  url: mongodb://localhost:27017/our-voice
   settings:
     # SSL and other Mongo settings.
     # See: http://mongodb.github.io/node-mongodb-native/3.0/reference/connecting/connection-settings/

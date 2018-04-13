@@ -8,7 +8,7 @@ import config from "../config/index";
 import passport from "passport";
 import colors from "colors";
 import { Strategy as JwtStrategy } from "passport-jwt";
-import AuthApi from "../api/AuthApi";
+import AuthRoutes from "../api/AuthRoutes";
 import apiRoutes from "./apiRoutes";
 
 const port = config.PORT;
@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 let opts = {};
-opts.secretOrKey = AuthApi.SECRET;
+opts.secretOrKey = AuthRoutes.SECRET;
 opts.jwtFromRequest = (req) => {
   console.log("Looking for cookie..");
   let token = null;

@@ -5,6 +5,7 @@ import HomePage from "./components/home/HomePage";
 import SignInForm from "./components/admin/SignInForm";
 import RegisterForm from "./components/admin/RegisterForm";
 import ForgottenForm from "./components/admin/ForgottenForm";
+import ResetForm from "./components/admin/ResetForm";
 
 export default (
   <Route path="/" component={App}>
@@ -12,5 +13,6 @@ export default (
     <Route path="signin" component={SignInForm}  />
     <Route path="register" component={RegisterForm}  />
     <Route path="forgotten" component={ForgottenForm}  />
+    <Route path="reset/:resetToken" component={ResetForm}  />
   </Route>
 );

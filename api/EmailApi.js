@@ -56,7 +56,7 @@ export default class EmailApi {
         to: user.email
       },
       send: true,
-      locals: Object.assign({}, user, { reseturl: `http://our-voice.io/auth/reset/${user.resetPasswordToken}` })
+      locals: Object.assign({}, user, { reseturl: `${config.externalUrl}/reset/${user.resetPasswordToken}` })
     });
   };
 

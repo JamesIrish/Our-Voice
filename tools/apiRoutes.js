@@ -1,9 +1,9 @@
 import {Router} from "express";
 import DatabaseClient from "../api/DatabaseClient";
-import ConfigApi from "../api/ConfigApi";
-import AuthApi from "../api/AuthApi";
-import UserApi from "../api/UserApi";
-import ProjectApi from "../api/ProjectApi";
+import ConfigRoutes from "../api/ConfigRoutes";
+import AuthRoutes from "../api/AuthRoutes";
+import UserRoutes from "../api/UserRoutes";
+import ProjectRoutes from "../api/ProjectRoutes";
 
 export default class ApiRoutes {
   static hook(passport) {
@@ -31,10 +31,10 @@ export default class ApiRoutes {
     client.createIndexes();
 
     let routes = new Router();
-    routes.use("/config", ConfigApi.routes());
-    routes.use("/auth", AuthApi.routes());
-    routes.use("/user", UserApi.routes());
-    routes.use("/projects", passport.authenticate("jwt"), ProjectApi.routes());
+    routes.use("/config", ConfigRoutes.routes());
+    routes.use("/auth", AuthRoutes.routes());
+    routes.use("/user", UserRoutes.routes());
+    routes.use("/projects", passport.authenticate("jwt"), ProjectRoutes.routes());
     return routes;
   }
 }

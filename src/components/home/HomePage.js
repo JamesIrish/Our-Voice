@@ -40,7 +40,7 @@ class HomePage extends React.Component {
         return user ? (
           <Typography gutterBottom noWrap>Welcome back {user.firstName}!</Typography>
         ) : (
-          <Typography gutterBottom noWrap>Please <Link to="signin">sign in</Link> or <Link to="register">register for an account</Link>.</Typography>
+          <Typography gutterBottom noWrap>Please <Link to="/signin">sign in</Link> or <Link to="/register">register for an account</Link>.</Typography>
         );
       }
     };

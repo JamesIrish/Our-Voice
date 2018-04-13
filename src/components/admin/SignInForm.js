@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {withRouter, Link} from "react-router";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import { Link } from "react-router";
 import DocumentTitle from "react-document-title";
 import { withStyles } from "material-ui/styles";
 import TextField from "material-ui/TextField";
@@ -83,6 +83,14 @@ class SignInForm extends React.Component {
       if (event.target.id === "password")
         this.onSubmit(event);
     }
+  };
+  
+  forgot = () => {
+    this.props.router.push(
+      {
+        pathname: "/forgotten",
+        state: { email: this.state.email }
+      });
   };
 
   onSubmit = (event) => {
@@ -165,7 +173,9 @@ class SignInForm extends React.Component {
                     disabled={authLoading}
                     style={{marginTop: 16, marginRight: 48}}
                     component={Link}
-                    to="forgotten">Forgotten</Button>
+                    to={{pathname: "/forgotten", state: { email: this.state.credentials.email }}}>
+              Forgotten
+            </Button>
 
             <Button color="primary"
                     disabled={authLoading}
@@ -194,7 +204,8 @@ SignInForm.propTypes = {
   configLoading: PropTypes.bool.isRequired,
   activeDirectoryEnabled: PropTypes.bool.isRequired,
   authLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string
+  error: PropTypes.string,
+  router: PropTypes.object.isRequired
 };
 
 function getAdEnabled(state) {
@@ -217,4 +228,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SignInForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(SignInForm)));

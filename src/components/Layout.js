@@ -46,7 +46,7 @@ const styles = theme => ({
 class Layout extends React.Component {
   
   constructor(props) {
-    super();
+    super(props);
     
     this.state = {
       loading: false,
@@ -65,9 +65,8 @@ class Layout extends React.Component {
       let refresh = cookies.get("refresh_token");
       if (access && refresh) {
         let decoded = jwtDecode(access);
-        let email = decoded.user.email;
         this.setState({ loading: true, user: decoded.user });
-        this.props.actions.refreshToken(email, refresh);
+        this.props.actions.refreshToken(decoded.user._id, refresh);
       }
     }
   };
@@ -104,8 +103,8 @@ class Layout extends React.Component {
               <Link to="/" className={classes.titleLink}>Voice</Link>
             </Typography>
             {user
-              ? (<Button color="inherit" component={Link} to="account" disabled={loading}>{user.displayName}</Button>)
-              : (<Button color="inherit" component={Link} to="signin" disabled={loading}>Sign in</Button>)}
+              ? (<Button color="inherit" component={Link} to="/account" disabled={loading}>{user.displayName}</Button>)
+              : (<Button color="inherit" component={Link} to="/signin" disabled={loading}>Sign in</Button>)}
           </Toolbar>
         </AppBar>
         <Drawer open={drawerOpen} onClose={this.toggleDrawer(false)}>

@@ -1,17 +1,17 @@
 export default class AuthApi {
 
-  static authenticateUser = (model) => {
+  static _fetchWrapper = (method, url, body) => {
     return new Promise((resolve, reject) =>
     {
-      fetch("/api/auth/token", {
-          method: "post",
-          headers: {
-            "Accept": "application/json, text/plain, */*",
-            "Content-Type": "application/json"
-          },
-          credentials: "same-origin",
-          body: JSON.stringify(model)
-        })
+      fetch(url, {
+        method: method,
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify(body)
+      })
         .then(response => {
           if (response.ok) {
             resolve(response.json());
@@ -23,82 +23,27 @@ export default class AuthApi {
           reject(error);
         });
     });
-  }
+  } ;
+  
+  static authenticateUser = (model) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/login", model);
+  };
 
   static authenticateUserAd = () => {
-    return new Promise((resolve, reject) =>
-    {
-      fetch("/api/auth/sspi", {
-        method: "post",
-        headers: {
-          "Accept": "application/json, text/plain, */*",
-          "Content-Type": "application/json"
-        },
-        credentials: "same-origin"
-      })
-        .then(response => {
-          if (response.ok) {
-            resolve(response.json());
-          } else {
-            reject(response.statusText, response);
-          }
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
+    return AuthApi._fetchWrapper("post", "/api/auth/sspi");
+  };
   
   static forgotten = (email) => {
-    return new Promise((resolve, reject) =>
-    {
-      fetch("/api/auth/forgotten", {
-        method: "post",
-        headers: {
-          "Accept": "application/json, text/plain, */*",
-          "Content-Type": "application/json"
-        },
-        credentials: "same-origin",
-        body: JSON.stringify({ email: email })
-      })
-        .then(response => {
-          if (response.ok) {
-            resolve(response.json());
-          } else {
-            reject(response.statusText, response);
-          }
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
+    return AuthApi._fetchWrapper("post", "/api/auth/forgotten", { email: email });
+  };
+  
+  static checkResetPasswordToken = (resetPasswordToken) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/checkPasswordResetToken", { resetToken: resetPasswordToken });
+  };
 
-  static getAccessToken = (email, refreshToken) => {
-    return new Promise((resolve, reject) =>
-    {
-      fetch("/api/auth/refresh", {
-        method: "post",
-        headers: {
-          "Accept": "application/json, text/plain, */*",
-          "Content-Type": "application/json"
-        },
-        credentials: "same-origin",
-        body: JSON.stringify({ email: email, refreshToken: refreshToken })
-      })
-        .then(response => {
-          console.log(response);
-          if (response.ok) {
-            resolve(response.json());
-          } else {
-            reject(response.statusText);
-          }
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
+  static getAccessToken = (userId, refreshToken) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/refresh", { userId: userId, refreshToken: refreshToken });
+  };
 }
 
 

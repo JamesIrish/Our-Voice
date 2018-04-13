@@ -1,5 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
+import {withRouter} from "react-router";
 import {bindActionCreators} from "redux";
 import PropTypes from "prop-types";
 import DocumentTitle from "react-document-title";
@@ -13,6 +14,7 @@ import UserApi from "../../api/UserApi";
 import * as snackActions from "../../actions/snackActions";
 import _debounce from "lodash/debounce";
 import {has as _has} from "lodash/object";
+import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
 
 const styles = theme => ({
   container: {
@@ -50,8 +52,8 @@ const styles = theme => ({
 
 class RegisterForm extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.debouncedValidate = _debounce(this.validateField, 300);
     
@@ -185,7 +187,7 @@ class RegisterForm extends React.Component {
     UserApi.createUser(this.state.newUser)
       .then(() => {
         this.setState({ loading: false });
-        this.props.history.push("/signin");
+        this.props.router.push("/signin");
         this.props.actions.showSnack("User account created. Please sign in.");
       })
       .catch(error => {
@@ -308,38 +310,21 @@ class RegisterForm extends React.Component {
               <Step key="password">
                 <StepLabel error={hasStep3Error}>Create a password</StepLabel>
                 <StepContent>
-
-                  <TextField
-                    autoFocus
-                    id="password"
-                    label="Password"
-                    type="password"
-                    className={classes.textField}
-                    margin="normal"
-                    inputProps={fieldInputProps}
-                    error={hasPasswordError}
-                    helperText={this.state.errors.password}
-                    value={this.state.newUser.password}
+  
+                  <PasswordConfirmationArea
+                    classes={classes}
+                    fieldInputProps={fieldInputProps}
+                    hasPasswordError={hasPasswordError}
+                    passwordError={this.state.errors.password}
+                    passwordValue={this.state.newUser.password}
+                    hasConfirmPasswordError={hasConfirmPasswordError}
+                    confirmPasswordError={this.state.errors.confirmPassword}
+                    confirmPasswordValue={this.state.newUser.confirmPassword}
                     onChange={this.onChange}
-                    disabled={loading}
                     onKeyDown={this.onKeyDown}
+                    loading={loading}
                   />
-
-                  <TextField
-                    id="confirmPassword"
-                    label="Confirm password"
-                    type="password"
-                    className={classes.textField}
-                    margin="normal"
-                    inputProps={fieldInputProps}
-                    error={hasConfirmPasswordError}
-                    helperText={this.state.errors.confirmPassword}
-                    value={this.state.newUser.confirmPassword}
-                    onChange={this.onChange}
-                    disabled={loading}
-                    onKeyDown={this.onKeyDown}
-                  />
-
+                  
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button disabled={loading} onClick={this.handleBack} className={classes.button}>Back</Button>
@@ -362,7 +347,7 @@ RegisterForm.propTypes = {
   loading: PropTypes.bool,
   errors: PropTypes.object,
   classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
+  router: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
 };
 
@@ -372,4 +357,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(RegisterForm));
+export default connect(null, mapDispatchToProps)(withRouter(withStyles(styles)(RegisterForm)));
