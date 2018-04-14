@@ -26,21 +26,21 @@ export default class UserRoutes {
         displayName: req.body.displayName,
         roles: []
       };
-  
+
       userModel.password = await bcrypt.hash(req.body.password, 10);
-  
+
       let userApi = new UserApi();
       await userApi.initialise();
-      
-      userModel.actions = [{ action: "Created" }];
-  
+
+      userModel.actions = [{ action: userApi.actions.created }];
+
       await userApi.createUser(userModel);
-  
+
       delete userModel.password;
-  
+
       let emailApi = new EmailApi();
       await emailApi.sendWelcomeEmail(userModel);
-      
+
       res.json(userModel);
     }
     catch (err)
@@ -48,7 +48,7 @@ export default class UserRoutes {
       Helpers.handleError(err, res);
     }
   };
-  
+
   static _userExists = async (req, res) => {
     try
     {
@@ -61,5 +61,5 @@ export default class UserRoutes {
       Helpers.handleError(err, res);
     }
   };
-  
+
 }

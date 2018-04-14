@@ -18,6 +18,7 @@ export default class EmailApi {
             address: "no-reply@our-voice.io"
           }
         },
+        preview: false,
         send: true,
         transport: this.transporter,
         juice: true,
@@ -40,8 +41,9 @@ export default class EmailApi {
       message: {
         to: user.email
       },
+      preview: false,
       send: true,
-      locals: Object.assign({}, user, { website: "http://our-voice.io" })
+      locals: Object.assign({}, user, { website: config.externalUrl })
     });
   };
 
