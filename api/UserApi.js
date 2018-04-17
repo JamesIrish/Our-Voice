@@ -80,7 +80,7 @@ export default class UserApi {
   };
   
   userExists = async (model) => {
-    let user = await this.findOne(model);
+    let user = await this.findOne(model).exec();
     return user !== null && user !== undefined;
   };
   

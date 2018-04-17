@@ -6,12 +6,25 @@ import bodyParser from "body-parser";
 import passport from "passport";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import colors from "colors";
+import logger from "./logging";
 import apiRoutes from "./apiRoutes";
 import config from "../config";
 import AuthRoutes from "../api/AuthRoutes";
 
 const port = config.PORT;
 const app = express();
+
+logger.info("Starting production web server...");
+
+app.use((req, res, next) => {
+  req.logger = logger.child({
+    method: req.method,
+    ip: req.ip,
+    xhr: req.xhr,
+    url: req.originalUrl
+  });
+  next();
+});
 
 app.use(compression());
 app.use(express.static("dist"));
@@ -22,7 +35,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let opts = {};
 opts.secretOrKey = AuthRoutes.SECRET;
 opts.jwtFromRequest = (req) => {
-  console.log("Looking for cookie..");
   let token = null;
   if (req && req.cookies)
     token = req.cookies["access_token"];
@@ -30,13 +42,11 @@ opts.jwtFromRequest = (req) => {
 };
 
 passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-  console.log("Verifying JWT..");
   let expirationDate = new Date(jwtPayload.exp * 1000);
   if (expirationDate < new Date()) {
     return done(null, false);
   }
-  let user = jwtPayload;
-  done(null, user);
+  done(null, jwtPayload);
 }));
 
 app.use(passport.initialize());
@@ -46,6 +56,7 @@ passport.serializeUser(function (user, done) {
   done(null, user.email);
 });
 
+logger.debug("Passport middleware registered");
 
 app.use("/api", apiRoutes.hook(passport));
 
@@ -59,6 +70,6 @@ app.listen(port, function(err) {
   } else {
     let uri = `http://localhost:${port}`;
     open(uri);
-    console.log(`Server listening at ${uri}`.green);
+    logger.info(`Production web server listening at ${uri}`);
   }
 });

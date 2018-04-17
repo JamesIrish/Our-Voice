@@ -52,8 +52,8 @@ class ResetForm extends React.Component {
   }
   
   componentDidMount = () => {
-    // Check resetToken for validity.
-    
+    let passwordResetToken = this.props.params.resetToken;
+    this.props.actions.checkResetPasswordToken(passwordResetToken);
   };
   
   componentWillReceiveProps = (nextProps) => {
@@ -62,8 +62,6 @@ class ResetForm extends React.Component {
       error: nextProps.error
     });
   };
-  
-  
   
   stateHasProp = (propPath) => {
     return _has(this.state, propPath);
@@ -117,33 +115,37 @@ class ResetForm extends React.Component {
 
             {checking ?
               (
-                <Typography style={{marginTop: 40, marginBottom: 36}}>Please wait... checking details..</Typography>
+                <Typography style={{marginTop: 60, marginBottom: 40}}>Please wait... checking details..</Typography>
               ) : (
-                <PasswordConfirmationArea
-                  classes={classes}
-                  fieldInputProps={fieldInputProps}
-                  hasPasswordError={hasPasswordError}
-                  passwordError={this.state.errors.password}
-                  passwordValue={this.state.password}
-                  hasConfirmPasswordError={hasConfirmPasswordError}
-                  confirmPasswordError={this.state.errors.confirmPassword}
-                  confirmPasswordValue={this.state.confirmPassword}
-                  onChange={this.onChange}
-                  onKeyDown={this.onKeyDown}
-                  loading={this.state.loading}
-                />
+                <div>
+                  
+                  <PasswordConfirmationArea
+                    classes={classes}
+                    fieldInputProps={fieldInputProps}
+                    hasPasswordError={hasPasswordError}
+                    passwordError={this.state.errors.password}
+                    passwordValue={this.state.password}
+                    hasConfirmPasswordError={hasConfirmPasswordError}
+                    confirmPasswordError={this.state.errors.confirmPassword}
+                    confirmPasswordValue={this.state.confirmPassword}
+                    onChange={this.onChange}
+                    onKeyDown={this.onKeyDown}
+                    loading={this.state.loading}
+                  />
+  
+                  <Button color="primary"
+                          disabled={saveButtonDisabled}
+                          variant="raised"
+                          size="large"
+                          style={{marginTop: 16}}
+                          onClick={this.onSubmit}>
+                    Save
+                  </Button>
+                  
+                </div>
               )
             }
-
-            <Button color="primary"
-                    disabled={saveButtonDisabled}
-                    variant="raised"
-                    size="large"
-                    style={{marginTop: 16}}
-                    onClick={this.onSubmit}>
-              Save
-            </Button>
-
+            
           </CardContent>
         </Card>
       </div>
@@ -156,6 +158,7 @@ ResetForm.propTypes = {
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
+  params: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.string
 };

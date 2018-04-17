@@ -45,7 +45,7 @@ export default class UserRoutes {
     }
     catch (err)
     {
-      Helpers.handleError(err, res);
+      Helpers.handleError(err, req, res);
     }
   };
 
@@ -58,7 +58,7 @@ export default class UserRoutes {
     }
     catch(err)
     {
-      Helpers.handleError(err, res);
+      Helpers.handleError(err, req, res);
     }
   };
 

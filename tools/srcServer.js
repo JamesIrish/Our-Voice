@@ -8,19 +8,36 @@ import config from "../config/index";
 import passport from "passport";
 import colors from "colors";
 import { Strategy as JwtStrategy } from "passport-jwt";
+import logger from "./logging";
 import AuthRoutes from "../api/AuthRoutes";
 import apiRoutes from "./apiRoutes";
+import bunyanMiddleware from "bunyan-middleware";
 
 const port = config.PORT;
 const app = express();
 const compiler = webpack(webpackconfig);
 
+logger.info("Starting development web server...");
+
+app.use(bunyanMiddleware({
+  headerName: "X-Request-Id",
+  propertyName: "reqId",
+  logName: "req_id",
+  obscureHeaders: [],
+  logger: logger,
+  additionalRequestFinishData: function(req, res) {
+      return {};
+    }
+  }
+));
+
 app.use(require("webpack-dev-middleware")(compiler, {
   noInfo: true,
   publicPath: webpackconfig.output.publicPath
 }));
-
 app.use(require("webpack-hot-middleware")(compiler));
+
+logger.debug("HMRE middleware registered.");
 
 app.use(express.static("dist"));
 
@@ -30,7 +47,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let opts = {};
 opts.secretOrKey = AuthRoutes.SECRET;
 opts.jwtFromRequest = (req) => {
-  console.log("Looking for cookie..");
+  logger.debug("Looking for cookie...");
   let token = null;
   if (req && req.cookies)
     token = req.cookies["access_token"];
@@ -38,13 +55,12 @@ opts.jwtFromRequest = (req) => {
 };
 
 passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-  console.log("Verifying JWT..");
+  logger.debug("Verifying JWT..");
   let expirationDate = new Date(jwtPayload.exp * 1000);
   if (expirationDate < new Date()) {
     return done(null, false);
   }
-  let user = jwtPayload;
-  done(null, user);
+  done(null, jwtPayload);
 }));
 
 app.use(passport.initialize());
@@ -54,6 +70,7 @@ passport.serializeUser(function (user, done) {
   done(null, user.email);
 });
 
+logger.debug("Passport middleware registered");
 
 app.use("/api", apiRoutes.hook(passport));
 
@@ -67,6 +84,6 @@ app.listen(port, function(err) {
   } else {
     let uri = `http://localhost:${port}`;
     open(uri);
-    console.log(`Server listening at ${uri}`.green);
+    logger.info(`Development web server listening at ${uri}`);
   }
 });

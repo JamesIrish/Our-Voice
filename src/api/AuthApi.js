@@ -38,7 +38,7 @@ export default class AuthApi {
   };
   
   static checkResetPasswordToken = (resetPasswordToken) => {
-    return AuthApi._fetchWrapper("post", "/api/auth/checkPasswordResetToken", { resetToken: resetPasswordToken });
+    return AuthApi._fetchWrapper("post", "/api/auth/checkPasswordResetToken", { passwordResetToken: resetPasswordToken });
   };
 
   static getAccessToken = (userId, refreshToken) => {

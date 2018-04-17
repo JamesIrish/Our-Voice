@@ -21,7 +21,11 @@ let passwordResetTokenSchema = mongoose.Schema(
     type: Schema.Types.ObjectId,
     default: new mongoose.Types.ObjectId
   },
-  userId: { type: Schema.Types.ObjectId, required: true },
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    index: true
+  },
   created: { type: Date, required: true, default: new Date() },
   expires: { type: Date, required: true },
   resetToken: { type: String, required: true }
@@ -58,7 +62,7 @@ export default class TokenApi {
   };
   
   findOneResetPasswordToken = async (query) => {
-    return this.ResetPasswordToken.findOne(query).exec();
+    return await this.ResetPasswordToken.findOne(query).exec();
   };
   
 }

@@ -117,7 +117,7 @@ class Layout extends React.Component {
           {children}
         </main>
         <Snackbar
-          autoHideDuration={3000}
+          autoHideDuration={4000}
           anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
           open={snackOpen}
           onClose={this.snackClose}

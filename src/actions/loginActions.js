@@ -53,3 +53,32 @@ export function forgotten(email) {
       .catch(() => dispatch(forgottenComplete()));
   };
 }
+
+export function resetTokenOkay(info) {
+  return { type: types.PASSWORD_RESET_TOKEN_OKAY, info: info };
+}
+export function resetTokenExpired(error) {
+  return { type: types.PASSWORD_RESET_TOKEN_EXPIRED, error: error };
+}
+
+export function checkResetPasswordToken(resetPasswordToken) {
+  return function(dispatch) {
+    return AuthApi.checkResetPasswordToken(resetPasswordToken)
+      .then(info => dispatch(resetTokenOkay(info)))
+      .catch(error => dispatch(resetTokenExpired(error)));
+  };
+}
+
+export function resetComplete() {
+  return { type: types.PASSWORD_RESET_COMPLETE };
+}
+export function resetError(error) {
+  return { type: types.PASSWORD_RESET_ERROR, error: error };
+}
+export function reset(email) {
+  return function(dispatch) {
+    return AuthApi.forgotten(email)
+      .then(() => dispatch(resetComplete()))
+      .catch(error => dispatch(resetError(error)));
+  };
+}

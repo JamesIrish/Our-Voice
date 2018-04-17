@@ -47,7 +47,7 @@ export default class EmailApi {
     });
   };
 
-  sendResetPasswordEmail = async (user) => {
+  sendResetPasswordEmail = async (user, resetPasswordToken) => {
 
     let email = this._createMail();
 
@@ -58,7 +58,7 @@ export default class EmailApi {
         to: user.email
       },
       send: true,
-      locals: Object.assign({}, user, { reseturl: `${config.externalUrl}/reset/${user.resetPasswordToken}` })
+      locals: Object.assign({}, user, { reseturl: `${config.externalUrl}/reset/${resetPasswordToken}` })
     });
   };
 
