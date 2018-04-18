@@ -105,7 +105,7 @@ class ResetForm extends React.Component {
     };
     
     return (
-      <DocumentTitle title="Voice :. Reset password">
+      <DocumentTitle title="Our Voice :. Reset your password">
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>

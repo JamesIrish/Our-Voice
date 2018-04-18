@@ -217,7 +217,7 @@ class RegisterForm extends React.Component {
     const emailFieldInputProps = Object.assign({}, fieldInputProps, { type: "email", spellCheck: "false" });
     
     return (
-      <DocumentTitle title="Voice :. Register">
+      <DocumentTitle title="Our Voice :. Register">
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>

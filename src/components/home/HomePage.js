@@ -45,9 +45,9 @@ class HomePage extends React.Component {
       }
     };
     return (
-      <DocumentTitle title="Voice">
+      <DocumentTitle title="Our Voice">
         <div className={classes.container}>
-          <Typography variant="display1" gutterBottom noWrap>Welcome to Voice</Typography>
+          <Typography variant="display1" gutterBottom noWrap>Welcome to Our Voice</Typography>
           <Typography gutterBottom noWrap>Make the most of your voice; introduce, comment &amp; vote for project features.</Typography>
           <Greeting />
         </div>
