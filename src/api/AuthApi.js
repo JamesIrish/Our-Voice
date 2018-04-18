@@ -37,8 +37,12 @@ export default class AuthApi {
     return AuthApi._fetchWrapper("post", "/api/auth/forgotten", { email: email });
   };
   
-  static checkResetPasswordToken = (resetPasswordToken) => {
-    return AuthApi._fetchWrapper("post", "/api/auth/checkPasswordResetToken", { passwordResetToken: resetPasswordToken });
+  static checkPasswordResetToken = (passwordResetToken) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/checkPasswordResetToken", { passwordResetToken: passwordResetToken });
+  };
+  
+  static resetPassword = (passwordResetToken, newPassword) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/resetPassword", { passwordResetToken: passwordResetToken, newPassword: newPassword });
   };
 
   static getAccessToken = (userId, refreshToken) => {

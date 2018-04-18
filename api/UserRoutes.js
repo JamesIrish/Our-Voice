@@ -10,7 +10,6 @@ export default class UserRoutes {
     let routes = new Router();
 
     routes.post("/", UserRoutes._createUser);
-    routes.post("/exists", UserRoutes._userExists);
 
     return routes;
   };
@@ -44,19 +43,6 @@ export default class UserRoutes {
       res.json(userModel);
     }
     catch (err)
-    {
-      Helpers.handleError(err, req, res);
-    }
-  };
-
-  static _userExists = async (req, res) => {
-    try
-    {
-      let userApi = new UserApi();
-      await userApi.initialise();
-      return await userApi.userExists({ email: req.body.email });
-    }
-    catch(err)
     {
       Helpers.handleError(err, req, res);
     }

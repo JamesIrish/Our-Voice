@@ -8,9 +8,12 @@ import Card, { CardContent } from "material-ui/Card";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
 import * as SnackActions from "../../actions/snackActions";
-import * as LoginActions from "../../actions/loginActions";
+import * as LoginActions from "../../actions/authActions";
 import {has as _has} from "lodash/object";
 import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
+import TextField from "material-ui/TextField/TextField";
+import {isValidEmail} from "../../helpers/Validation";
+import _debounce from "lodash/debounce";
 
 const styles = theme => ({
   container: {
@@ -40,11 +43,15 @@ class ResetForm extends React.Component {
 
   constructor(props) {
     super(props);
+  
+    this.debouncedValidate = _debounce(this.validateField, 300);
 
     this.state = {
       checking: true,
-      password: "",
-      confirmPassword: "",
+      credentials: {
+        password: "",
+        confirmPassword: "",
+      },
       errors: {},
       loading: props.loading,
       error: props.error
@@ -53,7 +60,8 @@ class ResetForm extends React.Component {
   
   componentDidMount = () => {
     let passwordResetToken = this.props.params.resetToken;
-    this.props.actions.checkResetPasswordToken(passwordResetToken);
+    this.props.actions.checkPasswordResetToken(passwordResetToken)
+      .finally(() => this.setState({checking: false}));
   };
   
   componentWillReceiveProps = (nextProps) => {
@@ -69,31 +77,50 @@ class ResetForm extends React.Component {
 
   onChange = (event) => {
     event.preventDefault();
-    return this.setState({ email: event.target.value });
+    const field = event.target.id;
+    const value = event.target.value;
+    let credentials = Object.assign({}, this.state.credentials);
+    credentials[field] = value;
+    
+    return this.setState({ credentials: credentials }, () => { this.debouncedValidate(field, value); });
   };
 
   onKeyDown = (event) => {
     if (event.nativeEvent.keyCode === 13) {
       event.preventDefault();
       event.stopPropagation();
-      if (event.target.id === "email")
+      if (event.target.id === "confirmPassword")
         this.onSubmit(event);
     }
+  };
+  
+  validateField = (fieldName, value) => {
+    let fieldValidationErrors = Object.assign({}, this.state.errors);
+    
+    if (fieldName === "password")
+    {
+        if (value.length >= 8)
+          delete fieldValidationErrors[fieldName];
+        else
+          fieldValidationErrors[fieldName] = "should be at least 8 characters long";
+    }
+    
+    if (this.state.credentials.password !== this.state.credentials.confirmPassword)
+      fieldValidationErrors.confirmPassword = "passwords do not match";
+    else
+      delete fieldValidationErrors.confirmPassword;
+    
+    this.setState({errors: fieldValidationErrors});
   };
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
-    this.props.actions.reset(this.state.email, this.state.password)
-      .finally(() => {
-        //this.props.actions.showSnack("Done, if you have an account an email with instructions has been sent to you.");
-        //this.setState({ email: "" });
-      });
+    this.props.actions.resetPassword(this.props.params.resetToken, this.state.credentials.password);
   };
 
   render() {
     const { classes } = this.props;
-    const { loading, checking } = this.state;
+    const { loading, checking, error } = this.state;
     
     const hasPasswordError = this.stateHasProp("errors.password");
     const hasConfirmPasswordError = this.stateHasProp("errors.confirmPassword");
@@ -104,48 +131,49 @@ class ResetForm extends React.Component {
     
     };
     
+    const ErrorDisplay = () => { return (<Typography style={{marginTop: 60, marginBottom: 40, color: "red"}}>Error: {error}</Typography>);};
+    const CheckingDisplay = () => { return (<Typography style={{marginTop: 60, marginBottom: 40}}>Please wait... checking details...</Typography>);};
+    const Display = () => {
+      if (error) return ErrorDisplay();
+      if (checking) return CheckingDisplay();
+      return null;
+    };
+    
     return (
       <DocumentTitle title="Our Voice :. Reset your password">
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>
-            <Typography className={classes.title} color="textSecondary" style={{textAlign: "left" }}>
-              Enter your new password
-            </Typography>
-
-            {checking ?
-              (
-                <Typography style={{marginTop: 60, marginBottom: 40}}>Please wait... checking details..</Typography>
-              ) : (
-                <div>
-                  
+            {error || checking
+              ? <Display/>
+              : (<div>
+                  <Typography className={classes.title} color="textSecondary" style={{textAlign: "left"}}>
+                    Enter your new password
+                  </Typography>
+        
                   <PasswordConfirmationArea
                     classes={classes}
                     fieldInputProps={fieldInputProps}
                     hasPasswordError={hasPasswordError}
                     passwordError={this.state.errors.password}
-                    passwordValue={this.state.password}
+                    passwordValue={this.state.credentials.password}
                     hasConfirmPasswordError={hasConfirmPasswordError}
                     confirmPasswordError={this.state.errors.confirmPassword}
-                    confirmPasswordValue={this.state.confirmPassword}
+                    confirmPasswordValue={this.state.credentials.confirmPassword}
                     onChange={this.onChange}
                     onKeyDown={this.onKeyDown}
-                    loading={this.state.loading}
-                  />
-  
+                    loading={loading}/>
+        
                   <Button color="primary"
                           disabled={saveButtonDisabled}
                           variant="raised"
                           size="large"
                           style={{marginTop: 16}}
                           onClick={this.onSubmit}>
-                    Save
+                    {loading ? (<span>Saving...</span>) : (<span>Save</span>)}
                   </Button>
-                  
-                </div>
-              )
-            }
-            
+                  </div>
+                )}
           </CardContent>
         </Card>
       </div>
@@ -164,9 +192,13 @@ ResetForm.propTypes = {
 };
 
 function mapStateToProps(state) {
+  let error = state.auth.error;
+  if (state.auth.passwordResetTokenOkay === false)
+    error = state.auth.passwordResetTokenError;
+  
   return {
     loading: state.auth.loading,
-    error: state.auth.error
+    error: error
   };
 }
 

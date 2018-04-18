@@ -5,29 +5,30 @@ import {browserHistory} from "react-router";
 export default function authenticationReducer(state = initialState.auth, action) {
   switch(action.type) {
     case types.AUTH_LOADING:
-      return Object.assign({}, { loading: true });
+      return {...state, loading: true };
+      
+    case types.FORGOTTEN_COMPLETE:
     case types.SIGN_IN_SUCCESS:
     {
       browserHistory.push("/");
-      return Object.assign({}, { loading: false, error: null }, action.auth);
+      return { ...initialState.auth, ...action.auth };
     }
     case types.REFRESH_TOKEN_SUCCESS:
-      return Object.assign({}, { loading: false, error: null }, action.auth);
+      return { ...initialState.auth, ...action.auth };
       
     case types.SIGN_IN_ERROR:
     case types.REFRESH_TOKEN_ERROR:
-    {
-      return Object.assign({},
-        {
-          loading: false,
-          user: null,
-          accessToken: null,
-          refreshToken: null
-        },
-        {
-          error: action.error
-        });
-    }
+    case types.CHECK_PASSWORD_RESET_TOKEN_ERROR:
+    case types.PASSWORD_RESET_ERROR:
+      return { ...initialState.auth, error: action.error };
+  
+    case types.CHECK_PASSWORD_RESET_TOKEN_SUCCESS:
+      return { ...initialState.auth, passwordResetTokenOkay: action.info.okay, passwordResetTokenError: action.info.reason };
+  
+    case types.PASSWORD_RESET_COMPLETE:
+      browserHistory.push("/signin");
+      return { ...initialState.auth };
+
     default:
       return state;
   }

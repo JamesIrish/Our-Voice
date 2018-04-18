@@ -9,7 +9,7 @@ import Card, { CardContent } from "material-ui/Card";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
 import * as SnackActions from "../../actions/snackActions";
-import * as LoginActions from "../../actions/loginActions";
+import * as LoginActions from "../../actions/authActions";
 import {has as _has} from "lodash/object";
 import {isValidEmail} from "../../helpers/Validation";
 
@@ -46,16 +46,14 @@ class ForgottenForm extends React.Component {
       email: props.location.state.email || "",
       isEmailValid: false,
       emailError: "please provide your email address",
-      configLoading: props.configLoading,
-      authLoading: props.authLoading,
+      loading: props.authLoading,
       error: props.error
     };
   }
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      configLoading: nextProps.configLoading,
-      authLoading: nextProps.authLoading,
+      loading: nextProps.authLoading,
       error: nextProps.error
     });
   };
@@ -86,17 +84,12 @@ class ForgottenForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.setState({ authLoading: true });
-    this.props.actions.forgotten(this.state.email)
-      .finally(() => {
-        this.props.actions.showSnack("Done, if you have an account an email with instructions has been sent to you.");
-        this.setState({ email: "" });
-      });
+    this.props.actions.forgotten(this.state.email);
   };
 
   render() {
     const { classes } = this.props;
-    const { authLoading, email, isEmailValid, emailError } = this.state;
+    const { loading, email, isEmailValid, emailError } = this.state;
     
     const emailInputProps = {
       type: "email",
@@ -104,10 +97,10 @@ class ForgottenForm extends React.Component {
     };
     
     const hasEmailError = !isEmailValid;
-    const buttonDisabled = authLoading || !isEmailValid;
+    const buttonDisabled = loading || !isEmailValid;
     
     return (
-      <DocumentTitle title="Voice :. Reset password">
+      <DocumentTitle title="Our Voice :. Reset password">
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>
@@ -126,7 +119,7 @@ class ForgottenForm extends React.Component {
               error={hasEmailError}
               helperText={emailError}
               onChange={this.onChange}
-              disabled={authLoading}
+              disabled={loading}
               onKeyDown={this.onKeyDown}
               value={email}
             />
@@ -137,7 +130,7 @@ class ForgottenForm extends React.Component {
                     size="large"
                     style={{marginTop: 16}}
                     onClick={this.onSubmit}>
-              Reset
+              {loading ? (<span>Resetting...</span>) : (<span>Reset</span>)}
             </Button>
 
           </CardContent>
@@ -150,9 +143,7 @@ class ForgottenForm extends React.Component {
 
 ForgottenForm.propTypes = {
   classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
-  configLoading: PropTypes.bool.isRequired,
   authLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   location: PropTypes.object.isRequired
@@ -160,7 +151,6 @@ ForgottenForm.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    configLoading: state.config.loading,
     authLoading: state.auth.loading,
     error: state.auth.error
   };

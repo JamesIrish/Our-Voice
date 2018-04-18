@@ -54,18 +54,18 @@ export function forgotten(email) {
   };
 }
 
-export function resetTokenOkay(info) {
-  return { type: types.PASSWORD_RESET_TOKEN_OKAY, info: info };
+export function checkPasswordResetTokenSuccess(info) {
+  return { type: types.CHECK_PASSWORD_RESET_TOKEN_SUCCESS, info: info };
 }
-export function resetTokenExpired(error) {
-  return { type: types.PASSWORD_RESET_TOKEN_EXPIRED, error: error };
+export function checkPasswordResetTokenError(error) {
+  return { type: types.CHECK_PASSWORD_RESET_TOKEN_ERROR, error: error };
 }
 
-export function checkResetPasswordToken(resetPasswordToken) {
+export function checkPasswordResetToken(resetPasswordToken) {
   return function(dispatch) {
-    return AuthApi.checkResetPasswordToken(resetPasswordToken)
-      .then(info => dispatch(resetTokenOkay(info)))
-      .catch(error => dispatch(resetTokenExpired(error)));
+    return AuthApi.checkPasswordResetToken(resetPasswordToken)
+      .then(info => dispatch(checkPasswordResetTokenSuccess(info)))
+      .catch(error => dispatch(checkPasswordResetTokenError(error)));
   };
 }
 
@@ -75,10 +75,14 @@ export function resetComplete() {
 export function resetError(error) {
   return { type: types.PASSWORD_RESET_ERROR, error: error };
 }
-export function reset(email) {
+export function resetPassword(passwordResetToken, newPassword) {
   return function(dispatch) {
-    return AuthApi.forgotten(email)
-      .then(() => dispatch(resetComplete()))
+    dispatch({ type: types.AUTH_LOADING });
+    return AuthApi.resetPassword(passwordResetToken, newPassword)
+      .then(info => {
+        console.log("Reset password complete", info);
+        dispatch(resetComplete());
+      })
       .catch(error => dispatch(resetError(error)));
   };
 }

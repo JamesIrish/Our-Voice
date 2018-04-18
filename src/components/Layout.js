@@ -18,7 +18,7 @@ import { mailFolderListItems, otherMailFolderListItems } from "./tileData";
 import {bindActionCreators} from "redux";
 import jwtDecode from "jwt-decode";
 import * as SnackActions from "../actions/snackActions";
-import * as LoginActions from "../actions/loginActions";
+import * as LoginActions from "../actions/authActions";
 
 const styles = theme => ({
   root: {
@@ -80,12 +80,14 @@ class Layout extends React.Component {
     });
   };
   
+  _snackDelay = 4000;
+  
   toggleDrawer = (open) => () => {
     this.setState({ drawerOpen: open });
   };
   
   snackClose = () => {
-    this.props.actions.clearSnack();
+    setTimeout(this.props.actions.clearSnack(), 500);
   };
 
   render() {
@@ -117,7 +119,7 @@ class Layout extends React.Component {
           {children}
         </main>
         <Snackbar
-          autoHideDuration={4000}
+          autoHideDuration={this._snackDelay}
           anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
           open={snackOpen}
           onClose={this.snackClose}

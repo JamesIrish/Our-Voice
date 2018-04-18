@@ -61,6 +61,7 @@ export default class AuthRoutes {
       await userApi.initialise();
       
       let user = await userApi.findOne({email: email});
+      assert.object(user, "user account not found");
 
       let userObj = user.toObject();
       delete userObj.actions;
@@ -106,7 +107,7 @@ export default class AuthRoutes {
       }
       else
       {
-        req.log.info(`User ${email} login failed. Passwords DO NOT match.`);
+        req.log.warn(`User ${email} login failed. Passwords DO NOT match.`);
         
         user.actions = [...user.actions, {action: userApi.actions.loginFailure}];
         await user.save();
@@ -278,46 +279,46 @@ export default class AuthRoutes {
     try
     {
       let email = req.body.email;
-      
       assert.string(email, "email");
       
       let userApi = new UserApi();
       await userApi.initialise();
       
       let user = await userApi.findOne({ email: email });
-      
-      assert.object(user);
-      
-      req.log.debug(`User ${user.email} loaded from database`);
-      
-      let tokenApi = new TokenApi();
-      await tokenApi.initialise();
-      
-      let oneHour = new Date();
-      oneHour.setHours(oneHour.getHours()+1);
-  
-      let resetTokenDb =
+      if (user)
       {
-        userId: user._id,
-        expires: oneHour,
-        resetToken: randtoken.uid(32)
-      };
-      
-      await tokenApi.createResetPasswordToken(resetTokenDb);
-      
-      req.log.debug(`Password reset token created and saved into database for ${user.email}`);
-      
-      user.actions = [...user.actions, { action: userApi.actions.pwResetRequest }];
-      
-      user.save();
-      
-      let safeUser = user.toObject();
-      delete safeUser.password;
-      
-      let emailApi = new EmailApi();
-      await emailApi.sendResetPasswordEmail(safeUser, resetTokenDb.resetToken);
-      
-      req.log.info(`Password reset email generated & sent to ${user.email}`);
+        req.log.debug(`User ${user.email} loaded from database`);
+  
+        let tokenApi = new TokenApi();
+        await tokenApi.initialise();
+  
+        let oneHour = new Date();
+        oneHour.setHours(oneHour.getHours() + 1);
+  
+        let resetTokenDb =
+          {
+            userId: user._id,
+            expires: oneHour,
+            resetToken: randtoken.uid(32)
+          };
+  
+        await tokenApi.createResetPasswordToken(resetTokenDb);
+  
+        req.log.debug(`Password reset token created and saved into database for ${user.email}`);
+  
+        user.actions = [...user.actions, {action: userApi.actions.pwResetRequest}];
+  
+        user.save();
+  
+        let safeUser = user.toObject();
+        delete safeUser.password;
+  
+        let emailApi = new EmailApi();
+        await emailApi.sendResetPasswordEmail(safeUser, resetTokenDb.resetToken);
+  
+        req.log.info(`Password reset email generated & sent to ${user.email}`);
+      } else
+        req.log.info(`No user account found for ${email}`);
       
       res.sendStatus(204);
     }
@@ -337,24 +338,33 @@ export default class AuthRoutes {
       await tokenApi.initialise();
       
       let tokenRecord = await tokenApi.findOneResetPasswordToken({resetToken: passwordResetToken});
-      
-      req.log.debug({ token: tokenRecord.toObject() }, "Token loaded from database");
-      
-      let now = new Date();
-      if (tokenRecord.expires > now)
+      if (tokenRecord)
       {
-        res.status(401).send("Password reset token expired.");
+        req.log.debug({ token: tokenRecord.toObject() }, "Token loaded from database");
+        
+        let expired = tokenRecord.expires.getTime() < new Date().getTime();
+        if (expired)
+        {
+          req.log.warn(`Token ${passwordResetToken} has expired`);
+          res.send({ okay: false, reason: "token expired" });
+        }
+        else
+        {
+          req.log.info(`Token ${passwordResetToken} valid`);
+          res.send(Object.assign({ okay: true }, tokenRecord.toObject()));
+        }
       }
       else
       {
-        res.send(tokenRecord.toObject());
+        req.log.warn(`Token ${passwordResetToken} could not be found`);
+        res.send({ okay: false, reason: "token removed" });
       }
     }
     catch(err)
     {
       Helpers.handleError(err, req, res);
     }
-  }
+  };
   
   static _resetPassword = async (req, res) => {
     try
@@ -362,35 +372,57 @@ export default class AuthRoutes {
       let passwordResetToken = req.body.passwordResetToken;
       assert.string(passwordResetToken, "passwordResetToken");
       
-      let newPassword = req.body.password;
-      assert.string(newPassword, "password");
+      let newPassword = req.body.newPassword;
+      assert.string(newPassword, "newPassword");
   
       let tokenApi = new TokenApi();
       await tokenApi.initialise();
   
       let tokenRecord = await tokenApi.findOneResetPasswordToken({resetToken: passwordResetToken});
+      if (tokenRecord)
+      {
+        let expired = tokenRecord.expires.getTime() < new Date().getTime();
+        if (expired)
+        {
+          req.log.warn(`Token ${passwordResetToken} has expired`);
+          res.status(401).send("Token expired");
+        }
+        else
+        {
+          req.log.debug({token: tokenRecord.toObject()}, "Token loaded from database");
   
-      req.log.debug({ token: tokenRecord.toObject() }, "Token loaded from database");
-      
-      let userApi = new UserApi();
-      await userApi.initialise();
+          let userApi = new UserApi();
+          await userApi.initialise();
   
-      let user = await userApi.findOne({_id: tokenRecord.userId});
+          let user = await userApi.findOne({_id: tokenRecord.userId});
+          if (user)
+          {
+            let safeUser = user.toObject();
+            delete safeUser.password;
+            req.log.debug({user: safeUser}, "User loaded from database");
   
-      let safeUser = user.toObject();
-      delete safeUser.password;
-      req.log.debug({ user: safeUser }, "User loaded from database");
+            user.password = await bcrypt.hash(newPassword, 10);
+            user.actions = [...user.actions, {action: userApi.actions.pwResetSuccess}];
   
-      user.password = await bcrypt.hash(newPassword, 10);
-      user.actions = [...user.actions, { action: userApi.actions.pwResetSuccess }];
+            user.save();
   
-      user.save();
+            tokenRecord.remove();
   
-      tokenRecord.remove();
+            req.log.info(`Password reset successful for ${user.email}`);
   
-      req.log.info(`Password reset successful for ${user.email}`);
-      
-      res.sendStatus(204);
+            res.send("Password reset successful");
+          }
+          else
+          {
+            req.log.error(`Unable to find user ${tokenRecord.userId}`);
+            res.status(500).send("Unable to find user record for this password reset token");
+          }
+        }
+      }
+      else
+      {
+        res.status(401).send("Unable to find password reset token");
+      }
     }
     catch (err)
     {

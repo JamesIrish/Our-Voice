@@ -184,17 +184,13 @@ class RegisterForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
     UserApi.createUser(this.state.newUser)
       .then(() => {
-        this.setState({ loading: false });
         this.props.router.push("/signin");
         this.props.actions.showSnack("User account created. Please sign in.");
       })
-      .catch(error => {
-        this.setState({ loading: false });
+      .catch(() => {
         this.props.actions.showSnack("An error occurred. Do you already have an account?");
-        console.log(error);
       });
   };
 

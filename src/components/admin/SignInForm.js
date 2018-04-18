@@ -11,7 +11,7 @@ import Button from "material-ui/Button";
 import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
 import * as SnackActions from "../../actions/snackActions";
-import * as LoginActions from "../../actions/loginActions";
+import * as LoginActions from "../../actions/authActions";
 
 const styles = theme => ({
   container: {
@@ -84,23 +84,13 @@ class SignInForm extends React.Component {
         this.onSubmit(event);
     }
   };
-  
-  forgot = () => {
-    this.props.router.push(
-      {
-        pathname: "/forgotten",
-        state: { email: this.state.email }
-      });
-  };
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.setState({ authLoading: true });
     this.props.actions.signInUser(this.state.credentials);
   };
   onSubmitAd = (event) => {
     event.preventDefault();
-    this.setState({ authLoading: true });
     this.props.actions.signInAdUser();
   };
 
@@ -131,7 +121,7 @@ class SignInForm extends React.Component {
     };
 
     return (
-      <DocumentTitle title="Voice :. Sign in">
+      <DocumentTitle title="Our Voice :. Sign in">
       <div className={classes.container}>
         <Card className={classes.card}>
           <CardContent>
@@ -199,13 +189,11 @@ class SignInForm extends React.Component {
 SignInForm.propTypes = {
   errors: PropTypes.object,
   classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   configLoading: PropTypes.bool.isRequired,
   activeDirectoryEnabled: PropTypes.bool.isRequired,
   authLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string,
-  router: PropTypes.object.isRequired
+  error: PropTypes.string
 };
 
 function getAdEnabled(state) {

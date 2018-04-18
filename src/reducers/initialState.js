@@ -11,7 +11,9 @@ export default {
     error: null,
     user: null,
     accessToken: null,
-    refreshToken: null
+    refreshToken: null,
+    passwordResetTokenOkay: null,
+    passwordResetTokenError: null
   },
   
   snack: {
