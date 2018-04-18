@@ -100,7 +100,7 @@ class Layout extends React.Component {
               <MenuIcon/>
             </IconButton>
             <Typography variant="headline" color="inherit" className={classes.flex}>
-              <Link to="/" className={classes.titleLink}>Voice</Link>
+              <Link to="/" className={classes.titleLink}>Our Voice</Link>
             </Typography>
             {user
               ? (<Button color="inherit" component={Link} to="/account" disabled={loading}>{user.displayName}</Button>)
