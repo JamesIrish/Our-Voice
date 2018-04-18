@@ -1,6 +1,10 @@
 import bunyan from "bunyan";
 import path from "path";
 import bunyanDebugStream from "bunyan-debug-stream";
+import fse from "fs-extra";
+
+const logpath = path.join(__dirname, "../logs/app.log");
+fse.outputFileSync(logpath, "");
 
 const log = bunyan.createLogger({
   name: "our-voice",
@@ -14,7 +18,7 @@ const log = bunyan.createLogger({
   },{
     level: "debug",
     type: "rotating-file",
-    path: path.join(__dirname, "../logs/app.log"),
+    path: logpath,
     period: "1d",
     count: 14
   }]
