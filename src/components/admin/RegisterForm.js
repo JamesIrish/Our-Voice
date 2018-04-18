@@ -12,6 +12,7 @@ import Typography from "material-ui/Typography";
 import Stepper, { Step, StepLabel, StepContent } from "material-ui/Stepper";
 import UserApi from "../../api/UserApi";
 import * as snackActions from "../../actions/snackActions";
+import {isValidEmail} from "../../helpers/Validation";
 import _debounce from "lodash/debounce";
 import {has as _has} from "lodash/object";
 import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
@@ -140,7 +141,7 @@ class RegisterForm extends React.Component {
 
     switch(fieldName) {
       case "email":
-        emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+        emailValid = isValidEmail(value);
         if (emailValid)
           delete fieldValidationErrors[fieldName];
         else

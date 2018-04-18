@@ -11,6 +11,7 @@ import Typography from "material-ui/Typography";
 import * as SnackActions from "../../actions/snackActions";
 import * as LoginActions from "../../actions/loginActions";
 import {has as _has} from "lodash/object";
+import {isValidEmail} from "../../helpers/Validation";
 
 const styles = theme => ({
   container: {
@@ -43,7 +44,8 @@ class ForgottenForm extends React.Component {
 
     this.state = {
       email: props.location.state.email || "",
-      errors: {},
+      isEmailValid: false,
+      emailError: "please provide your email address",
       configLoading: props.configLoading,
       authLoading: props.authLoading,
       error: props.error
@@ -64,7 +66,13 @@ class ForgottenForm extends React.Component {
 
   onChange = (event) => {
     event.preventDefault();
-    return this.setState({ email: event.target.value });
+    let email = event.target.value;
+    let emailValid = isValidEmail(email);
+    return this.setState({
+      email: email,
+      isEmailValid: emailValid,
+      emailError: emailValid ? "" : "please provide a valid email address"
+    });
   };
 
   onKeyDown = (event) => {
@@ -88,14 +96,15 @@ class ForgottenForm extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { authLoading } = this.state;
+    const { authLoading, email, isEmailValid, emailError } = this.state;
     
     const emailInputProps = {
       type: "email",
       spellCheck: false
     };
-  
-    const hasEmailError = this.stateHasProp("errors.email");
+    
+    const hasEmailError = !isEmailValid;
+    const buttonDisabled = authLoading || !isEmailValid;
     
     return (
       <DocumentTitle title="Voice :. Reset password">
@@ -115,15 +124,15 @@ class ForgottenForm extends React.Component {
               margin="normal"
               inputProps={emailInputProps}
               error={hasEmailError}
-              helperText={this.state.errors.email}
+              helperText={emailError}
               onChange={this.onChange}
               disabled={authLoading}
               onKeyDown={this.onKeyDown}
-              value={this.state.email}
+              value={email}
             />
 
             <Button color="primary"
-                    disabled={authLoading}
+                    disabled={buttonDisabled}
                     variant="raised"
                     size="large"
                     style={{marginTop: 16}}
