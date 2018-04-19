@@ -1,5 +1,21 @@
 import * as types from "./actionTypes";
 import AuthApi from "../api/AuthApi";
+import UserApi from "../api/UserApi";
+
+export function createUserSuccess(info) {
+  return { type: types.CREATE_USER_SUCCESS, info: info };
+}
+export function createUserError(error) {
+  return { type: types.CREATE_USER_ERROR, error: error };
+}
+export function createUser(newUser) {
+  return function(dispatch) {
+    dispatch({ type: types.AUTH_LOADING });
+    return UserApi.createUser(newUser)
+      .then(info => dispatch(createUserSuccess(info)))
+      .catch(error => dispatch(createUserError(error)));
+  };
+}
 
 export function signInSuccess(auth) {
   return { type: types.SIGN_IN_SUCCESS, auth: auth };

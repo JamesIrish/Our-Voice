@@ -9,6 +9,12 @@ export default function snackReducer(state = initialState.snack, action) {
     case types.CLEAR_SNACK:
       return { ...state, snackOpen: false, snackMessage: "" };
       
+    case types.CREATE_USER_SUCCESS:
+      return { ...state, snackOpen: true, snackMessage: "User account created. Please sign in." };
+      
+    case types.CREATE_USER_ERROR:
+      return { ...state, snackOpen: true, snackMessage: "An error occurred. Do you already have an account?" };
+      
     case types.SIGN_IN_SUCCESS:
       return { ...state, snackOpen: true, snackMessage: `Welcome back ${action.auth.user.firstName}` };
       

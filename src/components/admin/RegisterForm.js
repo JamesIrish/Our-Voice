@@ -10,8 +10,8 @@ import Card, { CardContent } from "material-ui/Card";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
 import Stepper, { Step, StepLabel, StepContent } from "material-ui/Stepper";
-import UserApi from "../../api/UserApi";
-import * as snackActions from "../../actions/snackActions";
+import * as SnackActions from "../../actions/snackActions";
+import * as AuthActions from "../../actions/authActions";
 import {isValidEmail} from "../../helpers/Validation";
 import _debounce from "lodash/debounce";
 import {has as _has} from "lodash/object";
@@ -70,10 +70,16 @@ class RegisterForm extends React.Component {
         confirmPassword: ""
       },
       errors: {},
-      loading: false,
+      loading: this.props.loading,
       activeStep: 0
     };
   }
+  
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({
+      loading: nextProps.loading
+    });
+  };
   
   setRef = element => {
     if (element && element.id) {
@@ -184,14 +190,7 @@ class RegisterForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    UserApi.createUser(this.state.newUser)
-      .then(() => {
-        this.props.router.push("/signin");
-        this.props.actions.showSnack("User account created. Please sign in.");
-      })
-      .catch(() => {
-        this.props.actions.showSnack("An error occurred. Do you already have an account?");
-      });
+    this.props.actions.createUser(this.state.newUser);
   };
 
   render() {
@@ -348,10 +347,15 @@ RegisterForm.propTypes = {
   actions: PropTypes.object.isRequired
 };
 
+function mapStateToProps(state) {
+  return {
+    loading: state.auth.loading
+  };
+}
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(snackActions, dispatch)
+    actions: bindActionCreators(Object.assign({}, SnackActions, AuthActions), dispatch)
   };
 }
 
-export default connect(null, mapDispatchToProps)(withRouter(withStyles(styles)(RegisterForm)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(RegisterForm)));

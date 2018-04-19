@@ -41,19 +41,22 @@ class ForgottenForm extends React.Component {
 
   constructor(props) {
     super(props);
-
+  
+    let email = props.location.state.email || "";
+    let emailValid = isValidEmail(email);
+    
     this.state = {
-      email: props.location.state.email || "",
-      isEmailValid: false,
-      emailError: "please provide your email address",
-      loading: props.authLoading,
+      email: email,
+      isEmailValid: emailValid,
+      emailError: emailValid ? "" : "please provide a valid email address",
+      loading: props.loading,
       error: props.error
     };
   }
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      loading: nextProps.authLoading,
+      loading: nextProps.loading,
       error: nextProps.error
     });
   };
@@ -144,14 +147,14 @@ class ForgottenForm extends React.Component {
 ForgottenForm.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
-  authLoading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   location: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
   return {
-    authLoading: state.auth.loading,
+    loading: state.auth.loading,
     error: state.auth.error
   };
 }

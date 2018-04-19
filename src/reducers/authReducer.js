@@ -7,8 +7,14 @@ export default function authenticationReducer(state = initialState.auth, action)
     case types.AUTH_LOADING:
       return {...state, loading: true };
       
-    case types.FORGOTTEN_COMPLETE:
+    case types.CREATE_USER_SUCCESS:
+    {
+      browserHistory.push("/signin");
+      return { ...initialState.auth };
+    }
+    
     case types.SIGN_IN_SUCCESS:
+    case types.FORGOTTEN_COMPLETE:
     {
       browserHistory.push("/");
       return { ...initialState.auth, ...action.auth };
@@ -16,6 +22,7 @@ export default function authenticationReducer(state = initialState.auth, action)
     case types.REFRESH_TOKEN_SUCCESS:
       return { ...initialState.auth, ...action.auth };
       
+    case types.CREATE_USER_ERROR:
     case types.SIGN_IN_ERROR:
     case types.REFRESH_TOKEN_ERROR:
     case types.CHECK_PASSWORD_RESET_TOKEN_ERROR:

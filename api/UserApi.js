@@ -6,14 +6,12 @@ let Schema = mongoose.Schema;
 let userActionSchema = mongoose.Schema({
   action: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   date: {
     type: Date,
     default: new Date(),
-    required: true,
-    index: true
+    required: true
   }
 });
 

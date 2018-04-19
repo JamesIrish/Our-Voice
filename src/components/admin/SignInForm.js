@@ -11,7 +11,7 @@ import Button from "material-ui/Button";
 import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
 import * as SnackActions from "../../actions/snackActions";
-import * as LoginActions from "../../actions/authActions";
+import * as AuthActions from "../../actions/authActions";
 
 const styles = theme => ({
   container: {
@@ -212,7 +212,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(Object.assign({}, SnackActions, LoginActions), dispatch)
+    actions: bindActionCreators(Object.assign({}, SnackActions, AuthActions), dispatch)
   };
 }
 

@@ -20,6 +20,7 @@ const PasswordConfirmationArea = (
     <div>
       
       <TextField
+        autoFocus
         id="password"
         label="Password"
         type="password"
