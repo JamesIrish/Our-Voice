@@ -18,11 +18,12 @@ export default class AuthRoutes {
   static routes = () => {
     let routes = new Router();
   
-    routes.post("/login", AuthRoutes._login);
+    routes.post("/signin", AuthRoutes._signin);
     routes.post("/refresh", AuthRoutes._refresh);
     routes.post("/forgotten", AuthRoutes._forgotten);
     routes.post("/checkPasswordResetToken", AuthRoutes._checkPasswordResetToken);
     routes.post("/resetPassword", AuthRoutes._resetPassword);
+    routes.post("/signout", AuthRoutes._signOut);
     
     if (os.platform() === "win32") {
       routes.post("/sspi", function (req, res, next) {
@@ -49,7 +50,7 @@ export default class AuthRoutes {
     return jwt.sign(tokenModel, AuthRoutes.SECRET, { expiresIn: 300 });
   };
 
-  static _login = async (req, res) => {
+  static _signin = async (req, res) => {
     try
     {
       let email = req.body.email;
@@ -60,7 +61,7 @@ export default class AuthRoutes {
       let userApi = new UserApi();
       await userApi.initialise();
       
-      let user = await userApi.findOne({email: email});
+      let user = await userApi.findOne({ email: email });
       assert.object(user, "user account not found");
 
       let userObj = user.toObject();
@@ -73,12 +74,12 @@ export default class AuthRoutes {
       {
         req.log.info(`User ${email} authenticated.`);
         
-        user.actions = [...user.actions, {action: userApi.actions.loginSuccess}];
+        user.actions = [...user.actions, {action: userApi.actions.signInSuccess}];
         await user.save();
 
         delete user.password;
 
-        let token = AuthRoutes._createToken(user, ["admin"]);
+        let token = AuthRoutes._createToken(user, user.roles);
         let refreshToken = randtoken.uid(256);
 
         let midnight = new Date();
@@ -101,7 +102,7 @@ export default class AuthRoutes {
         
         res.cookie("access_token", token);
         res.cookie("refresh_token", refreshToken);
-        res.status(200).send({user: user, accessToken: token, refreshToken: refreshToken});
+        res.send({user: user, accessToken: token, refreshToken: refreshToken});
         
         req.log.debug(`Token issued and cookies set for login request for ${email}`);
       }
@@ -109,11 +110,57 @@ export default class AuthRoutes {
       {
         req.log.warn(`User ${email} login failed. Passwords DO NOT match.`);
         
-        user.actions = [...user.actions, {action: userApi.actions.loginFailure}];
+        user.actions = [...user.actions, {action: userApi.actions.signInFailure}];
         await user.save();
         
         res.sendStatus(401);
       }
+    }
+    catch(err)
+    {
+      Helpers.handleError(err, req, res);
+    }
+  };
+  
+  static _signOut = async (req, res) => {
+    try
+    {
+      let userId = req.body.userId;
+      assert.string(userId, "userId");
+      let refreshToken = req.body.refreshToken;
+      assert.string(refreshToken, "refreshToken");
+      
+      let tokenApi = new TokenApi();
+      await tokenApi.initialise();
+      
+      let refreshTokens = await tokenApi.findRefreshTokens({refreshToken: refreshToken});
+      if (refreshTokens.length !== 1)
+        throw new Error(`Could not locate refresh token ${refreshToken}`);
+      if (refreshTokens[0].userId != userId)
+        throw new Error(`Refresh token ${refreshToken} does not belong to user ${userId}`);
+      
+      let userApi = new UserApi();
+      await userApi.initialise();
+    
+      let user = await userApi.findOne({ _id: userId });
+      assert.object(user, "user account not found");
+    
+      let userObj = user.toObject();
+      delete userObj.actions;
+      req.log.debug(userObj, `Lookup of user id ${userId} result`);
+      
+      refreshTokens = await tokenApi.findRefreshTokens({ userId: userId });
+      for (let i = 0; i < refreshTokens.length; i++)
+        refreshTokens[i].remove();
+        
+      req.log.debug(`${refreshTokens.length} refresh tokens for user ${userId} removed`);
+  
+      user.actions = [...user.actions, {action: userApi.actions.signOutSuccess}];
+      await user.save();
+      
+      res.cookie("access_token", null);
+      res.cookie("refresh_token", null);
+      res.send({ okay: true });
     }
     catch(err)
     {
@@ -135,10 +182,7 @@ export default class AuthRoutes {
       let tokenApi = new TokenApi();
       await tokenApi.initialise();
       
-      let refreshTokens = await tokenApi.findRefreshTokens(
-      {
-        userId: userId
-      });
+      let refreshTokens = await tokenApi.findRefreshTokens({ userId: userId });
       
       req.log.debug(`${refreshTokens.length} refresh token found for ${userId}`);
 
@@ -161,16 +205,16 @@ export default class AuthRoutes {
         await userApi.initialise();
         
         let user = await userApi.findOne({_id: userId});
-  
         assert.object(user, `User for ${userId}`);
         
-        delete user.password;
+        let safeUser = user.toObject();
+        delete safeUser.password;
         
-        req.log.debug(user, "Loaded user record from db");
+        req.log.debug(safeUser, "Loaded user record from db");
         
         let token = AuthRoutes._createToken(user, ["admin"]);
         res.cookie("access_token", token);
-        res.status(200).send({user: user, accessToken: token});
+        res.send({ user: safeUser, accessToken: token, refreshToken: refreshToken });
         
         req.log.debug(`Access token (re)issued for user ${user.email}`);
       }
@@ -317,7 +361,8 @@ export default class AuthRoutes {
         await emailApi.sendResetPasswordEmail(safeUser, resetTokenDb.resetToken);
   
         req.log.info(`Password reset email generated & sent to ${user.email}`);
-      } else
+      }
+      else
         req.log.info(`No user account found for ${email}`);
       
       res.sendStatus(204);

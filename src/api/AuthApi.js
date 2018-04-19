@@ -26,7 +26,7 @@ export default class AuthApi {
   } ;
   
   static authenticateUser = (model) => {
-    return AuthApi._fetchWrapper("post", "/api/auth/login", model);
+    return AuthApi._fetchWrapper("post", "/api/auth/signin", model);
   };
 
   static authenticateUserAd = () => {
@@ -48,6 +48,10 @@ export default class AuthApi {
   static getAccessToken = (userId, refreshToken) => {
     return AuthApi._fetchWrapper("post", "/api/auth/refresh", { userId: userId, refreshToken: refreshToken });
   };
+  
+  static signOut = (userId, refreshToken) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/signout", { userId: userId, refreshToken: refreshToken });
+  }
 }
 
 

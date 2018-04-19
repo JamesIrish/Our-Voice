@@ -63,8 +63,9 @@ export default class UserApi {
 
   actions = {
     created: "created",
-    loginSuccess: "login_success",
-    loginFailure: "login_failure",
+    signInSuccess: "signin_success",
+    signInFailure: "signin_failure",
+    signOutSuccess: "signout_success",
     pwResetRequest: "password_reset_request",
     pwResetSuccess: "password_reset_success"
   };

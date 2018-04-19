@@ -41,6 +41,22 @@ export function signInAdUser() {
   };
 }
 
+export function signOutSuccess(auth) {
+  return { type: types.SIGN_OUT_SUCCESS};
+}
+export function signOutError(error) {
+  return { type: types.SIGN_OUT_ERROR, error: error };
+}
+
+export function signOutUser(userId, refreshToken) {
+  return function(dispatch) {
+    dispatch({ type: types.AUTH_LOADING });
+    return AuthApi.signOut(userId, refreshToken)
+      .then(() => dispatch(signOutSuccess()))
+      .catch(error => dispatch(signOutError(error)));
+  };
+}
+
 export function refreshTokenSuccess(auth) {
   return { type: types.REFRESH_TOKEN_SUCCESS, auth: auth };
 }

@@ -20,6 +20,12 @@ export default function snackReducer(state = initialState.snack, action) {
       
     case types.SIGN_IN_ERROR:
       return { ...state, snackOpen: true, snackMessage: "Error signing in, do you have an account?" };
+  
+    case types.SIGN_OUT_SUCCESS:
+      return { ...state, snackOpen: true, snackMessage: "You have been signed out." };
+  
+    case types.SIGN_OUT_ERROR:
+      return { ...state, snackOpen: true, snackMessage: "Error signing out." };
       
     case types.FORGOTTEN_COMPLETE:
       return { ...state, snackOpen: true, snackMessage: "Instructions have been emailed to you." };

@@ -19,6 +19,7 @@ import {bindActionCreators} from "redux";
 import jwtDecode from "jwt-decode";
 import * as SnackActions from "../actions/snackActions";
 import * as LoginActions from "../actions/authActions";
+import AppBarMenu from "./admin/AppBarMenu";
 
 const styles = theme => ({
   root: {
@@ -53,7 +54,8 @@ class Layout extends React.Component {
       user: props.user,
       drawerOpen: false,
       snackOpen: props.snackOpen,
-      snackMessage: props.snackMessage
+      snackMessage: props.snackMessage,
+      menuAnchorEl: null
     };
   }
   
@@ -93,7 +95,7 @@ class Layout extends React.Component {
   render() {
     const { classes, children } = this.props;
     const { loading, user, drawerOpen, snackOpen, snackMessage } = this.state;
-
+    
     return (
       <div className={classes.root}>
         <AppBar position="static">
@@ -105,8 +107,9 @@ class Layout extends React.Component {
               <Link to="/" className={classes.titleLink}>Our Voice</Link>
             </Typography>
             {user
-              ? (<Button color="inherit" component={Link} to="/account" disabled={loading}>{user.displayName}</Button>)
-              : (<Button color="inherit" component={Link} to="/signin" disabled={loading}>Sign in</Button>)}
+              ? ( <AppBarMenu/> )
+              : ( <Button color="inherit" component={Link} to="/signin" disabled={loading}>Sign in</Button> )
+            }
           </Toolbar>
         </AppBar>
         <Drawer open={drawerOpen} onClose={this.toggleDrawer(false)}>
