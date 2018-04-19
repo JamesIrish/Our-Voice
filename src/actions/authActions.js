@@ -85,8 +85,8 @@ export function checkPasswordResetToken(resetPasswordToken) {
   };
 }
 
-export function resetComplete() {
-  return { type: types.PASSWORD_RESET_COMPLETE };
+export function resetComplete(info) {
+  return { type: types.PASSWORD_RESET_COMPLETE, info: info };
 }
 export function resetError(error) {
   return { type: types.PASSWORD_RESET_ERROR, error: error };
@@ -95,10 +95,7 @@ export function resetPassword(passwordResetToken, newPassword) {
   return function(dispatch) {
     dispatch({ type: types.AUTH_LOADING });
     return AuthApi.resetPassword(passwordResetToken, newPassword)
-      .then(info => {
-        console.log("Reset password complete", info);
-        dispatch(resetComplete());
-      })
+      .then(info => dispatch(resetComplete(info)))
       .catch(error => dispatch(resetError(error)));
   };
 }

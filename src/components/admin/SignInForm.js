@@ -130,8 +130,8 @@ class SignInForm extends React.Component {
             </Typography>
 
             <TextField
-              required
               autoFocus
+              required
               id="email"
               label="Email address"
               className={classes.textField}

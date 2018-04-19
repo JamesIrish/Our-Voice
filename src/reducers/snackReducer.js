@@ -22,7 +22,7 @@ export default function snackReducer(state = initialState.snack, action) {
       return { ...state, snackOpen: true, snackMessage: "Error signing in, do you have an account?" };
       
     case types.FORGOTTEN_COMPLETE:
-      return { ...state, snackOpen: true, snackMessage: "Done, if you have an account an email with instructions has been sent to you." };
+      return { ...state, snackOpen: true, snackMessage: "Instructions have been emailed to you." };
       
     case types.PASSWORD_RESET_COMPLETE:
       return { ...state, snackOpen: true, snackMessage: "Password reset. Please sign in." };

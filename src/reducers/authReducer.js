@@ -28,14 +28,19 @@ export default function authenticationReducer(state = initialState.auth, action)
     case types.CHECK_PASSWORD_RESET_TOKEN_ERROR:
     case types.PASSWORD_RESET_ERROR:
       return { ...initialState.auth, error: action.error };
-  
+      
     case types.CHECK_PASSWORD_RESET_TOKEN_SUCCESS:
       return { ...initialState.auth, passwordResetTokenOkay: action.info.okay, passwordResetTokenError: action.info.reason };
   
     case types.PASSWORD_RESET_COMPLETE:
-      browserHistory.push("/signin");
-      return { ...initialState.auth };
-
+      if (action.info && action.info.okay === true)
+      {
+        browserHistory.push("/signin");
+        return { ...initialState.auth };
+      }
+      else
+        return { ...initialState.auth, passwordResetTokenOkay: action.info.okay, passwordResetTokenError: action.info.reason };
+      
     default:
       return state;
   }

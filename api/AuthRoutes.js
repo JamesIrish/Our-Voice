@@ -386,11 +386,11 @@ export default class AuthRoutes {
         {
           req.log.warn(`Token ${passwordResetToken} has expired`);
           tokenRecord.remove();
-          res.status(401).send("Token expired");
+          res.send({ okay: false, reason: "Token expired" });
         }
         else
         {
-          req.log.debug({token: tokenRecord.toObject()}, "Token loaded from database");
+          req.log.debug({ token: tokenRecord.toObject() }, "Token loaded from database");
   
           let userApi = new UserApi();
           await userApi.initialise();
@@ -400,7 +400,7 @@ export default class AuthRoutes {
           {
             let safeUser = user.toObject();
             delete safeUser.password;
-            req.log.debug({user: safeUser}, "User loaded from database");
+            req.log.debug({ user: safeUser }, "User loaded from database");
   
             user.password = await bcrypt.hash(newPassword, 10);
             user.actions = [...user.actions, {action: userApi.actions.pwResetSuccess}];
@@ -411,18 +411,18 @@ export default class AuthRoutes {
   
             req.log.info(`Password reset successful for ${user.email}`);
   
-            res.send("Password reset successful");
+            res.send({ okay: true, reason: "Password reset successful" });
           }
           else
           {
             req.log.error(`Unable to find user ${tokenRecord.userId}`);
-            res.status(500).send("Unable to find user record for this password reset token");
+            res.send({ okay: false, reason: "Unable to find user record for this password reset token" });
           }
         }
       }
       else
       {
-        res.status(401).send("Unable to find password reset token");
+        res.send({ okay: false, reason: "Unable to find password reset token" });
       }
     }
     catch (err)

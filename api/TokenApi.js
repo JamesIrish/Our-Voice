@@ -26,7 +26,11 @@ let passwordResetTokenSchema = mongoose.Schema(
     index: true
   },
   expires: { type: Date, required: true },
-  resetToken: { type: String, required: true }
+  resetToken: {
+    type: String,
+    required: true,
+    index: true
+  }
 }, { timestamps: true });
 
 export default class TokenApi {
