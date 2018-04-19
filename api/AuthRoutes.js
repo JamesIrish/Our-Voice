@@ -385,6 +385,7 @@ export default class AuthRoutes {
         if (expired)
         {
           req.log.warn(`Token ${passwordResetToken} has expired`);
+          tokenRecord.remove();
           res.status(401).send("Token expired");
         }
         else
