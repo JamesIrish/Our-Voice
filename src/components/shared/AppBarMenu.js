@@ -17,7 +17,7 @@ class AppBarMenu extends React.Component {
     super(props);
   
     this.state = {
-      loading: false,
+      loading: props.loading,
       user: props.user,
       refreshToken: props.refreshToken,
       menuAnchorEl: null
@@ -26,7 +26,7 @@ class AppBarMenu extends React.Component {
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      loading: false,
+      loading: nextProps.loading,
       user: nextProps.user,
       refreshToken: nextProps.refreshToken
     });
@@ -56,7 +56,7 @@ class AppBarMenu extends React.Component {
             <div>
               <Button color="inherit" disabled={loading}
                       aria-owns={menuOpen ? "menu-appbar" : null} aria-haspopup="true"
-                      onClick={this.handleMenuOpen}>{user.displayName}</Button>
+                      onClick={this.handleMenuOpen}>{loading ? (<span>....</span>) : user.displayName}</Button>
               <Menu
                 id="menu-appbar"
                 anchorEl={menuAnchorEl}
@@ -78,7 +78,7 @@ class AppBarMenu extends React.Component {
           )
           :
           (
-            <Button color="inherit" component={Link} to="/signin" disabled={loading}>Sign in</Button>
+            <Button color="inherit" component={Link} to="/signin" disabled={loading}>{loading ? (<span>....</span>) : (<span>Sign in</span>)}</Button>
           )
         }
       </div>

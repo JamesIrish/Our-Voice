@@ -7,6 +7,7 @@ import DocumentTitle from "react-document-title";
 import { withStyles } from "material-ui/styles";
 import Card, { CardContent } from "material-ui/Card";
 import * as AuthActions from "../../actions/authActions";
+import {Divider, Grid, List, ListItem, ListItemText, Menu, MenuItem, Typography} from "material-ui";
 
 const styles = theme => ({
   container: {
@@ -17,18 +18,16 @@ const styles = theme => ({
     flexWrap: "wrap",
     textAlign: "center"
   },
+  root: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    alignContent: "stretch"
+  },
   card: {
-    minWidth: 400,
-    maxWidth: 400
-  },
-  title: {
-    marginBottom: theme.spacing.unit,
-    fontSize: 14
-  },
-  textField: {
-    marginLeft: 0,
-    marginRight: 0,
-    width: 280
+  
   }
 });
 
@@ -39,27 +38,63 @@ class AccountPage extends React.Component {
     
     this.state = {
       configLoading: props.configLoading,
-      activeDirectoryEnabled: props.activeDirectoryEnabled
+      activeDirectoryEnabled: props.activeDirectoryEnabled,
+      auth: props.auth
     };
   }
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       configLoading: nextProps.configLoading,
-      activeDirectoryEnabled: nextProps.activeDirectoryEnabled
+      activeDirectoryEnabled: nextProps.activeDirectoryEnabled,
+      auth: nextProps.auth
     });
+  };
+  
+  
+  
+  signOut = () => {
+    this.props.actions.signOutUser(this.state.auth.user._id, this.state.auth.refreshToken);
   };
   
   render() {
     const { classes } = this.props;
-    const { activeDirectoryEnabled, configLoading } = this.state;
+    const { activeDirectoryEnabled, configLoading, auth } = this.state;
+    const loading = configLoading || auth.loading;
     
     return (
       <DocumentTitle title="Our Voice :. My Account">
         <div className={classes.container}>
-          <Card className={classes.card}>
-            <CardContent/>
-          </Card>
+          <Grid container className={classes.root} spacing={16}>
+            <Grid item style={{flexBasis: "auto"}}>
+              <Card className={classes.card}>
+                <CardContent>
+                  <List>
+                    <ListItem button disabled={loading} component="a" href="#simple-list">
+                      <ListItemText primary="Profile" />
+                    </ListItem>
+                    <ListItem button disabled={loading} component="a" href="#simple-list">
+                      <ListItemText primary="Password" />
+                    </ListItem>
+                    <ListItem button disabled={loading} component="a" href="#simple-list">
+                      <ListItemText primary="Activity" />
+                    </ListItem>
+                    <Divider/>
+                    <ListItem button disabled={loading} onClick={this.signOut}>
+                      <ListItemText primary="Sign Out" />
+                    </ListItem>
+                  </List>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={6}>
+              <Card className={classes.card}>
+                <CardContent>
+                  <Typography>Content</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </div>
       </DocumentTitle>
     );
@@ -70,7 +105,8 @@ AccountPage.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   configLoading: PropTypes.bool.isRequired,
-  activeDirectoryEnabled: PropTypes.bool.isRequired
+  activeDirectoryEnabled: PropTypes.bool.isRequired,
+  auth: PropTypes.object.isRequired
 };
 
 function getAdEnabled(state) {
@@ -82,6 +118,7 @@ function mapStateToProps(state) {
   return {
     configLoading: state.config.loading,
     activeDirectoryEnabled: getAdEnabled(state),
+    auth: state.auth
   };
 }
 

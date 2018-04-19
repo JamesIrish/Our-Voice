@@ -19,7 +19,7 @@ import {bindActionCreators} from "redux";
 import jwtDecode from "jwt-decode";
 import * as SnackActions from "../actions/snackActions";
 import * as LoginActions from "../actions/authActions";
-import AppBarMenu from "./admin/AppBarMenu";
+import AppBarMenu from "./shared/AppBarMenu";
 
 const styles = theme => ({
   root: {
@@ -50,7 +50,7 @@ class Layout extends React.Component {
     super(props);
     
     this.state = {
-      loading: false,
+      loading: props.loading,
       user: props.user,
       drawerOpen: false,
       snackOpen: props.snackOpen,
@@ -65,17 +65,21 @@ class Layout extends React.Component {
       const { cookies } = this.props;
       let access = cookies.get("access_token");
       let refresh = cookies.get("refresh_token");
-      if (access && refresh) {
-        let decoded = jwtDecode(access);
-        this.setState({ loading: true, user: decoded.user });
-        this.props.actions.refreshToken(decoded.user._id, refresh);
+      if (access && refresh && access !== "j:null" && refresh !== "j:null") {
+        try {
+          let decoded = jwtDecode(access);
+          this.setState({ loading: true, user: decoded.user });
+          this.props.actions.refreshToken(decoded.user._id, refresh);
+        } catch(err) {
+          console.error("Error reading cookies", err);
+        }
       }
     }
   };
   
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      loading: false,
+      loading: nextProps.loading,
       user: nextProps.user,
       snackOpen: nextProps.snackOpen,
       snackMessage: nextProps.snackMessage
@@ -89,7 +93,7 @@ class Layout extends React.Component {
   };
   
   snackClose = () => {
-    setTimeout(this.props.actions.clearSnack(), 500);
+    setTimeout(() => this.props.actions.clearSnack(), 500);
   };
 
   render() {
