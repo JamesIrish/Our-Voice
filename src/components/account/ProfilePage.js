@@ -1,13 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {withRouter, Link} from "react-router";
+import {withRouter} from "react-router";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import DocumentTitle from "react-document-title";
 import { withStyles } from "material-ui/styles";
 import Card, { CardContent } from "material-ui/Card";
 import * as AuthActions from "../../actions/authActions";
-import {Divider, Grid, List, ListItem, ListItemText, Menu, MenuItem, Typography} from "material-ui";
+import {Grid, Typography} from "material-ui";
+import AccountNav from "../shared/AccountNav";
 
 const styles = theme => ({
   container: {
@@ -31,7 +32,7 @@ const styles = theme => ({
   }
 });
 
-class AccountPage extends React.Component {
+class ProfilePage extends React.Component {
   
   constructor(props) {
     super(props);
@@ -51,12 +52,6 @@ class AccountPage extends React.Component {
     });
   };
   
-  
-  
-  signOut = () => {
-    this.props.actions.signOutUser(this.state.auth.user._id, this.state.auth.refreshToken);
-  };
-  
   render() {
     const { classes } = this.props;
     const { activeDirectoryEnabled, configLoading, auth } = this.state;
@@ -69,28 +64,14 @@ class AccountPage extends React.Component {
             <Grid item style={{flexBasis: "auto"}}>
               <Card className={classes.card}>
                 <CardContent>
-                  <List>
-                    <ListItem button disabled={loading} component="a" href="#simple-list">
-                      <ListItemText primary="Profile" />
-                    </ListItem>
-                    <ListItem button disabled={loading} component="a" href="#simple-list">
-                      <ListItemText primary="Password" />
-                    </ListItem>
-                    <ListItem button disabled={loading} component="a" href="#simple-list">
-                      <ListItemText primary="Activity" />
-                    </ListItem>
-                    <Divider/>
-                    <ListItem button disabled={loading} onClick={this.signOut}>
-                      <ListItemText primary="Sign Out" />
-                    </ListItem>
-                  </List>
+                  <AccountNav/>
                 </CardContent>
               </Card>
             </Grid>
             <Grid item xs={6}>
               <Card className={classes.card}>
                 <CardContent>
-                  <Typography>Content</Typography>
+                  <Typography>Profile</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -101,7 +82,7 @@ class AccountPage extends React.Component {
   }
 }
 
-AccountPage.propTypes = {
+ProfilePage.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   configLoading: PropTypes.bool.isRequired,
@@ -128,4 +109,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(AccountPage)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(ProfilePage)));

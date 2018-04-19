@@ -6,7 +6,10 @@ import SignInForm from "./components/admin/SignInForm";
 import RegisterForm from "./components/admin/RegisterForm";
 import ForgottenForm from "./components/admin/ForgottenForm";
 import ResetForm from "./components/admin/ResetForm";
-import AccountPage from "./components/admin/AccountPage";
+import ProfilePage from "./components/account/ProfilePage";
+import ActivityPage from "./components/account/ActivityPage";
+import PasswordPage from "./components/account/PasswordPage";
+import EnsureSignedInContainer from "./components/EnsureSignedInContainer";
 
 export default (
   <Route path="/" component={App}>
@@ -15,6 +18,14 @@ export default (
     <Route path="register" component={RegisterForm}/>
     <Route path="forgotten" component={ForgottenForm}/>
     <Route path="reset/:resetToken" component={ResetForm}/>
-    <Route path="account" component={AccountPage}/>
+  
+    <Route component={EnsureSignedInContainer}>
+    
+      <Route path="account" component={ProfilePage}/>
+      <Route path="account/profile" component={ProfilePage}/>
+      <Route path="account/activity" component={ActivityPage}/>
+      <Route path="account/password" component={PasswordPage}/>
+      
+    </Route>
   </Route>
 );

@@ -12,6 +12,7 @@ import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
 import * as SnackActions from "../../actions/snackActions";
 import * as AuthActions from "../../actions/authActions";
+import _get from "lodash/get";
 
 const styles = theme => ({
   container: {
@@ -87,7 +88,8 @@ class SignInForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.actions.signInUser(this.state.credentials);
+    let redirect = _get(this.props.location, "query.redirect", null);
+    this.props.actions.signInUser(this.state.credentials, redirect);
   };
   onSubmitAd = (event) => {
     event.preventDefault();
@@ -190,6 +192,7 @@ SignInForm.propTypes = {
   errors: PropTypes.object,
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   configLoading: PropTypes.bool.isRequired,
   activeDirectoryEnabled: PropTypes.bool.isRequired,
   authLoading: PropTypes.bool.isRequired,

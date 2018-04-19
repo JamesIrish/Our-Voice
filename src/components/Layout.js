@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router";
 import { withCookies } from "react-cookie";
 import { withStyles } from "material-ui/styles";
+import {withRouter} from "react-router";
 import Drawer from "material-ui/Drawer";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
@@ -60,6 +61,7 @@ class Layout extends React.Component {
   }
   
   componentWillMount = () => {
+    this.checkForRedirection(this.props);
     if (!this.state.user)
     {
       const { cookies } = this.props;
@@ -78,12 +80,21 @@ class Layout extends React.Component {
   };
   
   componentWillReceiveProps = (nextProps) => {
+    this.checkForRedirection(nextProps);
     this.setState({
       loading: nextProps.loading,
       user: nextProps.user,
       snackOpen: nextProps.snackOpen,
       snackMessage: nextProps.snackMessage
     });
+  };
+  
+  checkForRedirection = (props) => {
+    if (props.redirectTo) {
+      let destination = props.redirectTo;
+      this.props.router.push(destination);
+      this.props.actions.clearRedirect();
+    }
   };
   
   _snackDelay = 4000;
@@ -144,7 +155,10 @@ Layout.propTypes = {
   snackMessage: PropTypes.string,
   cookies: PropTypes.object.isRequired,
   user: PropTypes.object,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  redirectTo: PropTypes.string,
+  loading: PropTypes.bool,
+  router: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -152,7 +166,8 @@ function mapStateToProps(state) {
     loading: state.auth.loading,
     user: state.auth.user,
     snackOpen: state.snack.snackOpen,
-    snackMessage: state.snack.snackMessage
+    snackMessage: state.snack.snackMessage,
+    redirectTo: state.auth.redirectTo
   };
 }
 
@@ -162,4 +177,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withCookies(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Layout)));
+export default withCookies(connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Layout))));

@@ -2,6 +2,10 @@ import * as types from "./actionTypes";
 import AuthApi from "../api/AuthApi";
 import UserApi from "../api/UserApi";
 
+export function clearRedirect() {
+  return { type: types.CLEAR_REDIRECTION };
+}
+
 export function createUserSuccess(info) {
   return { type: types.CREATE_USER_SUCCESS, info: info };
 }
@@ -17,18 +21,19 @@ export function createUser(newUser) {
   };
 }
 
-export function signInSuccess(auth) {
+export function signInSuccess(auth, redirect) {
+  if (redirect) return { type: types.SIGN_IN_SUCCESS, auth: auth, redirect: redirect };
   return { type: types.SIGN_IN_SUCCESS, auth: auth };
 }
 export function signInError(error) {
   return { type: types.SIGN_IN_ERROR, error: error };
 }
 
-export function signInUser(credentials) {
+export function signInUser(credentials, redirect) {
   return function(dispatch) {
     dispatch({ type: types.AUTH_LOADING });
     return AuthApi.authenticateUser(credentials)
-      .then(auth => dispatch(signInSuccess(auth)))
+      .then(auth => dispatch(signInSuccess(auth, redirect)))
       .catch(error => dispatch(signInError(error)));
   };
 }

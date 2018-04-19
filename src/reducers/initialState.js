@@ -13,7 +13,8 @@ export default {
     accessToken: null,
     refreshToken: null,
     passwordResetTokenOkay: null,
-    passwordResetTokenError: null
+    passwordResetTokenError: null,
+    redirectTo: null
   },
   
   snack: {

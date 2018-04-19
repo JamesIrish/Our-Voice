@@ -13,10 +13,14 @@ export default function authenticationReducer(state = initialState.auth, action)
       return { ...initialState.auth };
     }
     
+    case types.CLEAR_REDIRECTION:
+      return { ...state, redirectTo: null };
+    
     case types.SIGN_IN_SUCCESS:
     case types.FORGOTTEN_COMPLETE:
     {
-      browserHistory.push("/");
+      if (action.redirect) return { ...initialState.auth, ...action.auth, redirectTo: action.redirect };
+      //browserHistory.push(action.redirect || "/");
       return { ...initialState.auth, ...action.auth };
     }
     case types.REFRESH_TOKEN_SUCCESS:

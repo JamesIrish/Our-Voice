@@ -35,7 +35,7 @@ class HomePage extends React.Component {
     const { user, authLoading } = this.state;
     const Greeting = () => {
       if (authLoading)
-        return (<Typography gutterBottom noWrap>Signing you in, please wait a moment...</Typography>);
+        return (<Typography gutterBottom noWrap>Loading, please wait a moment...</Typography>);
       else {
         return user ? (
           <Typography gutterBottom noWrap>Welcome back {user.firstName}!</Typography>
