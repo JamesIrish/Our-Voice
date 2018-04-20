@@ -1,112 +1,146 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {withRouter} from "react-router";
-import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import DocumentTitle from "react-document-title";
 import { withStyles } from "material-ui/styles";
-import Card, { CardContent } from "material-ui/Card";
-import * as AuthActions from "../../actions/authActions";
-import {Grid, Typography} from "material-ui";
-import AccountNav from "../shared/AccountNav";
+import Typography from "material-ui/Typography";
+import List, { ListItem, ListItemText } from "material-ui/List";
+import Avatar from "material-ui/Avatar";
+import Icon from "material-ui/Icon";
+import moment from "moment";
+import * as userActions from "../../../api/UserActions";
+import _orderBy from "lodash/orderBy";
 
 const styles = theme => ({
-  container: {
-    margin: theme.spacing.unit*3,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    flexWrap: "wrap",
-    textAlign: "center"
-  },
   root: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    alignContent: "stretch"
+    width: "100%",
+    backgroundColor: theme.palette.background.paper,
   },
-  card: {
-  
-  }
 });
 
 class ActivityPage extends React.Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      configLoading: props.configLoading,
-      activeDirectoryEnabled: props.activeDirectoryEnabled,
       auth: props.auth
     };
   }
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
-      configLoading: nextProps.configLoading,
-      activeDirectoryEnabled: nextProps.activeDirectoryEnabled,
       auth: nextProps.auth
     });
   };
-  
+
   render() {
     const { classes } = this.props;
-    const { activeDirectoryEnabled, configLoading, auth } = this.state;
-    const loading = configLoading || auth.loading;
-    
+    const { auth } = this.state;
+    const loading = auth.loading;
+
+    const Created = (props) => (
+      <ListItem>
+        <Avatar>
+          <Icon>person_add</Icon>
+        </Avatar>
+        <ListItemText primary="Account created" secondary={moment(props.action.date).calendar()} />
+      </ListItem>
+    );
+    const SignInSuccess = (props) => (
+      <ListItem>
+        <Avatar>
+          <Icon>lock_open</Icon>
+        </Avatar>
+        <ListItemText primary="Signed in successfully" secondary={moment(props.action.date).calendar()} />
+      </ListItem>
+    );
+    const SignInFailure = (props) => (
+      <ListItem>
+        <Avatar>
+          <Icon>block</Icon>
+        </Avatar>
+        <ListItemText primary="Sign in failed" secondary={moment(props.action.date).calendar()} />
+      </ListItem>
+    );
+    const SignOutSuccess = (props) => (
+      <ListItem>
+        <Avatar>
+          <Icon>lock</Icon>
+        </Avatar>
+        <ListItemText primary="Signed out" secondary={moment(props.action.date).calendar()} />
+      </ListItem>
+    );
+    const PasswordResetRequested = (props) => (
+      <ListItem>
+        <Avatar>
+          <Icon>vpn_key</Icon>
+        </Avatar>
+        <ListItemText primary="Password reset requested" secondary={moment(props.action.date).calendar()} />
+      </ListItem>
+    );
+    const PasswordResetSuccess = (props) => (
+      <ListItem>
+        <Avatar>
+          <Icon>verified_user</Icon>
+        </Avatar>
+        <ListItemText primary="Password reset successfully" secondary={moment(props.action.date).calendar()} />
+      </ListItem>
+    );
+
+    /*
+    actions = {
+      created: "created",
+      signInSuccess: "signin_success",
+      signInFailure: "signin_failure",
+      signOutSuccess: "signout_success",
+      pwResetRequest: "password_reset_request",
+      pwResetSuccess: "password_reset_success"
+    };
+     */
+
+    const switchAction = (value, idx) => {
+      let key = `Action_${idx+1}`;
+      switch(value.action) {
+        case userActions.created:
+          return (<Created key={key} action={value}/>);
+        case userActions.signin_success:
+          return (<SignInSuccess key={key} action={value}/>);
+        case userActions.signin_failure:
+          return (<SignInFailure key={key} action={value}/>);
+        case userActions.signout_success:
+          return (<SignOutSuccess key={key} action={value}/>);
+        case userActions.password_reset_request:
+          return (<PasswordResetRequested key={key} action={value}/>);
+        case userActions.password_reset_success:
+          return (<PasswordResetSuccess key={key} action={value}/>);
+        default:
+          return null;
+      }
+    };
+
     return (
-      <DocumentTitle title="Our Voice :. My Account">
-        <div className={classes.container}>
-          <Grid container className={classes.root} spacing={16}>
-            <Grid item style={{flexBasis: "auto"}}>
-              <Card className={classes.card}>
-                <CardContent>
-                  <AccountNav/>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={6}>
-              <Card className={classes.card}>
-                <CardContent>
-                  <Typography>Activity</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </div>
-      </DocumentTitle>
+      <div className={classes.root}>
+        <Typography variant="subheading" gutterBottom align="left">Recent activity on your account.</Typography>
+        <Typography variant="caption" gutterBottom align="left">If anything seems unusual or you have any concerns please contact us at <a href="mailto:support@our-voice.io">support@our-voice.io</a>.</Typography>
+
+        <List>
+          {_orderBy(auth.user.actions, ["date"], ["desc"]).map((value, key) => switchAction(value, key))}
+        </List>
+      </div>
+
     );
   }
 }
 
 ActivityPage.propTypes = {
   classes: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired,
-  configLoading: PropTypes.bool.isRequired,
-  activeDirectoryEnabled: PropTypes.bool.isRequired,
   auth: PropTypes.object.isRequired
 };
 
-function getAdEnabled(state) {
-  if (!state.config) return false;
-  if (!state.config.activeDirectory) return false;
-  return state.config.activeDirectory.enabled;
-}
 function mapStateToProps(state) {
   return {
-    configLoading: state.config.loading,
-    activeDirectoryEnabled: getAdEnabled(state),
     auth: state.auth
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(Object.assign({}, AuthActions), dispatch)
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(ActivityPage)));
+export default connect(mapStateToProps, null)(withStyles(styles)(ActivityPage));

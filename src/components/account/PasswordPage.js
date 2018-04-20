@@ -3,12 +3,9 @@ import PropTypes from "prop-types";
 import {withRouter} from "react-router";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import DocumentTitle from "react-document-title";
 import { withStyles } from "material-ui/styles";
-import Card, { CardContent } from "material-ui/Card";
 import * as AuthActions from "../../actions/authActions";
-import {Grid, Typography} from "material-ui";
-import AccountNav from "../shared/AccountNav";
+import Typography from "material-ui/Typography";
 
 const styles = theme => ({
   container: {
@@ -28,22 +25,22 @@ const styles = theme => ({
     alignContent: "stretch"
   },
   card: {
-  
+
   }
 });
 
 class PasswordPage extends React.Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
       configLoading: props.configLoading,
       activeDirectoryEnabled: props.activeDirectoryEnabled,
       auth: props.auth
     };
   }
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       configLoading: nextProps.configLoading,
@@ -51,33 +48,15 @@ class PasswordPage extends React.Component {
       auth: nextProps.auth
     });
   };
-  
+
   render() {
     const { classes } = this.props;
     const { activeDirectoryEnabled, configLoading, auth } = this.state;
     const loading = configLoading || auth.loading;
-    
+
     return (
-      <DocumentTitle title="Our Voice :. My Account">
-        <div className={classes.container}>
-          <Grid container className={classes.root} spacing={16}>
-            <Grid item style={{flexBasis: "auto"}}>
-              <Card className={classes.card}>
-                <CardContent>
-                  <AccountNav/>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={6}>
-              <Card className={classes.card}>
-                <CardContent>
+
                   <Typography>Password</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </div>
-      </DocumentTitle>
     );
   }
 }

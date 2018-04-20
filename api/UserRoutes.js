@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import Helpers from "./Helpers";
 import EmailApi from "./EmailApi";
 import UserApi from "./UserApi";
+import * as userActions from "./UserActions";
 
 export default class UserRoutes {
 
@@ -31,7 +32,7 @@ export default class UserRoutes {
       let userApi = new UserApi();
       await userApi.initialise();
 
-      userModel.actions = [{ action: userApi.actions.created }];
+      userModel.actions = [{ action: userActions.created }];
 
       await userApi.createUser(userModel);
 

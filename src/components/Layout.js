@@ -1,10 +1,8 @@
 import React from "react";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
-import { Link } from "react-router";
-import { withCookies } from "react-cookie";
+import { Link, withRouter } from "react-router";
 import { withStyles } from "material-ui/styles";
-import {withRouter} from "react-router";
 import Drawer from "material-ui/Drawer";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
@@ -17,7 +15,6 @@ import Divider from "material-ui/Divider";
 import Snackbar from "material-ui/Snackbar";
 import { mailFolderListItems, otherMailFolderListItems } from "./tileData";
 import {bindActionCreators} from "redux";
-import jwtDecode from "jwt-decode";
 import * as SnackActions from "../actions/snackActions";
 import * as LoginActions from "../actions/authActions";
 import AppBarMenu from "./shared/AppBarMenu";
@@ -46,10 +43,10 @@ const styles = theme => ({
 });
 
 class Layout extends React.Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
       loading: props.loading,
       user: props.user,
@@ -59,9 +56,10 @@ class Layout extends React.Component {
       menuAnchorEl: null
     };
   }
-  
+
   componentWillMount = () => {
     this.checkForRedirection(this.props);
+    /*
     if (!this.state.user)
     {
       const { cookies } = this.props;
@@ -70,15 +68,16 @@ class Layout extends React.Component {
       if (access && refresh && access !== "j:null" && refresh !== "j:null") {
         try {
           let decoded = jwtDecode(access);
-          this.setState({ loading: true, user: decoded.user });
+          this.setState({ user: decoded.user });
           this.props.actions.refreshToken(decoded.user._id, refresh);
         } catch(err) {
           console.error("Error reading cookies", err);
         }
       }
     }
+    */
   };
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.checkForRedirection(nextProps);
     this.setState({
@@ -88,7 +87,7 @@ class Layout extends React.Component {
       snackMessage: nextProps.snackMessage
     });
   };
-  
+
   checkForRedirection = (props) => {
     if (props.redirectTo) {
       let destination = props.redirectTo;
@@ -96,13 +95,13 @@ class Layout extends React.Component {
       this.props.actions.clearRedirect();
     }
   };
-  
+
   _snackDelay = 4000;
-  
+
   toggleDrawer = (open) => () => {
     this.setState({ drawerOpen: open });
   };
-  
+
   snackClose = () => {
     setTimeout(() => this.props.actions.clearSnack(), 500);
   };
@@ -110,7 +109,7 @@ class Layout extends React.Component {
   render() {
     const { classes, children } = this.props;
     const { loading, user, drawerOpen, snackOpen, snackMessage } = this.state;
-    
+
     return (
       <div className={classes.root}>
         <AppBar position="static">
@@ -153,7 +152,6 @@ Layout.propTypes = {
   children: PropTypes.object.isRequired,
   snackOpen: PropTypes.bool.isRequired,
   snackMessage: PropTypes.string,
-  cookies: PropTypes.object.isRequired,
   user: PropTypes.object,
   actions: PropTypes.object.isRequired,
   redirectTo: PropTypes.string,
@@ -177,4 +175,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withCookies(connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Layout))));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Layout)));

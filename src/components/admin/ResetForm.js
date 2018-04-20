@@ -11,8 +11,6 @@ import * as SnackActions from "../../actions/snackActions";
 import * as LoginActions from "../../actions/authActions";
 import {has as _has} from "lodash/object";
 import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
-import TextField from "material-ui/TextField/TextField";
-import {isValidEmail} from "../../helpers/Validation";
 import _debounce from "lodash/debounce";
 
 const styles = theme => ({
@@ -43,7 +41,7 @@ class ResetForm extends React.Component {
 
   constructor(props) {
     super(props);
-  
+
     this.debouncedValidate = _debounce(this.validateField, 300);
 
     this.state = {
@@ -57,20 +55,20 @@ class ResetForm extends React.Component {
       error: props.error
     };
   }
-  
+
   componentDidMount = () => {
     let passwordResetToken = this.props.params.resetToken;
     this.props.actions.checkPasswordResetToken(passwordResetToken)
       .finally(() => this.setState({checking: false}));
   };
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       loading: nextProps.loading,
       error: nextProps.error
     });
   };
-  
+
   stateHasProp = (propPath) => {
     return _has(this.state, propPath);
   };
@@ -81,7 +79,7 @@ class ResetForm extends React.Component {
     const value = event.target.value;
     let credentials = Object.assign({}, this.state.credentials);
     credentials[field] = value;
-    
+
     return this.setState({ credentials: credentials }, () => { this.debouncedValidate(field, value); });
   };
 
@@ -93,10 +91,10 @@ class ResetForm extends React.Component {
         this.onSubmit(event);
     }
   };
-  
+
   validateField = (fieldName, value) => {
     let fieldValidationErrors = Object.assign({}, this.state.errors);
-    
+
     if (fieldName === "password")
     {
         if (value.length >= 8)
@@ -104,12 +102,12 @@ class ResetForm extends React.Component {
         else
           fieldValidationErrors[fieldName] = "should be at least 8 characters long";
     }
-    
+
     if (this.state.credentials.password !== this.state.credentials.confirmPassword)
       fieldValidationErrors.confirmPassword = "passwords do not match";
     else
       delete fieldValidationErrors.confirmPassword;
-    
+
     this.setState({errors: fieldValidationErrors});
   };
 
@@ -121,16 +119,16 @@ class ResetForm extends React.Component {
   render() {
     const { classes } = this.props;
     const { loading, checking, error } = this.state;
-    
+
     const hasPasswordError = this.stateHasProp("errors.password");
     const hasConfirmPasswordError = this.stateHasProp("errors.confirmPassword");
-    
+
     const saveButtonDisabled = loading || checking || hasPasswordError || hasConfirmPasswordError;
-    
+
     const fieldInputProps = {
-    
+
     };
-    
+
     const ErrorDisplay = () => { return (<Typography style={{marginTop: 60, marginBottom: 40, color: "red"}}>Error: {error}</Typography>);};
     const CheckingDisplay = () => { return (<Typography style={{marginTop: 60, marginBottom: 40}}>Please wait... checking details...</Typography>);};
     const Display = () => {
@@ -138,7 +136,7 @@ class ResetForm extends React.Component {
       if (checking) return CheckingDisplay();
       return null;
     };
-    
+
     return (
       <DocumentTitle title="Our Voice :. Reset your password">
       <div className={classes.container}>
@@ -150,7 +148,7 @@ class ResetForm extends React.Component {
                   <Typography className={classes.title} color="textSecondary" style={{textAlign: "left"}}>
                     Enter your new password
                   </Typography>
-        
+
                   <PasswordConfirmationArea
                     classes={classes}
                     fieldInputProps={fieldInputProps}
@@ -163,7 +161,7 @@ class ResetForm extends React.Component {
                     onChange={this.onChange}
                     onKeyDown={this.onKeyDown}
                     loading={loading}/>
-        
+
                   <Button color="primary"
                           disabled={saveButtonDisabled}
                           variant="raised"
@@ -195,7 +193,7 @@ function mapStateToProps(state) {
   let error = state.auth.error;
   if (state.auth.passwordResetTokenOkay === false)
     error = state.auth.passwordResetTokenError;
-  
+
   return {
     loading: state.auth.loading,
     error: error

@@ -1,9 +1,10 @@
 import React from "react";
 import {Link} from "react-router";
 import PropTypes from "prop-types";
-import {withStyles} from "material-ui/styles/index";
+import {withStyles} from "material-ui/styles";
 import {connect} from "react-redux";
-import {Button, Menu, MenuItem} from "material-ui";
+import Button from "material-ui/Button";
+import {Menu, MenuItem} from "material-ui/Menu";
 import * as AuthActions from "../../actions/authActions";
 import {bindActionCreators} from "redux";
 
@@ -12,10 +13,10 @@ const styles = theme => ({
 });
 
 class AppBarMenu extends React.Component {
-  
+
   constructor(props){
     super(props);
-  
+
     this.state = {
       loading: props.loading,
       user: props.user,
@@ -23,7 +24,7 @@ class AppBarMenu extends React.Component {
       menuAnchorEl: null
     };
   }
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       loading: nextProps.loading,
@@ -31,24 +32,24 @@ class AppBarMenu extends React.Component {
       refreshToken: nextProps.refreshToken
     });
   };
-  
+
   handleMenuOpen = event => {
     this.setState({ menuAnchorEl: event.currentTarget });
   };
   handleMenuClose = () => {
     this.setState({ menuAnchorEl: null });
   };
-  
+
   signOut = () => {
     this.props.actions.signOutUser(this.state.user._id, this.state.refreshToken);
     this.setState({ menuAnchorEl: null });
   };
-  
+
   render() {
     const { classes } = this.props;
     const { loading, user, menuAnchorEl } = this.state;
     const menuOpen = Boolean(menuAnchorEl);
-    
+
     return (
       <div className={classes.root}>
         {user ?
@@ -84,14 +85,15 @@ class AppBarMenu extends React.Component {
       </div>
     );
   }
-  
+
 }
 
 AppBarMenu.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   user: PropTypes.object,
-  refreshToken: PropTypes.string
+  refreshToken: PropTypes.string,
+  loading: PropTypes.bool
 };
 
 function mapStateToProps(state) {

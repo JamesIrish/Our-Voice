@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import PropTypes from "prop-types";
 import DocumentTitle from "react-document-title";
 import Typography from "material-ui/Typography";
-import {withStyles} from "material-ui/styles/index";
+import {withStyles} from "material-ui/styles";
 
 const styles = theme => ({
   container: {
@@ -13,23 +13,23 @@ const styles = theme => ({
 });
 
 class HomePage extends React.Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
       authLoading: props.authLoading,
       user: props.user
     };
   }
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       authLoading: nextProps.authLoading,
       user: nextProps.user
     });
   };
-  
+
   render() {
     const { classes } = this.props;
     const { user, authLoading } = this.state;

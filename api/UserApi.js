@@ -61,15 +61,6 @@ export default class UserApi {
     this.User = mongoose.model("user", userSchema);
   };
 
-  actions = {
-    created: "created",
-    signInSuccess: "signin_success",
-    signInFailure: "signin_failure",
-    signOutSuccess: "signout_success",
-    pwResetRequest: "password_reset_request",
-    pwResetSuccess: "password_reset_success"
-  };
-
   createUser = async (model) => {
     return await this.User.create(model);
   };
