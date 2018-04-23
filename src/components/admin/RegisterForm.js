@@ -162,11 +162,6 @@ class RegisterForm extends React.Component {
           fieldValidationErrors[fieldName] = "should be at least 3 characters long";
         break;
       case "password":
-        if (value.length >= 8)
-          delete fieldValidationErrors[fieldName];
-        else
-          fieldValidationErrors[fieldName] = "should be at least 8 characters long";
-        break;
       case "confirmPassword":
         if (this.state.newUser.password !== this.state.newUser.confirmPassword)
           fieldValidationErrors.confirmPassword = "passwords do not match";

@@ -1,3 +1,16 @@
 body {
   margin: 0;
 }
+
+.strengthRoot[aria-valuenow="20"] > .strengthBar {
+  background-color: red;
+}
+.strengthRoot[aria-valuenow="40"] > .strengthBar {
+  background-color: orange;
+}
+.strengthRoot[aria-valuenow="60"] > .strengthBar {
+  background-color: yellow;
+}
+.strengthRoot[aria-valuenow="80"] > .strengthBar {
+  background-color: green;
+}
