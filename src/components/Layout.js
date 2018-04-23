@@ -42,6 +42,7 @@ const styles = theme => ({
   }
 });
 
+
 class Layout extends React.Component {
 
   constructor(props) {
@@ -59,23 +60,6 @@ class Layout extends React.Component {
 
   componentWillMount = () => {
     this.checkForRedirection(this.props);
-    /*
-    if (!this.state.user)
-    {
-      const { cookies } = this.props;
-      let access = cookies.get("access_token");
-      let refresh = cookies.get("refresh_token");
-      if (access && refresh && access !== "j:null" && refresh !== "j:null") {
-        try {
-          let decoded = jwtDecode(access);
-          this.setState({ user: decoded.user });
-          this.props.actions.refreshToken(decoded.user._id, refresh);
-        } catch(err) {
-          console.error("Error reading cookies", err);
-        }
-      }
-    }
-    */
   };
 
   componentWillReceiveProps = (nextProps) => {

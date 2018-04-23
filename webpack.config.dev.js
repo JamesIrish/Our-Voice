@@ -20,8 +20,6 @@ export default {
   plugins: [
     //new webpack.IgnorePlugin(/node-sspi/),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.DedupePlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ],

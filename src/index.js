@@ -34,7 +34,6 @@ let stateWithAuth = Object.assign({}, initialState, { auth: authWithCookies });
 
 // Pass that initial state into Redux
 const store = configureStore(stateWithAuth);
-console.log(store.getState());
 store.dispatch(loadConfig());
 
 render(

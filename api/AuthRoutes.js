@@ -46,6 +46,8 @@ export default class AuthRoutes {
   static _createToken = (userModel, rolesArray) => {
     let safeUserModel = Object.assign({}, userModel);
     delete safeUserModel.password;
+    delete safeUserModel.actions;
+    delete safeUserModel.roles;
     let tokenModel = {
       "user": safeUserModel,
       "roles": rolesArray

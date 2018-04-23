@@ -10,7 +10,7 @@ import {MenuItem, MenuList} from "material-ui/Menu";
 import {withStyles} from "material-ui/styles";
 
 const styles = theme => ({
-  root: {
+  miRoot: {
     ...theme.typography.subheading,
     height: theme.spacing.unit * 3,
     boxSizing: "content-box",
@@ -27,7 +27,7 @@ const styles = theme => ({
       }
     },
   },
-  selected: {},
+  miSelected: {},
 
   primary: {},
   icon: {},
@@ -67,16 +67,16 @@ class AccountNav extends React.Component {
 
     return (
       <MenuList>
-        <MenuItem disabled={loading} component={Link} to="/account/profile" selected={isProfile} classes={{ root: classes.root, selected: classes.selected }}>
+        <MenuItem disabled={loading} component={Link} to="/account/profile" selected={isProfile} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
           <ListItemText classes={{ primary: classes.primary }} primary="Profile" />
         </MenuItem >
-        <MenuItem disabled={loading} component={Link} to="/account/avatar" selected={isAvatar} classes={{ root: classes.root, selected: classes.selected }}>
+        <MenuItem disabled={loading} component={Link} to="/account/avatar" selected={isAvatar} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
           <ListItemText classes={{ primary: classes.primary }} primary="Avatar" />
         </MenuItem >
-        <MenuItem disabled={loading} component={Link} to="/account/activity" selected={isActivity} classes={{ root: classes.root, selected: classes.selected }}>
+        <MenuItem disabled={loading} component={Link} to="/account/activity" selected={isActivity} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
           <ListItemText classes={{ primary: classes.primary }} primary="Activity" />
         </MenuItem >
-        <MenuItem disabled={loading} component={Link} to="/account/password" selected={isPassword} classes={{ root: classes.root, selected: classes.selected }}>
+        <MenuItem disabled={loading} component={Link} to="/account/password" selected={isPassword} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
           <ListItemText classes={{ primary: classes.primary }} primary="Password" />
         </MenuItem >
         <Divider/>
