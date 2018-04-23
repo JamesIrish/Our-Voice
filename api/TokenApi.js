@@ -5,10 +5,6 @@ let Schema = mongoose.Schema;
 
 let refreshTokenSchema = mongoose.Schema(
 {
-  _id: {
-    type: Schema.Types.ObjectId,
-    default: new mongoose.Types.ObjectId
-  },
   userId: { type: Schema.Types.ObjectId, required: true },
   expires: { type: Date, required: true },
   refreshToken: { type: String, required: true }
@@ -16,10 +12,6 @@ let refreshTokenSchema = mongoose.Schema(
 
 let passwordResetTokenSchema = mongoose.Schema(
 {
-  _id: {
-    type: Schema.Types.ObjectId,
-    default: new mongoose.Types.ObjectId
-  },
   userId: {
     type: Schema.Types.ObjectId,
     required: true,

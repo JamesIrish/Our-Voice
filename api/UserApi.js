@@ -16,10 +16,6 @@ let userActionSchema = mongoose.Schema({
 });
 
 let userSchema = mongoose.Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    default: new mongoose.Types.ObjectId
-  },
   isActiveDirectory: {
     type: Boolean,
     default: false,

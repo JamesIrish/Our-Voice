@@ -5,30 +5,20 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as AuthActions from "../../actions/authActions";
 import Divider from "material-ui/Divider";
-import ListItemText from "material-ui/List";
-import {MenuItem, MenuList} from "material-ui/Menu";
-import {withStyles} from "material-ui/styles";
+import { MenuList, MenuItem } from "material-ui/Menu";
+import Paper from "material-ui/Paper";
+import { withStyles } from "material-ui/styles";
+import { ListItemText } from "material-ui/List";
 
 const styles = theme => ({
-  miRoot: {
-    ...theme.typography.subheading,
-    height: theme.spacing.unit * 3,
-    boxSizing: "content-box",
-    width: "auto",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    paddingLeft: theme.spacing.unit * 2,
-    paddingRight: theme.spacing.unit * 2,
-    "&$selected": {
+  menuItem: {
+    '&:focus': {
       backgroundColor: theme.palette.primary.main,
-      "& $primary, & $icon": {
+      '& $primary, & $icon': {
         color: theme.palette.common.white,
-      }
+      },
     },
   },
-  miSelected: {},
-
   primary: {},
   icon: {},
 });
@@ -67,23 +57,36 @@ class AccountNav extends React.Component {
 
     return (
       <MenuList>
-        <MenuItem disabled={loading} component={Link} to="/account/profile" selected={isProfile} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
-          <ListItemText classes={{ primary: classes.primary }} primary="Profile" />
+        <MenuItem className={classes.menuItem}>
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Sent mail" />
+        </MenuItem>
+        <MenuItem className={classes.menuItem}>
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Drafts" />
+        </MenuItem>
+        <MenuItem className={classes.menuItem}>
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Inbox" />
+        </MenuItem>
+      </MenuList>
+      /*
+      <MenuList>
+        <MenuItem disabled={loading} component={Link} to="/account/profile" selected={isProfile}>
+          <ListItemText primary="Profile" />
         </MenuItem >
-        <MenuItem disabled={loading} component={Link} to="/account/avatar" selected={isAvatar} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
-          <ListItemText classes={{ primary: classes.primary }} primary="Avatar" />
+        <MenuItem disabled={loading} component={Link} to="/account/avatar" selected={isAvatar}>
+          <ListItemText primary="Avatar" />
         </MenuItem >
-        <MenuItem disabled={loading} component={Link} to="/account/activity" selected={isActivity} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
-          <ListItemText classes={{ primary: classes.primary }} primary="Activity" />
+        <MenuItem disabled={loading} component={Link} to="/account/activity" selected={isActivity}>
+          <ListItemText primary="Activity" />
         </MenuItem >
-        <MenuItem disabled={loading} component={Link} to="/account/password" selected={isPassword} classes={{ root: classes.miRoot, selected: classes.miSelected }}>
-          <ListItemText classes={{ primary: classes.primary }} primary="Password" />
+        <MenuItem disabled={loading} component={Link} to="/account/password" selected={isPassword}>
+          <ListItemText primary="Password" />
         </MenuItem >
         <Divider/>
         <MenuItem disabled={loading} onClick={this.signOut}>
           <ListItemText primary="Sign Out" />
         </MenuItem>
       </MenuList>
+      */
     );
   }
 }

@@ -56,7 +56,7 @@ class AppBarMenu extends React.Component {
             <div>
               <Button color="inherit" disabled={loading}
                       aria-owns={menuOpen ? "menu-appbar" : null} aria-haspopup="true"
-                      onClick={this.handleMenuOpen}>{loading ? (<span>....</span>) : user.displayName}</Button>
+                      onClick={this.handleMenuOpen}>{loading ? (<span>....</span>) : user.displayName || ""}</Button>
               <Menu
                 id="menu-appbar"
                 anchorEl={menuAnchorEl}
