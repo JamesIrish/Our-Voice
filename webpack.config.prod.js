@@ -21,8 +21,8 @@ export default {
     new ExtractTextPlugin("styles.css"),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
-    new BundleAnalyzerPlugin()
+    new webpack.optimize.UglifyJsPlugin()
+    //new BundleAnalyzerPlugin()
   ],
   module: {
     loaders: [
