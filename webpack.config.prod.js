@@ -16,7 +16,11 @@ export default {
     contentBase: path.resolve(__dirname, "dist")
   },
   plugins: [
-    new webpack.DefinePlugin({ "process.env": { "NODE_ENV": "production" }}),
+    new webpack.DefinePlugin({
+      "process.env": {
+        "NODE_ENV": JSON.stringify("production")
+      }
+    }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new ExtractTextPlugin("styles.css"),
     new webpack.optimize.OccurrenceOrderPlugin(),
