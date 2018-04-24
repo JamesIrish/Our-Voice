@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {withStyles} from "material-ui";
 import {FormControl, FormHelperText} from "material-ui/Form";
-import {InputLabel} from "material-ui/Input";
-import {Icon, IconButton, Input, InputAdornment, withStyles} from "material-ui";
+import {IconButton} from "material-ui/IconButton";
+import {Input, InputLabel, InputAdornment} from "material-ui/Input";
 import Visibility from "material-ui-icons/Visibility";
 import VisibilityOff from "material-ui-icons/VisibilityOff";
 

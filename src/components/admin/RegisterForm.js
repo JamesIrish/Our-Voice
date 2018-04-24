@@ -75,7 +75,7 @@ class RegisterForm extends React.Component {
         { valid: false, controls: { password: null, confirmPassword: null } }
       ],
       errors: {},
-      loading: this.props.loading,
+      loading: props.loading,
       activeStep: 0,
       formValid: false
     };
