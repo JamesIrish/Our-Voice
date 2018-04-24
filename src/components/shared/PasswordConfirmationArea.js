@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TextField from "material-ui/TextField";
 import {FormControl, FormHelperText} from "material-ui/Form";
 import {InputLabel} from "material-ui/Input";
 import {Icon, IconButton, Input, InputAdornment, withStyles} from "material-ui";
+import Visibility from "material-ui-icons/Visibility";
+import VisibilityOff from "material-ui-icons/VisibilityOff";
 
 const styles = theme => ({
   strength: {
@@ -80,10 +81,15 @@ class PasswordConfirmationArea extends React.Component {
       try {
         // eslint-disable-next-line no-undef
         results = zxcvbn(value);
+
+        // call the user validation method
+        let validation = this.props.passwordValidator(value, results);
+
         this.setState({
           strength: results,
           strengthPercent: (results.score+1)*20,
-          strengthOkay: results.score > 2
+          strengthOkay: validation.valid,
+          passwordMessage: validation.message
         });
 
       } catch (err) {
@@ -97,12 +103,11 @@ class PasswordConfirmationArea extends React.Component {
     event.preventDefault();
   };
 
-  handleClickShowPassword = (event) => {
-    let parent = event.target.parentElement.parentElement.parentElement.previousElementSibling;
-    if (parent.id === "password")
-      this.setState({ showPassword: !this.state.showPassword });
-    else if (parent.id === "confirmPassword")
-      this.setState({ showConfirmPassword: !this.state.showConfirmPassword });
+  handleClickShowPassword = () => {
+    this.setState({ showPassword: !this.state.showPassword });
+  };
+  handleClickShowConfirmPassword = () => {
+    this.setState({ showConfirmPassword: !this.state.showConfirmPassword });
   };
 
   render() {
@@ -110,8 +115,9 @@ class PasswordConfirmationArea extends React.Component {
       classes,
       textFieldClassName,
       fieldInputProps,
-      passwordError,
+      passwordLabel,
       passwordValue,
+      confirmPasswordLabel,
       hasConfirmPasswordError,
       confirmPasswordError,
       confirmPasswordValue,
@@ -119,23 +125,11 @@ class PasswordConfirmationArea extends React.Component {
       loading
     } = this.props;
 
-    const { strength, strengthOkay, strengthPercent, showPassword, showConfirmPassword } = this.state;
+    const { strength, strengthOkay, strengthPercent, showPassword, showConfirmPassword, passwordMessage } = this.state;
 
-    let pwHelperText = passwordError;
-    if (
-      (pwHelperText === null || pwHelperText === undefined || pwHelperText === "")
-      && strength !== null
-      && strength.feedback !== null
-    )
-      pwHelperText = strength.feedback.warning || "";
-    if (pwHelperText === "" && strength.feedback.suggestions.length > 0)
-      pwHelperText = strength.feedback.suggestions[0];
-    if (pwHelperText === "" && strengthOkay)
-      pwHelperText = "Password strength: " + (strengthPercent > 80 ? "excellent" : "good");
+    const hasPasswordError = strength === null ? this.props.hasPasswordError : !strengthOkay;
 
-    const hasPasswordError = !strengthOkay;
-
-    const additionalClasses = `${classes.strength} ${classes["strength" + strengthPercent]}`;
+    const additionalClasses = strength === null ? "" : `${classes.strength} ${classes["strength" + strengthPercent]}`;
 
     return (
       <div>
@@ -143,7 +137,7 @@ class PasswordConfirmationArea extends React.Component {
         <FormControl id="passwordCtl" error={hasPasswordError} style={{marginTop: "16px", marginLeft: 0, marginRight: "24px", width: 280}}>
 
           <InputLabel htmlFor="password">
-            Password
+            {passwordLabel}
           </InputLabel>
 
           <Input
@@ -154,21 +148,24 @@ class PasswordConfirmationArea extends React.Component {
             value={passwordValue}
             id="password"
             onChange={this.onChangeWrapper}
+            inputProps={fieldInputProps}
+            onKeyDown={onKeyDown}
             endAdornment={
             <InputAdornment position="end">
               <IconButton
                 aria-label="Toggle password visibility"
                 onClick={this.handleClickShowPassword}
                 onMouseDown={this.handleMouseDownPassword}
+                tabIndex="-1"
               >
-                {showPassword ? <Icon>visibility_off</Icon> : <Icon>visibility</Icon>}
+                {showPassword ? <VisibilityOff/> : <Visibility/>}
               </IconButton>
             </InputAdornment>
           }
           />
 
           <FormHelperText id="password-helper-text">
-            {pwHelperText}
+            {passwordMessage}
           </FormHelperText>
 
         </FormControl>
@@ -177,7 +174,7 @@ class PasswordConfirmationArea extends React.Component {
         <FormControl id="confirmPasswordCtl" error={hasConfirmPasswordError} style={{marginTop: "16px", marginLeft: 0, marginRight: "24px", width: 280}}>
 
           <InputLabel htmlFor="password">
-            Confirm password
+            {confirmPasswordLabel}
           </InputLabel>
 
           <Input
@@ -187,14 +184,17 @@ class PasswordConfirmationArea extends React.Component {
             value={confirmPasswordValue}
             id="confirmPassword"
             onChange={this.onChangeWrapper}
+            inputProps={fieldInputProps}
+            onKeyDown={onKeyDown}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
                   aria-label="Toggle password visibility"
-                  onClick={this.handleClickShowPassword}
+                  onClick={this.handleClickShowConfirmPassword}
                   onMouseDown={this.handleMouseDownPassword}
+                  tabIndex="-1"
                 >
-                  {showConfirmPassword ? <Icon>visibility_off</Icon> : <Icon>visibility</Icon>}
+                  {showConfirmPassword ? <VisibilityOff/> : <Visibility/>}
                 </IconButton>
               </InputAdornment>
             }
@@ -215,15 +215,23 @@ PasswordConfirmationArea.propTypes = {
   classes: PropTypes.object.isRequired,
   textFieldClassName: PropTypes.string.isRequired,
   fieldInputProps: PropTypes.object.isRequired,
+  passwordLabel: PropTypes.string,
   hasPasswordError: PropTypes.bool.isRequired,
   passwordError: PropTypes.string,
   passwordValue: PropTypes.string.isRequired,
+  passwordValidator: PropTypes.func.isRequired,
+  confirmPasswordLabel: PropTypes.string,
   hasConfirmPasswordError: PropTypes.bool.isRequired,
   confirmPasswordError: PropTypes.string,
   confirmPasswordValue: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onKeyDown: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired
+};
+
+PasswordConfirmationArea.defaultProps = {
+  passwordLabel: "Password",
+  confirmPasswordLabel: "Confirm password",
 };
 
 export default withStyles(styles, {name:"PasswordConfirmation"})(PasswordConfirmationArea);
