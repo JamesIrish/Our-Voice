@@ -6,21 +6,11 @@ import {connect} from "react-redux";
 import * as AuthActions from "../../actions/authActions";
 import Divider from "material-ui/Divider";
 import { MenuList, MenuItem } from "material-ui/Menu";
-import Paper from "material-ui/Paper";
 import { withStyles } from "material-ui/styles";
 import { ListItemText } from "material-ui/List";
 
 const styles = theme => ({
-  menuItem: {
-    '&:focus': {
-      backgroundColor: theme.palette.primary.main,
-      '& $primary, & $icon': {
-        color: theme.palette.common.white,
-      },
-    },
-  },
-  primary: {},
-  icon: {},
+
 });
 
 class AccountNav extends React.Component {
@@ -57,18 +47,6 @@ class AccountNav extends React.Component {
 
     return (
       <MenuList>
-        <MenuItem className={classes.menuItem}>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Sent mail" />
-        </MenuItem>
-        <MenuItem className={classes.menuItem}>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Drafts" />
-        </MenuItem>
-        <MenuItem className={classes.menuItem}>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Inbox" />
-        </MenuItem>
-      </MenuList>
-      /*
-      <MenuList>
         <MenuItem disabled={loading} component={Link} to="/account/profile" selected={isProfile}>
           <ListItemText primary="Profile" />
         </MenuItem >
@@ -85,9 +63,7 @@ class AccountNav extends React.Component {
         <MenuItem disabled={loading} onClick={this.signOut}>
           <ListItemText primary="Sign Out" />
         </MenuItem>
-      </MenuList>
-      */
-    );
+      </MenuList>    );
   }
 }
 
@@ -112,4 +88,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(AccountNav)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles, {name:"AccountNav"})(AccountNav)));

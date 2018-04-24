@@ -57,9 +57,9 @@ class RegisterForm extends React.Component {
     super(props);
 
     this.debouncedValidate = _debounce(this.validateField, 300);
-    
+
     this.refs = {};
-    
+
     this.state = {
       newUser: {
         email: "",
@@ -74,13 +74,13 @@ class RegisterForm extends React.Component {
       activeStep: 0
     };
   }
-  
+
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       loading: nextProps.loading
     });
   };
-  
+
   setRef = element => {
     if (element && element.id) {
       let newRefs = Object.assign({}, this.refs);
@@ -88,7 +88,7 @@ class RegisterForm extends React.Component {
       this.refs = newRefs;
     }
   };
-  
+
   stateHasProp = (propPath) => {
     return _has(this.state, propPath);
   };
@@ -151,7 +151,7 @@ class RegisterForm extends React.Component {
         if (emailValid)
           delete fieldValidationErrors[fieldName];
         else
-          fieldValidationErrors[fieldName] = "please provide a valid email address";
+          fieldValidationErrors[fieldName] = "Please provide a valid email address";
         break;
       case "firstName":
       case "lastName":
@@ -159,12 +159,12 @@ class RegisterForm extends React.Component {
         if (value.length >= 3)
           delete fieldValidationErrors[fieldName];
         else
-          fieldValidationErrors[fieldName] = "should be at least 3 characters long";
+          fieldValidationErrors[fieldName] = "Should be at least 3 characters long";
         break;
       case "password":
       case "confirmPassword":
         if (this.state.newUser.password !== this.state.newUser.confirmPassword)
-          fieldValidationErrors.confirmPassword = "passwords do not match";
+          fieldValidationErrors.confirmPassword = "Passwords do not match";
         else
           delete fieldValidationErrors.confirmPassword;
         break;
@@ -191,21 +191,21 @@ class RegisterForm extends React.Component {
   render() {
     const { classes } = this.props;
     const { activeStep, loading } = this.state;
-    
+
     const hasEmailError = this.stateHasProp("errors.email");
     const hasFirstNameError = this.stateHasProp("errors.firstName");
     const hasLastNameError = this.stateHasProp("errors.lastName");
     const hasDisplayNameError = this.stateHasProp("errors.displayName");
     const hasPasswordError = this.stateHasProp("errors.password");
     const hasConfirmPasswordError = this.stateHasProp("errors.confirmPassword");
-    
+
     const hasStep1Error = hasEmailError;
     const hasStep2Error = hasFirstNameError || hasLastNameError || hasDisplayNameError;
     const hasStep3Error = hasPasswordError || hasConfirmPasswordError;
-    
+
     const fieldInputProps = { ref: this.setRef };
     const emailFieldInputProps = Object.assign({}, fieldInputProps, { type: "email", spellCheck: "false" });
-    
+
     return (
       <DocumentTitle title="Our Voice :. Register">
       <div className={classes.container}>
@@ -301,9 +301,9 @@ class RegisterForm extends React.Component {
               <Step key="password">
                 <StepLabel error={hasStep3Error}>Create a password</StepLabel>
                 <StepContent>
-  
+
                   <PasswordConfirmationArea
-                    classes={classes}
+                    textFieldClassName={classes.textField}
                     fieldInputProps={fieldInputProps}
                     hasPasswordError={hasPasswordError}
                     passwordError={this.state.errors.password}
@@ -315,7 +315,7 @@ class RegisterForm extends React.Component {
                     onKeyDown={this.onKeyDown}
                     loading={loading}
                   />
-                  
+
                   <div className={classes.actionsContainer}>
                     <div>
                       <Button disabled={loading} onClick={this.handleBack} className={classes.button}>Back</Button>

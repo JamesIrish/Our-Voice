@@ -38,7 +38,7 @@
     "js-yaml": "^3.11.0",
     "jsonwebtoken": "^8.2.1",
     "jwt-decode": "^2.2.0",
-    "material-ui": "^1.0.0-beta.40",
+    "material-ui": "^1.0.0-beta.43",
     "material-ui-icons": "^1.0.0-beta.36",
     "moment": "^2.22.1",
     "mongodb": "^3.0.5",

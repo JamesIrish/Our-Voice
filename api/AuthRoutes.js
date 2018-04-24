@@ -135,13 +135,13 @@ export default class AuthRoutes {
     {
       let userId = req.body.userId;
       assert.string(userId, "userId");
-      let refreshToken = req.body.refreshToken;
+      let refreshToken = req.cookies["refresh_token"];
       assert.string(refreshToken, "refreshToken");
 
       let tokenApi = new TokenApi();
       await tokenApi.initialise();
 
-      let refreshTokens = await tokenApi.findRefreshTokens({refreshToken: refreshToken});
+      let refreshTokens = await tokenApi.findRefreshTokens({userId: refreshToken});
       if (refreshTokens.length !== 1)
         throw new Error(`Could not locate refresh token ${refreshToken}`);
       if (refreshTokens[0].userId != userId)
