@@ -150,7 +150,7 @@ class PasswordConfirmationArea extends React.Component {
             autoFocus
             disabled={loading}
             className={additionalClasses}
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             value={passwordValue}
             id="password"
             onChange={this.onChangeWrapper}
@@ -183,7 +183,7 @@ class PasswordConfirmationArea extends React.Component {
           <Input
             disabled={loading}
             className={textFieldClassName}
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? "text" : "password"}
             value={confirmPasswordValue}
             id="confirmPassword"
             onChange={this.onChangeWrapper}
