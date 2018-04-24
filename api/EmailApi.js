@@ -2,11 +2,12 @@ import nodemailer from "nodemailer";
 import Email from "email-templates";
 import config from "../config/index";
 import path from "path";
+import logger from "../tools/logging";
 
 export default class EmailApi {
 
   constructor() {
-    this.transporter = nodemailer.createTransport(config.email);
+    this.transporter = nodemailer.createTransport(Object.assign({}, config.email, { logger:logger }));
   }
 
   _createMail = () => {
