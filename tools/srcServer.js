@@ -2,6 +2,7 @@ import express from "express";
 import webpack from "webpack";
 import path from "path";
 import webpackconfig from "../webpack.config.dev";
+import cookieParser from "cookie-parser";
 import open from "open";
 import bodyParser from "body-parser";
 import config from "../config/index";
@@ -36,11 +37,10 @@ app.use(require("webpack-dev-middleware")(compiler, {
   publicPath: webpackconfig.output.publicPath
 }));
 app.use(require("webpack-hot-middleware")(compiler));
-
 logger.debug("HMRE middleware registered.");
 
 app.use(express.static("dist"));
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

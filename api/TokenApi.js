@@ -25,38 +25,25 @@ let passwordResetTokenSchema = mongoose.Schema(
   }
 }, { timestamps: true });
 
+const RefreshToken = mongoose.model("refresh_token", refreshTokenSchema);
+const ResetPasswordToken = mongoose.model("reset_password_token", passwordResetTokenSchema);
+
 export default class TokenApi {
 
-  constructor()
-  {
-    this._url = config.mongoDb.url;
-    this._settings = config.mongoDb.settings;
-  }
-
-  initialise = async () =>
-  {
-    await mongoose.connect(this._url, this._settings);
-
-    this._db = mongoose.connection;
-
-    this.RefreshToken = mongoose.model("refresh_token", refreshTokenSchema);
-    this.ResetPasswordToken = mongoose.model("reset_password_token", passwordResetTokenSchema);
+  static createRefreshToken = async (model) => {
+    return await RefreshToken.create(model);
   };
 
-  createRefreshToken = async (model) => {
-    return await this.RefreshToken.create(model);
+  static createResetPasswordToken = async (model) => {
+    return await ResetPasswordToken.create(model);
   };
 
-  createResetPasswordToken = async (model) => {
-    return await this.ResetPasswordToken.create(model);
+  static findRefreshTokens = async (query) => {
+    return await RefreshToken.find(query).exec();
   };
 
-  findRefreshTokens = async (query) => {
-    return await this.RefreshToken.find(query).exec();
-  };
-
-  findOneResetPasswordToken = async (query) => {
-    return await this.ResetPasswordToken.findOne(query).exec();
+  static findOneResetPasswordToken = async (query) => {
+    return await ResetPasswordToken.findOne(query).exec();
   };
 
 }

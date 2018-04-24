@@ -24,7 +24,7 @@ export default class AuthApi {
         });
     });
   } ;
-  
+
   static authenticateUser = (model) => {
     return AuthApi._fetchWrapper("post", "/api/auth/signin", model);
   };
@@ -32,15 +32,15 @@ export default class AuthApi {
   static authenticateUserAd = () => {
     return AuthApi._fetchWrapper("post", "/api/auth/sspi");
   };
-  
+
   static forgotten = (email) => {
     return AuthApi._fetchWrapper("post", "/api/auth/forgotten", { email: email });
   };
-  
+
   static checkPasswordResetToken = (passwordResetToken) => {
     return AuthApi._fetchWrapper("post", "/api/auth/checkPasswordResetToken", { passwordResetToken: passwordResetToken });
   };
-  
+
   static resetPassword = (passwordResetToken, newPassword) => {
     return AuthApi._fetchWrapper("post", "/api/auth/resetPassword", { passwordResetToken: passwordResetToken, newPassword: newPassword });
   };
@@ -48,9 +48,9 @@ export default class AuthApi {
   static getAccessToken = (userId, refreshToken) => {
     return AuthApi._fetchWrapper("post", "/api/auth/refresh", { userId: userId, refreshToken: refreshToken });
   };
-  
-  static signOut = (userId, refreshToken) => {
-    return AuthApi._fetchWrapper("post", "/api/auth/signout", { userId: userId, refreshToken: refreshToken });
+
+  static signOut = (userId) => {
+    return AuthApi._fetchWrapper("post", "/api/auth/signout", { userId: userId });
   }
 }
 

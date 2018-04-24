@@ -1,14 +1,14 @@
-import fs from "fs";
 import {Router} from "express";
+import Connection from "../api/Connection";
 import ConfigRoutes from "../api/ConfigRoutes";
 import AuthRoutes from "../api/AuthRoutes";
 import UserRoutes from "../api/UserRoutes";
 import ProjectRoutes from "../api/ProjectRoutes";
 
 export default class ApiRoutes {
-  
+
   static hook(passport) {
-    
+
     //logger.debug("Our-Voice starting up...");
 
     /*  TODO
@@ -35,7 +35,7 @@ export default class ApiRoutes {
     routes.use("/auth", AuthRoutes.routes());
     routes.use("/user", UserRoutes.routes());
     routes.use("/projects", passport.authenticate("jwt"), ProjectRoutes.routes());
-    
+
     return routes;
   }
 }

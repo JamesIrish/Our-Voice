@@ -40,7 +40,7 @@ class AppBarMenu extends React.Component {
   };
 
   signOut = () => {
-    this.props.actions.signOutUser(this.state.user._id, this.state.refreshToken);
+    this.props.actions.signOutUser(this.state.user._id);
     this.setState({ menuAnchorEl: null });
   };
 

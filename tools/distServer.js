@@ -10,6 +10,7 @@ import logger from "./logging";
 import apiRoutes from "./apiRoutes";
 import config from "../config";
 import AuthRoutes from "../api/AuthRoutes";
+import cookieParser from "cookie-parser";
 
 const port = config.PORT;
 const app = express();
@@ -28,7 +29,7 @@ app.use((req, res, next) => {
 
 app.use(compression());
 app.use(express.static("dist"));
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

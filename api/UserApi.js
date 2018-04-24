@@ -1,7 +1,4 @@
 import mongoose from "mongoose";
-import config from "../config/index";
-
-let Schema = mongoose.Schema;
 
 let userActionSchema = mongoose.Schema({
   action: {
@@ -40,33 +37,20 @@ let userSchema = mongoose.Schema({
   password: String
 }, { timestamps: true });
 
+const User = mongoose.model("user", userSchema);
+
 export default class UserApi {
 
-  constructor()
-  {
-    this._url = config.mongoDb.url;
-    this._settings = config.mongoDb.settings;
-  }
-
-  initialise = async () =>
-  {
-    await mongoose.connect(this._url, this._settings);
-
-    this._db = mongoose.connection;
-
-    this.User = mongoose.model("user", userSchema);
+  static createUser = async (model) => {
+    return await User.create(model);
   };
 
-  createUser = async (model) => {
-    return await this.User.create(model);
+  static findOne = async (query) => {
+    return await User.findOne(query).exec();
   };
 
-  findOne = async (query) => {
-    return await this.User.findOne(query).exec();
-  };
-
-  userExists = async (model) => {
-    let user = await this.findOne(model).exec();
+  static userExists = async (model) => {
+    let user = await UserApi.findOne(model).exec();
     return user !== null && user !== undefined;
   };
 

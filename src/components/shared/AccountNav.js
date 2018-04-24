@@ -32,7 +32,7 @@ class AccountNav extends React.Component {
   };
 
   signOut = () => {
-    this.props.actions.signOutUser(this.state.auth.user._id, this.state.auth.refreshToken);
+    this.props.actions.signOutUser(this.state.auth.user._id);
   };
 
   render() {

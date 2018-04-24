@@ -68,10 +68,7 @@ export default class AuthRoutes {
       let password = req.body.password;
       assert.string(password, "password");
 
-      let userApi = new UserApi();
-      await userApi.initialise();
-
-      let user = await userApi.findOne({ email: email });
+      let user = await UserApi.findOne({ email: email });
       assert.object(user, "user account not found");
 
       let userObj = user.toObject();
@@ -101,10 +98,7 @@ export default class AuthRoutes {
           refreshToken: refreshToken
         };
 
-        let tokenApi = new TokenApi();
-        await tokenApi.initialise();
-
-        await tokenApi.createRefreshToken(refreshTokenDb);
+        await TokenApi.createRefreshToken(refreshTokenDb);
 
         req.log.debug(`Refresh token stored in db for user ${email}`);
 
@@ -138,26 +132,20 @@ export default class AuthRoutes {
       let refreshToken = req.cookies["refresh_token"];
       assert.string(refreshToken, "refreshToken");
 
-      let tokenApi = new TokenApi();
-      await tokenApi.initialise();
-
-      let refreshTokens = await tokenApi.findRefreshTokens({userId: refreshToken});
+      let refreshTokens = await TokenApi.findRefreshTokens({refreshToken: refreshToken});
       if (refreshTokens.length !== 1)
         throw new Error(`Could not locate refresh token ${refreshToken}`);
       if (refreshTokens[0].userId != userId)
         throw new Error(`Refresh token ${refreshToken} does not belong to user ${userId}`);
 
-      let userApi = new UserApi();
-      await userApi.initialise();
-
-      let user = await userApi.findOne({ _id: userId });
+      let user = await UserApi.findOne({ _id: userId });
       assert.object(user, "user account not found");
 
       let userObj = user.toObject();
       delete userObj.actions;
       req.log.debug(userObj, `Lookup of user id ${userId} result`);
 
-      refreshTokens = await tokenApi.findRefreshTokens({ userId: userId });
+      refreshTokens = await TokenApi.findRefreshTokens({ userId: userId });
       for (let i = 0; i < refreshTokens.length; i++)
         refreshTokens[i].remove();
 
@@ -187,10 +175,7 @@ export default class AuthRoutes {
       let refreshToken = req.body.refreshToken;
       assert.string(refreshToken, "refreshToken");
 
-      let tokenApi = new TokenApi();
-      await tokenApi.initialise();
-
-      let refreshTokens = await tokenApi.findRefreshTokens({ userId: userId });
+      let refreshTokens = await TokenApi.findRefreshTokens({ userId: userId });
 
       req.log.debug(`${refreshTokens.length} refresh token found for ${userId}`);
 
@@ -209,10 +194,7 @@ export default class AuthRoutes {
 
       if (okay)
       {
-        let userApi = new UserApi();
-        await userApi.initialise();
-
-        let user = await userApi.findOne({_id: userId});
+        let user = await UserApi.findOne({_id: userId});
         assert.object(user, `User for ${userId}`);
 
         let safeUser = user.toObject();
@@ -270,14 +252,11 @@ export default class AuthRoutes {
         if (err) Helpers.handleError(err, req, res);
         else
         {
-          let userApi = new UserApi();
-          await userApi.initialise();
-
           let user = null;
 
           // Either get the user from mongo or create them if this is the first time we've seen them
-          if (await userApi.userExists({email: aduser.mail}))
-            user = await userApi.findOne({email: aduser.mail});
+          if (await UserApi.userExists({email: aduser.mail}))
+            user = await UserApi.findOne({email: aduser.mail});
           else
           {
             let userModel =
@@ -292,7 +271,7 @@ export default class AuthRoutes {
               displayName: aduser.displayName,
               roles: groups || []
             };
-            user = await userApi.createUser(userModel);
+            user = await UserApi.createUser(userModel);
           }
 
           user.actions = [...user.actions, {action: userActions.signin_success}];
@@ -313,10 +292,7 @@ export default class AuthRoutes {
             refreshToken: refreshToken
           };
 
-          let tokenApi = new TokenApi();
-          await tokenApi.initialise();
-
-          await tokenApi.createRefreshToken(refreshTokenDb);
+          await TokenApi.createRefreshToken(refreshTokenDb);
 
           req.log.debug(`Refresh token created for user ${user.email}`);
 
@@ -337,16 +313,10 @@ export default class AuthRoutes {
       let email = req.body.email;
       assert.string(email, "email");
 
-      let userApi = new UserApi();
-      await userApi.initialise();
-
-      let user = await userApi.findOne({ email: email });
+      let user = await UserApi.findOne({ email: email });
       if (user)
       {
         req.log.debug(`User ${user.email} loaded from database`);
-
-        let tokenApi = new TokenApi();
-        await tokenApi.initialise();
 
         let oneHour = new Date();
         oneHour.setHours(oneHour.getHours() + 1);
@@ -358,7 +328,7 @@ export default class AuthRoutes {
             resetToken: randtoken.uid(32)
           };
 
-        await tokenApi.createResetPasswordToken(resetTokenDb);
+        await TokenApi.createResetPasswordToken(resetTokenDb);
 
         req.log.debug(`Password reset token created and saved into database for ${user.email}`);
 
@@ -391,10 +361,7 @@ export default class AuthRoutes {
       let passwordResetToken = req.body.passwordResetToken;
       assert.string(passwordResetToken, "passwordResetToken");
 
-      let tokenApi = new TokenApi();
-      await tokenApi.initialise();
-
-      let tokenRecord = await tokenApi.findOneResetPasswordToken({resetToken: passwordResetToken});
+      let tokenRecord = await TokenApi.findOneResetPasswordToken({resetToken: passwordResetToken});
       if (tokenRecord)
       {
         req.log.debug({ token: tokenRecord.toObject() }, "Token loaded from database");
@@ -432,10 +399,7 @@ export default class AuthRoutes {
       let newPassword = req.body.newPassword;
       assert.string(newPassword, "newPassword");
 
-      let tokenApi = new TokenApi();
-      await tokenApi.initialise();
-
-      let tokenRecord = await tokenApi.findOneResetPasswordToken({resetToken: passwordResetToken});
+      let tokenRecord = await TokenApi.findOneResetPasswordToken({resetToken: passwordResetToken});
       if (tokenRecord)
       {
         let expired = tokenRecord.expires.getTime() < new Date().getTime();
@@ -449,10 +413,7 @@ export default class AuthRoutes {
         {
           req.log.debug({ token: tokenRecord.toObject() }, "Token loaded from database");
 
-          let userApi = new UserApi();
-          await userApi.initialise();
-
-          let user = await userApi.findOne({_id: tokenRecord.userId});
+          let user = await UserApi.findOne({_id: tokenRecord.userId});
           if (user)
           {
             let safeUser = user.toObject();

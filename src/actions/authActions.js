@@ -46,17 +46,17 @@ export function signInAdUser() {
   };
 }
 
-export function signOutSuccess(auth) {
+export function signOutSuccess() {
   return { type: types.SIGN_OUT_SUCCESS};
 }
 export function signOutError(error) {
   return { type: types.SIGN_OUT_ERROR, error: error };
 }
 
-export function signOutUser(userId, refreshToken) {
+export function signOutUser(userId) {
   return function(dispatch) {
     dispatch({ type: types.AUTH_LOADING });
-    return AuthApi.signOut(userId, refreshToken)
+    return AuthApi.signOut(userId)
       .then(() => dispatch(signOutSuccess()))
       .catch(error => dispatch(signOutError(error)));
   };

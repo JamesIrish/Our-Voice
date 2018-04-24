@@ -29,12 +29,9 @@ export default class UserRoutes {
 
       userModel.password = await bcrypt.hash(req.body.password, 10);
 
-      let userApi = new UserApi();
-      await userApi.initialise();
-
       userModel.actions = [{ action: userActions.created }];
 
-      await userApi.createUser(userModel);
+      await UserApi.createUser(userModel);
 
       delete userModel.password;
 
