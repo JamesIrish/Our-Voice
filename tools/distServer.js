@@ -11,21 +11,24 @@ import apiRoutes from "./apiRoutes";
 import config from "../config";
 import AuthRoutes from "../api/AuthRoutes";
 import cookieParser from "cookie-parser";
+import bunyanMiddleware from "bunyan-middleware";
 
 const port = config.PORT;
 const app = express();
 
 logger.info("Starting production web server...");
 
-app.use((req, res, next) => {
-  req.logger = logger.child({
-    method: req.method,
-    ip: req.ip,
-    xhr: req.xhr,
-    url: req.originalUrl
-  });
-  next();
-});
+app.use(bunyanMiddleware({
+    headerName: "X-Request-Id",
+    propertyName: "reqId",
+    logName: "req_id",
+    obscureHeaders: [],
+    logger: logger,
+    additionalRequestFinishData: function(req, res) {
+      return {};
+    }
+  }
+));
 
 app.use(compression());
 app.use(express.static("dist"));
