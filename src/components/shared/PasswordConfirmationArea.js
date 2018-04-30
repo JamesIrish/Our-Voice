@@ -46,7 +46,7 @@ const styles = theme => ({
 });
 
 function loadZXCVBN() {
-  let ZXCVBN_SRC = "zxcvbn.js";
+  let ZXCVBN_SRC = "/zxcvbn.js";
   let first, s;
   s = document.createElement("script");
   s.src = ZXCVBN_SRC;
