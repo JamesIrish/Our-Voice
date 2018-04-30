@@ -102,9 +102,14 @@ export default class AuthRoutes {
 
         req.log.debug(`Refresh token stored in db for user ${email}`);
 
+        let safeUserModel = user.toObject();
+        delete safeUserModel.password;
+        delete safeUserModel.actions;
+        delete safeUserModel.roles;
+
         res.cookie("access_token", token);
         res.cookie("refresh_token", refreshToken);
-        res.send({user: user, roles: user.roles, accessToken: token, refreshToken: refreshToken});  // TODO sort our custom roles
+        res.send({user: safeUserModel, roles: user.roles, accessToken: token, refreshToken: refreshToken});  // TODO sort our custom roles
 
         req.log.debug(`Token issued and cookies set for login request for ${email}`);
       }

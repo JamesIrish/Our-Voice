@@ -1,16 +1,11 @@
 import React from "react";
 import {Link} from "react-router";
 import PropTypes from "prop-types";
-import {withStyles} from "material-ui/styles";
 import {connect} from "react-redux";
-import {Button} from "material-ui/Button";
-import {Menu, MenuItem} from "material-ui/Menu";
+import Button from "material-ui/Button";
+import Menu, { MenuItem } from 'material-ui/Menu';
 import * as AuthActions from "../../actions/authActions";
 import {bindActionCreators} from "redux";
-
-const styles = theme => ({
-
-});
 
 class AppBarMenu extends React.Component {
 
@@ -46,42 +41,43 @@ class AppBarMenu extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
     const { loading, user, menuAnchorEl } = this.state;
     const menuOpen = Boolean(menuAnchorEl);
 
+    const isLoggedIn = user !== null;
+
+    let buttonLabelText = "";
+    if (loading)
+      buttonLabelText = "...";
+    else if (isLoggedIn)
+      buttonLabelText = user.displayName;
+    else
+      buttonLabelText = "Sign in";
+
+    const buttonLabel = (<span>{buttonLabelText}</span>);
+
     return (
-      <div className={classes.root}>
-        {user ?
-          (
-            <div>
-              <Button color="inherit" disabled={loading}
-                      aria-owns={menuOpen ? "menu-appbar" : null} aria-haspopup="true"
-                      onClick={this.handleMenuOpen}>{loading ? (<span>....</span>) : user.displayName || ""}</Button>
-              <Menu
-                id="menu-appbar"
-                anchorEl={menuAnchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={menuOpen}
-                onClose={this.handleMenuClose}
-              >
-                <MenuItem disabled={loading} onClick={this.handleMenuClose} component={Link} to="/account">My Account</MenuItem>
-                <MenuItem disabled={loading} onClick={this.signOut}>Sign Out</MenuItem>
-              </Menu>
-            </div>
-          )
-          :
-          (
-            <Button color="inherit" component={Link} to="/signin" disabled={loading}>{loading ? (<span>....</span>) : (<span>Sign in</span>)}</Button>
-          )
-        }
+      <div>
+        <Button color="inherit" disabled={loading}
+                aria-owns={menuOpen ? "menu-appbar" : null} aria-haspopup="true"
+                onClick={this.handleMenuOpen}>{buttonLabel}</Button>
+        <Menu
+          id="menu-appbar"
+          anchorEl={menuAnchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={menuOpen}
+          onClose={this.handleMenuClose}
+        >
+          <MenuItem disabled={loading} onClick={this.handleMenuClose} component={Link} to="/account">My Account</MenuItem>
+          <MenuItem disabled={loading} onClick={this.signOut}>Sign Out</MenuItem>
+        </Menu>
       </div>
     );
   }
@@ -89,7 +85,6 @@ class AppBarMenu extends React.Component {
 }
 
 AppBarMenu.propTypes = {
-  classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   user: PropTypes.object,
   refreshToken: PropTypes.string,
@@ -110,4 +105,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AppBarMenu));
+export default connect(mapStateToProps, mapDispatchToProps)(AppBarMenu);
