@@ -10,7 +10,7 @@ import passport from "passport";
 import colors from "colors";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import logger from "./logging";
-import AuthRoutes from "../api/AuthRoutes";
+import AuthRoutes from "../webapi/AuthRoutes";
 import apiRoutes from "./apiRoutes";
 import bunyanMiddleware from "bunyan-middleware";
 

@@ -9,7 +9,7 @@ import colors from "colors";
 import logger from "./logging";
 import apiRoutes from "./apiRoutes";
 import config from "../config";
-import AuthRoutes from "../api/AuthRoutes";
+import AuthRoutes from "../webapi/AuthRoutes";
 import cookieParser from "cookie-parser";
 import bunyanMiddleware from "bunyan-middleware";
 

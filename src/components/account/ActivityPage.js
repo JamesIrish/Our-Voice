@@ -7,7 +7,7 @@ import List, { ListItem, ListItemText } from "material-ui/List";
 import Avatar from "material-ui/Avatar";
 import Icon from "material-ui/Icon";
 import moment from "moment";
-import * as userActions from "../../../api/UserActions";
+import * as userActions from "../../../webapi/UserActions";
 import _orderBy from "lodash/orderBy";
 
 const styles = theme => ({

@@ -1,9 +1,9 @@
 import {Router} from "express";
-import Connection from "../api/Connection";
-import ConfigRoutes from "../api/ConfigRoutes";
-import AuthRoutes from "../api/AuthRoutes";
-import UserRoutes from "../api/UserRoutes";
-import ProjectRoutes from "../api/ProjectRoutes";
+import Connection from "../webapi/Connection";
+import ConfigRoutes from "../webapi/ConfigRoutes";
+import AuthRoutes from "../webapi/AuthRoutes";
+import UserRoutes from "../webapi/UserRoutes";
+import ProjectRoutes from "../webapi/ProjectRoutes";
 
 export default class ApiRoutes {
 
