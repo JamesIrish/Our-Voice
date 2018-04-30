@@ -1,9 +1,10 @@
 import React from "react";
 import {Link} from "react-router";
 import PropTypes from "prop-types";
-import {withStyles} from "material-ui/styles/index";
+import {withStyles} from "material-ui/styles";
 import {connect} from "react-redux";
-import {Button, Menu, MenuItem} from "material-ui";
+import {Button} from "material-ui/Button";
+import {Menu, MenuItem} from "material-ui/Menu";
 import * as AuthActions from "../../actions/authActions";
 import {bindActionCreators} from "redux";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {withStyles} from "material-ui";
+import {withStyles} from "material-ui/styles";
 import {FormControl, FormHelperText} from "material-ui/Form";
 import {IconButton} from "material-ui/IconButton";
 import {Input, InputLabel, InputAdornment} from "material-ui/Input";
