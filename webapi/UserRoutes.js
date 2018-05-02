@@ -11,6 +11,7 @@ export default class UserRoutes {
     let routes = new Router();
 
     routes.post("/", UserRoutes._createUser);
+    routes.get("/activity/:userId", UserRoutes._getActivity);
 
     return routes;
   };
@@ -39,6 +40,18 @@ export default class UserRoutes {
       await emailApi.sendWelcomeEmail(userModel);
 
       res.json(userModel);
+    }
+    catch (err)
+    {
+      Helpers.handleError(err, req, res);
+    }
+  };
+
+  static _getActivity = async (req, res) => {
+    try
+    {
+      let user = await UserApi.findOne({_id: req.params.userId});
+      res.send(user.activity);
     }
     catch (err)
     {
