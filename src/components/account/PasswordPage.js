@@ -6,13 +6,12 @@ import { withStyles } from "material-ui/styles";
 import * as AuthActions from "../../actions/authActions";
 import Typography from "material-ui/Typography";
 import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
-import Divider from "material-ui/Divider";
-import {isValidEmail} from "../../helpers/Validation";
 import _debounce from "lodash/debounce";
 import {has as _has} from "lodash/object";
-import {FormControl, FormHelperText} from "material-ui/Form";
-import {IconButton} from "material-ui/IconButton";
-import {Input, InputLabel, InputAdornment} from "material-ui/Input";
+import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+import Input, { InputLabel, InputAdornment } from "material-ui/Input";
+import { FormControl, FormHelperText } from "material-ui/Form";
 import Visibility from "material-ui-icons/Visibility";
 import VisibilityOff from "material-ui-icons/VisibilityOff";
 
@@ -142,7 +141,9 @@ class PasswordPage extends React.Component {
     const hasCurrentPasswordError = this.stateHasProp("errors.currentPassword");
     const hasPasswordError = this.stateHasProp("errors.password");
     const hasConfirmPasswordError = this.stateHasProp("errors.confirmPassword");
-
+  
+    const currentPasswordError = this.state.errors.currentPassword;
+    
     const fieldInputProps = { ref: this.setRef };
 
     const adEnabled = false;
@@ -154,10 +155,45 @@ class PasswordPage extends React.Component {
           <Typography variant="subheading">You are using Windows Single Sign-on and cannot change your password here.</Typography>
         ) : (
           <div>
-
-
-
+            <Typography variant="subheading" gutterBottom align="left">Change your password using the form below</Typography>
+            <Typography variant="caption" gutterBottom align="left">If anything seems unusual or you have any concerns please contact us at <a href="mailto:support@our-voice.io">support@our-voice.io</a>.</Typography>
+  
+            <FormControl id="passwordCtl" error={hasPasswordError} style={{marginTop: "16px", marginLeft: 0, marginRight: "24px", width: 280}}>
+    
+              <InputLabel htmlFor="currentpassword">
+                Current password
+              </InputLabel>
+    
+              <Input
+                disabled={loading}
+                type={showCurrentPassword ? "text" : "password"}
+                value={currentPassword}
+                id="currentpassword"
+                onChange={this.onChangeWrapper}
+                inputProps={fieldInputProps}
+                onKeyDown={this.onKeyDown}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Toggle password visibility"
+                      onClick={this.handleClickShowCurrentPassword}
+                      onMouseDown={this.handleMouseDownPassword}
+                      tabIndex="-1"
+                    >
+                      {showCurrentPassword ? <VisibilityOff/> : <Visibility/>}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+    
+              <FormHelperText id="password-helper-text">
+                {currentPasswordError}
+              </FormHelperText>
+  
+            </FormControl>
+            
             <PasswordConfirmationArea
+              autoFocusEnabled={false}
               textFieldClassName={classes.textField}
               fieldInputProps={fieldInputProps}
               hasPasswordError={hasPasswordError}
@@ -165,6 +201,7 @@ class PasswordPage extends React.Component {
               passwordError={this.state.errors.password}
               passwordValue={password}
               passwordValidator={this.validatePassword}
+              confirmPasswordLabel="Confirm new password"
               hasConfirmPasswordError={hasConfirmPasswordError}
               confirmPasswordError={this.state.errors.confirmPassword}
               confirmPasswordValue={confirmPassword}
@@ -172,6 +209,8 @@ class PasswordPage extends React.Component {
               onKeyDown={this.onKeyDown}
               loading={loading}
             />
+            
+            <Button variant="raised" color="primary">Save</Button>
 
           </div>
         )}

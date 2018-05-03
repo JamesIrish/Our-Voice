@@ -120,7 +120,7 @@ class ActivityPage extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Typography variant="subheading" gutterBottom align="left">Recent activity on your account.</Typography>
+        <Typography variant="subheading" gutterBottom align="left">Recent activity on your account</Typography>
         <Typography variant="caption" gutterBottom align="left">If anything seems unusual or you have any concerns please contact us at <a href="mailto:support@our-voice.io">support@our-voice.io</a>.</Typography>
 
         <List>

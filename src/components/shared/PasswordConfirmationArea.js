@@ -114,6 +114,7 @@ class PasswordConfirmationArea extends React.Component {
   render() {
     const {
       classes,
+      autoFocusEnabled,
       textFieldClassName,
       fieldInputProps,
       passwordLabel,
@@ -142,7 +143,7 @@ class PasswordConfirmationArea extends React.Component {
           </InputLabel>
 
           <Input
-            autoFocus
+            autoFocus={autoFocusEnabled}
             disabled={loading}
             className={additionalClasses}
             type={showPassword ? "text" : "password"}
@@ -214,6 +215,7 @@ class PasswordConfirmationArea extends React.Component {
 
 PasswordConfirmationArea.propTypes = {
   classes: PropTypes.object.isRequired,
+  autoFocusEnabled: PropTypes.bool,
   textFieldClassName: PropTypes.string.isRequired,
   fieldInputProps: PropTypes.object.isRequired,
   passwordLabel: PropTypes.string,
@@ -231,6 +233,7 @@ PasswordConfirmationArea.propTypes = {
 };
 
 PasswordConfirmationArea.defaultProps = {
+  autoFocusEnabled: true,
   passwordLabel: "Password",
   confirmPasswordLabel: "Confirm password",
 };
