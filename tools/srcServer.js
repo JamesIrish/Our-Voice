@@ -45,30 +45,39 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 let opts = {};
+opts.authScheme = "JWT";
 opts.secretOrKey = AuthRoutes.SECRET;
 opts.jwtFromRequest = (req) => {
   logger.debug("Looking for cookie...");
   let token = null;
   if (req && req.cookies)
     token = req.cookies["access_token"];
+  logger.debug("Token: ", token);
   return token;
 };
 
 passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-  logger.debug("Verifying JWT..");
+  logger.debug("Verifying JWT..", jwtPayload);
   let expirationDate = new Date(jwtPayload.exp * 1000);
   if (expirationDate < new Date()) {
+    logger.warning("Token expired");
     return done(null, false);
   }
   done(null, jwtPayload);
 }));
 
+passport.serializeUser(function(user, done) {
+  logger.debug("Serialize user", user);
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  logger.debug("Deserialise user", user);
+  done(null, user);
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.serializeUser(function (user, done) {
-  done(null, user.email);
-});
 
 logger.debug("Passport middleware registered");
 

@@ -7,11 +7,11 @@ import * as userActions from "./UserActions";
 
 export default class UserRoutes {
 
-  static routes = () => {
+  static routes = (passport) => {
     let routes = new Router();
 
     routes.post("/", UserRoutes._createUser);
-    routes.get("/activity/:userId", UserRoutes._getActivity);
+    routes.get("/activity", passport.authenticate("jwt"), UserRoutes._getActivity);
 
     return routes;
   };
@@ -50,7 +50,8 @@ export default class UserRoutes {
   static _getActivity = async (req, res) => {
     try
     {
-      let user = await UserApi.findOne({_id: req.params.userId});
+      console.log(req.user);
+      let user = await UserApi.findOne({_id: req.user.userId});
       res.send(user.activity);
     }
     catch (err)
