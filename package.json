@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "prestart": "babel-node tools/startMessage.js",
-    "start": "npm run open:src && npm-run-all --parallel lint:watch test:watch",
+    "start": "nodemon --watch webapi --watch tools --exec npm-run-all --parallel lint:watch test:watch",
+    "poststart": "npm run open:src",
     "open:src": "babel-node tools/srcServer.js",
     "lint": "node_modules/.bin/esw webpack.config.* api config src tools",
     "lint:watch": "npm run lint -- --watch",
@@ -97,6 +98,7 @@
     "jsdom": "8.5.0",
     "mocha": "2.4.5",
     "nock": "8.0.0",
+    "nodemon": "^1.17.3",
     "npm-run-all": "1.8.0",
     "open": "0.0.5",
     "react-addons-test-utils": "15.0.2",
