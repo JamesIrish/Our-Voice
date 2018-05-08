@@ -1,0 +1,1 @@
+export const VALIDATION_DEBOUNCE = 200;

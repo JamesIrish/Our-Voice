@@ -125,9 +125,7 @@ class ResetForm extends React.Component {
 
     const saveButtonDisabled = loading || checking || hasPasswordError || hasConfirmPasswordError;
 
-    const fieldInputProps = {
-
-    };
+    const fieldInputProps = {};
 
     const ErrorDisplay = () => { return (<Typography style={{marginTop: 60, marginBottom: 40, color: "red"}}>Error: {error}</Typography>);};
     const CheckingDisplay = () => { return (<Typography style={{marginTop: 60, marginBottom: 40}}>Please wait... checking details...</Typography>);};

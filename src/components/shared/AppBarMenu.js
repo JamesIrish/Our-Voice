@@ -3,7 +3,7 @@ import {Link} from "react-router";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import Button from "material-ui/Button";
-import Menu, { MenuItem } from 'material-ui/Menu';
+import Menu, { MenuItem } from "material-ui/Menu";
 import * as AuthActions from "../../actions/authActions";
 import {bindActionCreators} from "redux";
 

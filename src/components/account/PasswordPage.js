@@ -8,12 +8,14 @@ import Typography from "material-ui/Typography";
 import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
 import _debounce from "lodash/debounce";
 import {has as _has} from "lodash/object";
+import * as Validation from "../../helpers/Validation";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 import Input, { InputLabel, InputAdornment } from "material-ui/Input";
 import { FormControl, FormHelperText } from "material-ui/Form";
 import Visibility from "material-ui-icons/Visibility";
 import VisibilityOff from "material-ui-icons/VisibilityOff";
+import * as Constants from "../../helpers/Constants";
 
 const styles = theme => ({
   textField: {
@@ -28,22 +30,30 @@ class PasswordPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.debouncedValidate = _debounce(this.validateField, 200);
+    this.debouncedValidate = _debounce(this.validateField, Constants.VALIDATION_DEBOUNCE);
 
     this.refs = {};
 
     this.state = {
-      currentPassword: "",
-      password: "",
-      confirmPassword: "",
+      credentials: {
+        currentPassword: "",
+        password: "",
+        confirmPassword: ""
+      },
+      loading: false,
       errors: {},
       formValid: false,
       showCurrentPassword: false
     };
   }
-
+  
   componentWillReceiveProps = (nextProps) => {
-
+    this.props.configLoading = nextProps.configLoading;
+    this.props.activeDirectoryEnabled = nextProps.activeDirectoryEnabled;
+    
+    this.setState({
+      loading: nextProps.loading
+    });
   };
 
   setRef = element => {
@@ -68,6 +78,9 @@ class PasswordPage extends React.Component {
         this.onSubmit(event);
       else {
         switch (event.target.id) {
+          case "currentpassword":
+            this.refs.password.focus();
+            break;
           case "password":
             this.refs.confirmPassword.focus();
             break;
@@ -81,7 +94,7 @@ class PasswordPage extends React.Component {
     event.preventDefault();
     const field = event.target.id;
     const value = event.target.value;
-    let newState = Object.assign({}, this.state);
+    let newState = Object.assign({}, this.state.credentials);
     newState[field] = value;
     return this.setState({ credentials: newState }, () => { this.debouncedValidate(field, value); });
   };
@@ -91,11 +104,11 @@ class PasswordPage extends React.Component {
     switch(fieldName) {
       case "password":
       case "confirmPassword": {
-        let passwordsMatch = this.state.password === this.state.confirmPassword;
-        if (!passwordsMatch)
-          fieldValidationErrors.confirmPassword = "Passwords do not match";
-        else
-          delete fieldValidationErrors.confirmPassword;
+        
+        //if (!passwordsMatch)
+        //  fieldValidationErrors.confirmPassword = "Passwords do not match";
+        //else
+        //  delete fieldValidationErrors.confirmPassword;
         break;
       }
       default:
@@ -107,37 +120,21 @@ class PasswordPage extends React.Component {
     }, this.validateForm);
   };
 
-  validatePassword = (password, strength) => {
-    let passwordValid = strength.score > 2;
-
-    let pwHelperText = "";
-    if (pwHelperText === "" && strength !== null && strength.feedback !== null)
-      pwHelperText = strength.feedback.warning || "";
-    if (pwHelperText === "" && strength.feedback.suggestions.length > 0)
-      pwHelperText = strength.feedback.suggestions[0] || "";
-    if (pwHelperText === "" && strength.score > 2)
-      pwHelperText = "Password strength: " + (strength.score === 4 ? "excellent" : "good");
-
-    return {
-      valid: passwordValid,
-      message: pwHelperText
-    };
-  };
-
   validateForm = () => {
     this.setState({ formValid: false });
   };
 
   onSubmit = (event) => {
     event.preventDefault();
-    //this.props.actions.changePassword(this.state);
+    //this.props.actions.changePassword(this.state.credentials);
   };
 
   render() {
-    const { classes, activeDirectoryEnabled, configLoading, auth } = this.props;
-    const { currentPassword, password, confirmPassword, showCurrentPassword } = this.state;
-    const loading = false;
+    const { classes, activeDirectoryEnabled } = this.props;
+    const { credentials, showCurrentPassword, loading } = this.state;
 
+    const { currentPassword, password, confirmPassword } = credentials;
+    
     const hasCurrentPasswordError = this.stateHasProp("errors.currentPassword");
     const hasPasswordError = this.stateHasProp("errors.password");
     const hasConfirmPasswordError = this.stateHasProp("errors.confirmPassword");
@@ -146,11 +143,9 @@ class PasswordPage extends React.Component {
     
     const fieldInputProps = { ref: this.setRef };
 
-    const adEnabled = false;
-
     return (
       <div>
-      {adEnabled ?
+      {activeDirectoryEnabled ?
         (
           <Typography variant="subheading">You are using Windows Single Sign-on and cannot change your password here.</Typography>
         ) : (
@@ -158,7 +153,7 @@ class PasswordPage extends React.Component {
             <Typography variant="subheading" gutterBottom align="left">Change your password using the form below</Typography>
             <Typography variant="caption" gutterBottom align="left">If anything seems unusual or you have any concerns please contact us at <a href="mailto:support@our-voice.io">support@our-voice.io</a>.</Typography>
   
-            <FormControl id="passwordCtl" error={hasPasswordError} style={{marginTop: "16px", marginLeft: 0, marginRight: "24px", width: 280}}>
+            <FormControl id="passwordCtl" error={hasCurrentPasswordError} style={{marginTop: "16px", marginLeft: 0, marginRight: "24px", width: 280}}>
     
               <InputLabel htmlFor="currentpassword">
                 Current password
@@ -200,7 +195,7 @@ class PasswordPage extends React.Component {
               passwordLabel="New password"
               passwordError={this.state.errors.password}
               passwordValue={password}
-              passwordValidator={this.validatePassword}
+              passwordValidator={Validation.validatePassword}
               confirmPasswordLabel="Confirm new password"
               hasConfirmPasswordError={hasConfirmPasswordError}
               confirmPasswordError={this.state.errors.confirmPassword}
@@ -210,7 +205,7 @@ class PasswordPage extends React.Component {
               loading={loading}
             />
             
-            <Button variant="raised" color="primary">Save</Button>
+            <Button variant="raised" color="primary" onClick={this.onSubmit}>Save</Button>
 
           </div>
         )}

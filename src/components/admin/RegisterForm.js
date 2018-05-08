@@ -12,10 +12,11 @@ import Typography from "material-ui/Typography";
 import Stepper, { Step, StepLabel, StepContent } from "material-ui/Stepper";
 import * as SnackActions from "../../actions/snackActions";
 import * as AuthActions from "../../actions/authActions";
-import {isValidEmail} from "../../helpers/Validation";
+import * as Validation from "../../helpers/Validation";
 import _debounce from "lodash/debounce";
 import {has as _has} from "lodash/object";
 import PasswordConfirmationArea from "../shared/PasswordConfirmationArea";
+import * as Constants from "../../helpers/Constants";
 
 const styles = theme => ({
   container: {
@@ -56,7 +57,7 @@ class RegisterForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.debouncedValidate = _debounce(this.validateField, 200);
+    this.debouncedValidate = _debounce(this.validateField, Constants.VALIDATION_DEBOUNCE);
 
     this.refs = {};
 
@@ -148,7 +149,7 @@ class RegisterForm extends React.Component {
 
     switch(fieldName) {
       case "email": {
-        let emailValid = isValidEmail(value);
+        let emailValid = Validation.isValidEmail(value);
         newSteps[0].valid = newSteps[0].controls.email = emailValid;
         if (emailValid)
           delete fieldValidationErrors[fieldName];
@@ -187,28 +188,6 @@ class RegisterForm extends React.Component {
       errors: fieldValidationErrors,
       steps: newSteps
     }, this.validateForm);
-  };
-
-  validatePassword = (password, strength) => {
-    let passwordValid = strength.score > 2;
-
-
-    let pwHelperText = "";
-    if (pwHelperText === "" && strength !== null && strength.feedback !== null)
-      pwHelperText = strength.feedback.warning || "";
-    if (pwHelperText === "" && strength.feedback.suggestions.length > 0)
-      pwHelperText = strength.feedback.suggestions[0] || "";
-    if (pwHelperText === "" && strength.score > 2)
-      pwHelperText = "Password strength: " + (strength.score === 4 ? "excellent" : "good");
-
-    let newSteps = Object.assign({}, this.state.steps);
-    newSteps[2].controls.password = passwordValid;
-    this.setState({ steps: newSteps });
-
-    return {
-      valid: passwordValid,
-      message: pwHelperText
-    };
   };
 
   validateForm = () => {
@@ -348,7 +327,7 @@ class RegisterForm extends React.Component {
                     fieldInputProps={fieldInputProps}
                     hasPasswordError={hasPasswordError}
                     passwordValue={this.state.newUser.password}
-                    passwordValidator={this.validatePassword}
+                    passwordValidator={Validation.validatePassword}
                     hasConfirmPasswordError={hasConfirmPasswordError}
                     confirmPasswordError={this.state.errors.confirmPassword}
                     confirmPasswordValue={this.state.newUser.confirmPassword}
