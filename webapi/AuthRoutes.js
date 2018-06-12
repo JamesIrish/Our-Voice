@@ -16,7 +16,7 @@ export default class AuthRoutes {
 
   static SECRET = "VOICE_SECRET";
 
-  static routes = () => {
+  static routes = (passport) => {
     let routes = new Router();
 
     routes.post("/signin", AuthRoutes._signin);
@@ -84,7 +84,7 @@ export default class AuthRoutes {
         user.actions = [...user.actions, {action: userActions.signin_success}];
         await user.save();
 
-        let token = AuthRoutes._createToken(user, user.roles);
+        let token = "JWT " + AuthRoutes._createToken(user, user.roles);
         let refreshToken = randtoken.uid(256);
 
         let midnight = new Date();
@@ -207,7 +207,7 @@ export default class AuthRoutes {
 
         req.log.debug(safeUser, "Loaded user record from db");
 
-        let token = AuthRoutes._createToken(user, ["admin"]);
+        let token = "JWT " + AuthRoutes._createToken(user, ["admin"]);
         res.cookie("access_token", token);
         res.send({ user: safeUser, accessToken: token, refreshToken: refreshToken });
 
@@ -283,7 +283,7 @@ export default class AuthRoutes {
 
           await user.save();
 
-          let token = AuthRoutes._createToken(user, groups);
+          let token = "JWT " + AuthRoutes._createToken(user, groups);
           let refreshToken = randtoken.uid(256);
 
           let midnight = new Date();

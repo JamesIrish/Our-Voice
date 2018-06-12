@@ -32,8 +32,8 @@ export default class ApiRoutes {
 
     let routes = new Router();
     routes.use("/config", ConfigRoutes.routes());
-    routes.use("/auth", AuthRoutes.routes());
-    routes.use("/user", UserRoutes.routes());
+    routes.use("/auth", AuthRoutes.routes(passport));
+    routes.use("/user", UserRoutes.routes(passport));
     routes.use("/projects", passport.authenticate("jwt"), ProjectRoutes.routes());
 
     return routes;
